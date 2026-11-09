@@ -83,7 +83,7 @@
 		D4443C34A7E8C3400E46BD2F /* LiturgicalDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalDay.swift; sourceTree = "<group>"; };
 		D4D71A0FFCECCBFC2BC0395D /* lectionary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary.json; sourceTree = "<group>"; };
 		D632EAC635041B3C549CF8C8 /* PericoreIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PericoreIndex.swift; sourceTree = "<group>"; };
-		D64AC4ABCAA4F44BFDE6D7BD /* DailyBread.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyBread.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D64AC4ABCAA4F44BFDE6D7BD /* DailyBread.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyBread.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06FDEAD47DDB103D849FB27 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		EAB3AF2E6F41795B121BA63C /* Saint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Saint.swift; sourceTree = "<group>"; };
 		ED225BEBD459EC410E6E72CA /* DateReadingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateReadingsView.swift; sourceTree = "<group>"; };
@@ -274,8 +274,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 74E00FBD46E2164EC7884F3F /* Build configuration list for PBXProject "DailyBread" */;
 			developmentRegion = en;
@@ -430,6 +428,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = DT58WA8N32;
 				INFOPLIST_KEY_CFBundleDisplayName = DailyBread;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -509,6 +508,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = DT58WA8N32;
 				INFOPLIST_KEY_CFBundleDisplayName = DailyBread;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

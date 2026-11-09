@@ -82,20 +82,53 @@ public final class ReadingsRepository: @unchecked Sendable {
             // Step 1A: Check SwiftData cache
             if !forceRefresh, let cached = fetchFromCache(dateKey: dateKey, translation: "NAB") {
                 if !cached.isExpired, let readings = try? cached.decodeReadings() {
-                    self.currentReadings = readings
-                    self.activeTranslation = "NAB"
-                    return readings
+                    // Check if cached readings have valid citations
+                    let hasMissingCitations = readings.readings.contains { $0.citation.book.trimmingCharacters(in: .whitespaces).isEmpty }
+                    if !hasMissingCitations {
+                        self.currentReadings = readings
+                        self.activeTranslation = "NAB"
+                        return readings
+                    }
+                    // If citations were missing from a previous cache, fall through to re-fetch/repair
                 }
             }
 
             // Step 1B: Fetch from Evangelizo API
             do {
                 let onlineReadings = try await evangelizioService.fetchReadings(for: date)
-                // Cache successful response in SwiftData
-                saveToCache(readings: onlineReadings, translation: "NAB")
-                self.currentReadings = onlineReadings
+                
+                // Safety net: ensure all citations are complete, backfilling from official USCCB lectionary if necessary
+                let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
+                let lectionaryEntries = pericoreIndex.entries(for: liturgicalDay)
+                
+                let verifiedReadings = onlineReadings.readings.map { reading -> Reading in
+                    if reading.citation.book.trimmingCharacters(in: .whitespaces).isEmpty,
+                       let match = lectionaryEntries.first(where: { $0.type == reading.type }) {
+                        return Reading(
+                            id: reading.id,
+                            type: reading.type,
+                            citation: match.citation,
+                            text: reading.text,
+                            response: reading.response,
+                            translation: "NAB"
+                        )
+                    }
+                    return reading
+                }
+                
+                let finalDailyReadings = DailyReadings(
+                    id: onlineReadings.id,
+                    date: onlineReadings.date,
+                    liturgicalTitle: onlineReadings.liturgicalTitle,
+                    readings: verifiedReadings,
+                    translation: "NAB"
+                )
+
+                // Cache successful verified response in SwiftData
+                saveToCache(readings: finalDailyReadings, translation: "NAB")
+                self.currentReadings = finalDailyReadings
                 self.activeTranslation = "NAB"
-                return onlineReadings
+                return finalDailyReadings
             } catch {
                 self.lastError = "Online fetch unavailable: \(error.localizedDescription). Using Douay-Rheims Bible."
             }

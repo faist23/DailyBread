@@ -120,13 +120,7 @@ public actor EvangelizioService {
 
         for (index, item) in rawReadings.enumerated() {
             let type = determineReadingType(from: item, index: index, total: rawReadings.count)
-            let referenceStr = (item["reference"] as? String)
-                ?? (item["citation"] as? String)
-                ?? (item["book"] as? String)
-                ?? ""
-            
-            let citation = ReadingCitation.parse(from: referenceStr)
-                ?? ReadingCitation(book: referenceStr, verses: "")
+            let citation = extractCitation(from: item)
 
             let rawText = (item["text"] as? String)
                 ?? (item["content"] as? String)
@@ -209,6 +203,95 @@ public actor EvangelizioService {
             return cleanHTML(title)
         }
         return nil
+    }
+
+    // MARK: - Citation Extraction
+
+    private func extractCitation(from item: [String: Any]) -> ReadingCitation {
+        // 1. Direct formatted reference if provided as a string
+        if let direct = (item["reference"] as? String) ?? (item["citation"] as? String), !direct.isEmpty {
+            if let parsed = ReadingCitation.parse(from: direct) {
+                return parsed
+            }
+        }
+        
+        // 2. Extract book name from dictionary or string
+        var rawBookName = ""
+        if let bookDict = item["book"] as? [String: Any] {
+            rawBookName = (bookDict["short_title"] as? String)
+                ?? (bookDict["full_title"] as? String)
+                ?? (bookDict["code"] as? String)
+                ?? ""
+        }
+        if rawBookName.isEmpty {
+            rawBookName = (item["title"] as? String) ?? (item["book"] as? String) ?? ""
+        }
+        
+        // Clean and resolve to canonical English book name (e.g. "Ezek" -> "Ezekiel", "1_Co" -> "1 Corinthians")
+        let cleanRawBook = rawBookName.replacingOccurrences(of: "_", with: " ")
+        let canonicalBook = BibleBook.find(named: cleanRawBook)?.canonicalName ?? cleanRawBook
+        
+        // 3. Format reference_displayed (e.g. "47,1-2.8-9.12." -> "47:1-2, 8-9, 12")
+        let rawRef = (item["reference_displayed"] as? String) ?? ""
+        let formattedReference = formatEvangelizoReference(book: canonicalBook, rawRef: rawRef)
+        
+        if let parsed = ReadingCitation.parse(from: formattedReference) {
+            return parsed
+        }
+        
+        // 4. Fallback: Parse reading_code (e.g. "Jn 2,13-22" or "1_Co 3,9c-11#1_Co 3,16-17")
+        if let readingCode = item["reading_code"] as? String, !readingCode.isEmpty {
+            let codeFormatted = formatReadingCode(readingCode, fallbackBook: canonicalBook)
+            if let parsed = ReadingCitation.parse(from: codeFormatted) {
+                return parsed
+            }
+        }
+        
+        return ReadingCitation(book: canonicalBook, verses: rawRef)
+    }
+
+    private func formatEvangelizoReference(book: String, rawRef: String) -> String {
+        let trimmed = rawRef
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "."))
+        guard !trimmed.isEmpty else { return book }
+        
+        // Remove Septuagint/Vulgate alternate numbering in parentheses, e.g. "46(45)" -> "46"
+        var cleanRef = trimmed.replacingOccurrences(of: "\\(\\d+\\)", with: "", options: .regularExpression)
+        
+        // Evangelizo uses a comma to separate chapter from verses
+        if let commaIndex = cleanRef.firstIndex(of: ",") {
+            let chapter = String(cleanRef[..<commaIndex]).trimmingCharacters(in: .whitespaces)
+            var verses = String(cleanRef[cleanRef.index(after: commaIndex)...]).trimmingCharacters(in: .whitespaces)
+            verses = verses.replacingOccurrences(of: ".", with: ", ")
+            return "\(book) \(chapter):\(verses)"
+        } else {
+            cleanRef = cleanRef.replacingOccurrences(of: ".", with: ", ")
+            return "\(book) \(cleanRef)"
+        }
+    }
+
+    private func formatReadingCode(_ code: String, fallbackBook: String) -> String {
+        let segments = code.split(separator: "#")
+        var formattedParts: [String] = []
+        var detectedBook = fallbackBook
+        
+        for segment in segments {
+            let part = segment.replacingOccurrences(of: "_", with: " ").replacingOccurrences(of: ",", with: ":")
+            let components = part.split(separator: " ")
+            if components.count >= 2 {
+                let bookCode = String(components[0])
+                if let matched = BibleBook.find(named: bookCode)?.canonicalName {
+                    detectedBook = matched
+                }
+                formattedParts.append(String(components[1]))
+            } else {
+                formattedParts.append(part)
+            }
+        }
+        
+        let combinedVerses = formattedParts.joined(separator: ", ")
+        return "\(detectedBook) \(combinedVerses)"
     }
 
     // MARK: - HTML Sanitization
