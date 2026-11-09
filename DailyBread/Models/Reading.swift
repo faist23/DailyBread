@@ -149,6 +149,15 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
     /// Translation identifier: "DRB" (Douay-Rheims) or "NAB" (New American Bible).
     public let translation: String
     
+    /// Sanitizes scripture text by stripping inline lectionary verse tags like `[[Jn 2,13]]` or `[[...]]`.
+    public static func sanitizeText(_ rawText: String) -> String {
+        var text = rawText
+            .replacingOccurrences(of: "\\[\\[[^\\]]+\\]\\]", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "(?m)^[ \\t]+", with: "", options: .regularExpression)
+            .replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     /// Designated initializer.
     public init(
         id: UUID = UUID(),
@@ -162,8 +171,9 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
         self.id = id
         self.type = type
         self.citation = citation
-        self.text = text
-        self.response = response ?? psalmResponse
+        self.text = Self.sanitizeText(text)
+        let rawResp = response ?? psalmResponse
+        self.response = rawResp != nil ? Self.sanitizeText(rawResp!) : nil
         self.translation = translation
     }
     
@@ -178,8 +188,13 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
         self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         self.type = try container.decode(ReadingType.self, forKey: .type)
         self.citation = try container.decode(ReadingCitation.self, forKey: .citation)
-        self.text = try container.decode(String.self, forKey: .text)
-        self.response = try container.decodeIfPresent(String.self, forKey: .response)
+        let rawText = try container.decode(String.self, forKey: .text)
+        self.text = Self.sanitizeText(rawText)
+        if let rawResp = try container.decodeIfPresent(String.self, forKey: .response) {
+            self.response = Self.sanitizeText(rawResp)
+        } else {
+            self.response = nil
+        }
         self.translation = try container.decode(String.self, forKey: .translation)
     }
     

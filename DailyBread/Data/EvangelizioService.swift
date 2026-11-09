@@ -215,6 +215,8 @@ public actor EvangelizioService {
 
     private func cleanHTML(_ html: String) -> String {
         var text = html
+            // Strip Evangelizo inline scripture reference tags like [[Jn 2,13]] or [[Ez 47,1]]
+            .replacingOccurrences(of: "\\[\\[[^\\]]+\\]\\]", with: "", options: .regularExpression)
             .replacingOccurrences(of: "<br\\s*/?>", with: "\n", options: .regularExpression)
             .replacingOccurrences(of: "</p>", with: "\n\n", options: .caseInsensitive)
             .replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
@@ -229,7 +231,8 @@ public actor EvangelizioService {
             .replacingOccurrences(of: "&mdash;", with: "—")
             .replacingOccurrences(of: "&ndash;", with: "–")
 
-        // Clean redundant line breaks
+        // Clean redundant indentation and line breaks
+        text = text.replacingOccurrences(of: "(?m)^[ \\t]+", with: "", options: .regularExpression)
         text = text.replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
         return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
