@@ -78,6 +78,17 @@ public struct MainTabView: View {
             if todayViewModel.liturgicalDay == nil {
                 await todayViewModel.loadReadings()
             }
+            // Refresh upcoming liturgical reminders if enabled
+            if UserDefaults.standard.bool(forKey: "reminderEnabled") {
+                let interval = UserDefaults.standard.double(forKey: "reminderTimeInterval")
+                let timeInterval = interval > 0 ? interval : 25200 // Default 7:00 AM
+                let calendar = Calendar.current
+                let hours = Int(timeInterval) / 3600
+                let minutes = (Int(timeInterval) % 3600) / 60
+                if let targetDate = calendar.date(bySettingHour: hours, minute: minutes, second: 0, of: .now) {
+                    await NotificationManager.shared.scheduleDailyReminders(at: targetDate)
+                }
+            }
         }
     }
     

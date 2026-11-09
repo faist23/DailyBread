@@ -17,6 +17,11 @@ public struct SettingsView: View {
     @AppStorage("bibleTranslation") private var selectedTranslation: String = "Douay-Rheims"
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @AppStorage("readingLineSpacing") private var readingLineSpacing: Double = 7.0
+    @AppStorage("reminderEnabled") private var reminderEnabled: Bool = false
+    @AppStorage("reminderTimeInterval") private var reminderTimeInterval: Double = 25200 // 7:00 AM (7 * 3600)
+    
+    @State private var notificationManager = NotificationManager.shared
+    @State private var showSettingsAlert: Bool = false
     
     // MARK: - Translation Options
     
@@ -33,25 +38,106 @@ public struct SettingsView: View {
                 .ignoresSafeArea()
             
             Form {
-                // Section 1: Translation Picker
+                // Section 1: Daily Reminder
+                reminderSection
+
+                // Section 2: Translation Picker
                 translationSection
                 
-                // Section 2: Typography & Sizing
+                // Section 3: Typography & Sizing
                 typographySection
                 
-                // Section 3: Live Reading Preview
+                // Section 4: Live Reading Preview
                 livePreviewSection
                 
-                // Section 4: About DailyBread
+                // Section 5: About DailyBread
                 aboutSection
                 
-                // Section 5: Credits & Sources
+                // Section 6: Credits & Sources
                 creditsSection
             }
             .scrollContentBackground(.hidden)
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Notifications Disabled", isPresented: $showSettingsAlert) {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Please enable notifications for DailyBread in iOS Settings to receive daily prayer reminders.")
+        }
+        .task {
+            await notificationManager.checkAuthorization()
+        }
+    }
+    
+    // MARK: - Daily Reminder Helpers
+    
+    private var reminderTime: Binding<Date> {
+        Binding(
+            get: {
+                let calendar = Calendar.current
+                let hours = Int(reminderTimeInterval) / 3600
+                let minutes = (Int(reminderTimeInterval) % 3600) / 60
+                return calendar.date(bySettingHour: hours, minute: minutes, second: 0, of: .now) ?? .now
+            },
+            set: { newDate in
+                let calendar = Calendar.current
+                let hours = calendar.component(.hour, from: newDate)
+                let minutes = calendar.component(.minute, from: newDate)
+                reminderTimeInterval = Double(hours * 3600 + minutes * 60)
+                if reminderEnabled {
+                    Task {
+                        await notificationManager.scheduleDailyReminders(at: newDate)
+                    }
+                }
+            }
+        )
+    }
+    
+    // MARK: - Daily Reminder Section
+    
+    private var reminderSection: some View {
+        Section {
+            Toggle("Daily Prayer Reminder", isOn: Binding(
+                get: { reminderEnabled },
+                set: { newValue in
+                    reminderEnabled = newValue
+                    Task {
+                        if newValue {
+                            let granted = await notificationManager.requestAuthorization()
+                            if granted {
+                                await notificationManager.scheduleDailyReminders(at: reminderTime.wrappedValue)
+                            } else {
+                                reminderEnabled = false
+                                showSettingsAlert = true
+                            }
+                        } else {
+                            await notificationManager.cancelReminders()
+                        }
+                    }
+                }
+            ))
+            
+            if reminderEnabled {
+                DatePicker(
+                    "Reminder Time",
+                    selection: reminderTime,
+                    displayedComponents: .hourAndMinute
+                )
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        } header: {
+            Text("Daily Prayer Reminder")
+        } footer: {
+            Text("Receive a gentle daily notification with today's liturgical feast and a reminder to pray.")
+                .font(.footnote)
+                .foregroundStyle(Color.secondary)
+        }
     }
     
     // MARK: - Translation Section
