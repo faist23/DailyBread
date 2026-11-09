@@ -19,7 +19,7 @@ public struct SaintOfDayCard: View {
     public let saint: Saint
     public var liturgicalColor: LiturgicalColor = .green
     
-    @State private var isExpanded: Bool = false
+    @State private var isExpanded: Bool = true
     
     // MARK: - Initialization
     
