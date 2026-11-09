@@ -16,6 +16,7 @@
 		3A53CF23AAEA990B6FE4A0A5 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675A3726E3FA84981BD2BD15 /* MainTabView.swift */; };
 		3D73438008F3A455D46871F7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06FDEAD47DDB103D849FB27 /* SettingsView.swift */; };
 		3FE9C12D39A6B52C35E7F074 /* Saint.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB3AF2E6F41795B121BA63C /* Saint.swift */; };
+		421DB86799396B2379596F9E /* LiturgicalCelebrationBlurbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23AEFAADE5ACCA88A242CD07 /* LiturgicalCelebrationBlurbs.swift */; };
 		4945BA94C817C04EDB93B467 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9257C0D964884098A1CF663 /* Typography.swift */; };
 		53A778B4517940633794E242 /* BibleDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12EF92FF56D5075D95D863D5 /* BibleDatabase.swift */; };
 		573D9188A4B834FBD861B385 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7630F48EAB2E377119539C3 /* TodayView.swift */; };
@@ -54,6 +55,7 @@
 		0C2147C32CC67FCD933024FE /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		12EF92FF56D5075D95D863D5 /* BibleDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleDatabase.swift; sourceTree = "<group>"; };
 		1C1F3F446EA56CA6AD06332E /* SaintOfDayCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaintOfDayCard.swift; sourceTree = "<group>"; };
+		23AEFAADE5ACCA88A242CD07 /* LiturgicalCelebrationBlurbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCelebrationBlurbs.swift; sourceTree = "<group>"; };
 		2A0A0F1E376264F638CF3AB9 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		359891D4647C5BCE44E6117B /* LiturgicalCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCycle.swift; sourceTree = "<group>"; };
 		39FC99E8C1C4C2E32EED419A /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
@@ -83,7 +85,7 @@
 		D4443C34A7E8C3400E46BD2F /* LiturgicalDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalDay.swift; sourceTree = "<group>"; };
 		D4D71A0FFCECCBFC2BC0395D /* lectionary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary.json; sourceTree = "<group>"; };
 		D632EAC635041B3C549CF8C8 /* PericoreIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PericoreIndex.swift; sourceTree = "<group>"; };
-		D64AC4ABCAA4F44BFDE6D7BD /* DailyBread.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyBread.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D64AC4ABCAA4F44BFDE6D7BD /* DailyBread.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyBread.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E06FDEAD47DDB103D849FB27 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		EAB3AF2E6F41795B121BA63C /* Saint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Saint.swift; sourceTree = "<group>"; };
 		ED225BEBD459EC410E6E72CA /* DateReadingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateReadingsView.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 			children = (
 				12EF92FF56D5075D95D863D5 /* BibleDatabase.swift */,
 				41E5BFA63FCB525D881236FE /* EvangelizioService.swift */,
+				23AEFAADE5ACCA88A242CD07 /* LiturgicalCelebrationBlurbs.swift */,
 				B3FB0F22269C6568279F7659 /* NotificationManager.swift */,
 				D632EAC635041B3C549CF8C8 /* PericoreIndex.swift */,
 				5F48A0841CCE9B6A6B1807A2 /* ReadingsRepository.swift */,
@@ -274,6 +277,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 74E00FBD46E2164EC7884F3F /* Build configuration list for PBXProject "DailyBread" */;
 			developmentRegion = en;
@@ -328,6 +333,7 @@
 				F2268599C844EA0AA1BD860D /* EvangelizioService.swift in Sources */,
 				90A7BF4975EC583DCEDF03BC /* FixedSolemnities.swift in Sources */,
 				6F0A0CF74F59A3A49EA5BAB2 /* LiturgicalCalendar.swift in Sources */,
+				421DB86799396B2379596F9E /* LiturgicalCelebrationBlurbs.swift in Sources */,
 				C87DA6E67583DB807DF96C0C /* LiturgicalColor.swift in Sources */,
 				63BD936549B857F73B5F5532 /* LiturgicalColors.swift in Sources */,
 				F39DA722EEB7295C4D99904B /* LiturgicalCycle.swift in Sources */,
@@ -428,7 +434,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = DT58WA8N32;
 				INFOPLIST_KEY_CFBundleDisplayName = DailyBread;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -508,7 +513,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = DT58WA8N32;
 				INFOPLIST_KEY_CFBundleDisplayName = DailyBread;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

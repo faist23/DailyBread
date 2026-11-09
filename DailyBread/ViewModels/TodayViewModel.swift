@@ -112,8 +112,8 @@ public final class TodayViewModel {
                 self.dailyReadings = readings
             }
             
-            // 3. Look up the Saint of the Day
-            self.saint = saintsDatabase.saint(for: date)
+            // 3. Look up the Saint of the Day or Solemnity/Feast blurb
+            self.saint = saintsDatabase.saint(for: date, liturgicalDay: self.liturgicalDay)
             
         } catch {
             self.error = "Unable to load readings: \(error.localizedDescription)"

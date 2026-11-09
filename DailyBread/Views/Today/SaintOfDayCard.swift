@@ -66,7 +66,7 @@ public struct SaintOfDayCard: View {
             }
             
             VStack(alignment: .leading, spacing: 3) {
-                Text("SAINT OF THE DAY")
+                Text(headerBadgeTitle)
                     .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
                 
                 Text(saint.name)
@@ -81,6 +81,26 @@ public struct SaintOfDayCard: View {
             }
             
             Spacer()
+        }
+    }
+    
+    // MARK: - Dynamic Badge Title
+    
+    private var headerBadgeTitle: String {
+        let nameLower = saint.name.lowercased()
+        let titleLower = (saint.title ?? "").lowercased()
+        
+        // Respect the classic "SAINT OF THE DAY" specifically for All Saints
+        if nameLower.contains("all saints") {
+            return "SAINT OF THE DAY"
+        } else if nameLower.contains("solemnity") || titleLower.contains("solemnity") {
+            return "SOLEMNITY OF THE DAY"
+        } else if nameLower.contains("feast") || titleLower.contains("feast") || nameLower.contains("dedication") || nameLower.contains("presentation") || nameLower.contains("transfiguration") || nameLower.contains("exaltation") || nameLower.contains("baptism") {
+            return "FEAST OF THE DAY"
+        } else if nameLower.contains("commemoration") || nameLower.contains("ash wednesday") || nameLower.contains("good friday") || nameLower.contains("holy saturday") || nameLower.contains("holy thursday") {
+            return "COMMEMORATION OF THE DAY"
+        } else {
+            return "SAINT OF THE DAY"
         }
     }
     
