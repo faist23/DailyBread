@@ -1,0 +1,635 @@
+//
+//  BibleDatabase.swift
+//  DailyBread
+//
+//  Created for DailyBread Catholic Daily Readings App.
+//  iOS 17+ | Swift 6+ | SQLite3
+//
+
+import Foundation
+import SQLite3
+
+// MARK: - BibleBook Enum (73 Catholic Books)
+
+/// Canonical enumeration of the 73 books of the Catholic Bible (Douay-Rheims version),
+/// mapping canonical book IDs, official English names, Vulgate Latin names, and common abbreviations.
+public enum BibleBook: Int, CaseIterable, Codable, Sendable {
+    // Old Testament (46 Books)
+    case genesis = 1
+    case exodus = 2
+    case leviticus = 3
+    case numbers = 4
+    case deuteronomy = 5
+    case joshua = 6
+    case judges = 7
+    case ruth = 8
+    case firstSamuel = 9         // 1 Kings in DRB/Vulgate
+    case secondSamuel = 10       // 2 Kings in DRB/Vulgate
+    case firstKings = 11         // 3 Kings in DRB/Vulgate
+    case secondKings = 12        // 4 Kings in DRB/Vulgate
+    case firstChronicles = 13    // 1 Paralipomenon
+    case secondChronicles = 14   // 2 Paralipomenon
+    case ezra = 15               // 1 Esdras
+    case nehemiah = 16           // 2 Esdras
+    case tobit = 17              // Tobias
+    case judith = 18
+    case esther = 19
+    case job = 20
+    case psalms = 21
+    case proverbs = 22
+    case ecclesiastes = 23       // Qoheleth
+    case songOfSongs = 24        // Canticle of Canticles
+    case wisdom = 25             // Wisdom of Solomon
+    case sirach = 26             // Ecclesiasticus
+    case isaiah = 27             // Isaias
+    case jeremiah = 28           // Jeremias
+    case lamentations = 29
+    case baruch = 30
+    case ezekiel = 31            // Ezechiel
+    case daniel = 32
+    case hosea = 33              // Osee
+    case joel = 34
+    case amos = 35
+    case obadiah = 36            // Abdias
+    case jonah = 37              // Jonas
+    case micah = 38              // Micheas
+    case nahum = 39
+    case habakkuk = 40           // Habacuc
+    case zephaniah = 41          // Sophonias
+    case haggai = 42             // Aggeus
+    case zechariah = 43          // Zacharias
+    case malachi = 44            // Malachias
+    case firstMaccabees = 45     // 1 Machabees
+    case secondMaccabees = 46    // 2 Machabees
+
+    // New Testament (27 Books)
+    case matthew = 47
+    case mark = 48
+    case luke = 49
+    case john = 50
+    case acts = 51
+    case romans = 52
+    case firstCorinthians = 53
+    case secondCorinthians = 54
+    case galatians = 55
+    case ephesians = 56
+    case philippians = 57
+    case colossians = 58
+    case firstThessalonians = 59
+    case secondThessalonians = 60
+    case firstTimothy = 61
+    case secondTimothy = 62
+    case titus = 63
+    case philemon = 64
+    case hebrews = 65
+    case james = 66
+    case firstPeter = 67
+    case secondPeter = 68
+    case firstJohn = 69
+    case secondJohn = 70
+    case thirdJohn = 71
+    case jude = 72
+    case revelation = 73         // Apocalypse
+
+    /// Canonical English name.
+    public var canonicalName: String {
+        switch self {
+        case .genesis: return "Genesis"
+        case .exodus: return "Exodus"
+        case .leviticus: return "Leviticus"
+        case .numbers: return "Numbers"
+        case .deuteronomy: return "Deuteronomy"
+        case .joshua: return "Joshua"
+        case .judges: return "Judges"
+        case .ruth: return "Ruth"
+        case .firstSamuel: return "1 Samuel"
+        case .secondSamuel: return "2 Samuel"
+        case .firstKings: return "1 Kings"
+        case .secondKings: return "2 Kings"
+        case .firstChronicles: return "1 Chronicles"
+        case .secondChronicles: return "2 Chronicles"
+        case .ezra: return "Ezra"
+        case .nehemiah: return "Nehemiah"
+        case .tobit: return "Tobit"
+        case .judith: return "Judith"
+        case .esther: return "Esther"
+        case .job: return "Job"
+        case .psalms: return "Psalms"
+        case .proverbs: return "Proverbs"
+        case .ecclesiastes: return "Ecclesiastes"
+        case .songOfSongs: return "Song of Songs"
+        case .wisdom: return "Wisdom"
+        case .sirach: return "Sirach"
+        case .isaiah: return "Isaiah"
+        case .jeremiah: return "Jeremiah"
+        case .lamentations: return "Lamentations"
+        case .baruch: return "Baruch"
+        case .ezekiel: return "Ezekiel"
+        case .daniel: return "Daniel"
+        case .hosea: return "Hosea"
+        case .joel: return "Joel"
+        case .amos: return "Amos"
+        case .obadiah: return "Obadiah"
+        case .jonah: return "Jonah"
+        case .micah: return "Micah"
+        case .nahum: return "Nahum"
+        case .habakkuk: return "Habakkuk"
+        case .zephaniah: return "Zephaniah"
+        case .haggai: return "Haggai"
+        case .zechariah: return "Zechariah"
+        case .malachi: return "Malachi"
+        case .firstMaccabees: return "1 Maccabees"
+        case .secondMaccabees: return "2 Maccabees"
+        case .matthew: return "Matthew"
+        case .mark: return "Mark"
+        case .luke: return "Luke"
+        case .john: return "John"
+        case .acts: return "Acts"
+        case .romans: return "Romans"
+        case .firstCorinthians: return "1 Corinthians"
+        case .secondCorinthians: return "2 Corinthians"
+        case .galatians: return "Galatians"
+        case .ephesians: return "Ephesians"
+        case .philippians: return "Philippians"
+        case .colossians: return "Colossians"
+        case .firstThessalonians: return "1 Thessalonians"
+        case .secondThessalonians: return "2 Thessalonians"
+        case .firstTimothy: return "1 Timothy"
+        case .secondTimothy: return "2 Timothy"
+        case .titus: return "Titus"
+        case .philemon: return "Philemon"
+        case .hebrews: return "Hebrews"
+        case .james: return "James"
+        case .firstPeter: return "1 Peter"
+        case .secondPeter: return "2 Peter"
+        case .firstJohn: return "1 John"
+        case .secondJohn: return "2 John"
+        case .thirdJohn: return "3 John"
+        case .jude: return "Jude"
+        case .revelation: return "Revelation"
+        }
+    }
+
+    /// Number of chapters in this book.
+    public var chapterCount: Int {
+        switch self {
+        case .genesis: return 50
+        case .exodus: return 40
+        case .leviticus: return 27
+        case .numbers: return 36
+        case .deuteronomy: return 34
+        case .joshua: return 24
+        case .judges: return 21
+        case .ruth: return 4
+        case .firstSamuel: return 31
+        case .secondSamuel: return 24
+        case .firstKings: return 22
+        case .secondKings: return 25
+        case .firstChronicles: return 29
+        case .secondChronicles: return 36
+        case .ezra: return 10
+        case .nehemiah: return 13
+        case .tobit: return 14
+        case .judith: return 16
+        case .esther: return 16
+        case .job: return 42
+        case .psalms: return 150
+        case .proverbs: return 31
+        case .ecclesiastes: return 12
+        case .songOfSongs: return 8
+        case .wisdom: return 19
+        case .sirach: return 51
+        case .isaiah: return 66
+        case .jeremiah: return 52
+        case .lamentations: return 5
+        case .baruch: return 6
+        case .ezekiel: return 48
+        case .daniel: return 14
+        case .hosea: return 14
+        case .joel: return 3
+        case .amos: return 9
+        case .obadiah: return 1
+        case .jonah: return 4
+        case .micah: return 7
+        case .nahum: return 3
+        case .habakkuk: return 3
+        case .zephaniah: return 3
+        case .haggai: return 2
+        case .zechariah: return 14
+        case .malachi: return 4
+        case .firstMaccabees: return 16
+        case .secondMaccabees: return 15
+        case .matthew: return 28
+        case .mark: return 16
+        case .luke: return 24
+        case .john: return 21
+        case .acts: return 28
+        case .romans: return 16
+        case .firstCorinthians: return 16
+        case .secondCorinthians: return 13
+        case .galatians: return 6
+        case .ephesians: return 6
+        case .philippians: return 4
+        case .colossians: return 4
+        case .firstThessalonians: return 5
+        case .secondThessalonians: return 3
+        case .firstTimothy: return 6
+        case .secondTimothy: return 4
+        case .titus: return 3
+        case .philemon: return 1
+        case .hebrews: return 13
+        case .james: return 5
+        case .firstPeter: return 5
+        case .secondPeter: return 3
+        case .firstJohn: return 5
+        case .secondJohn: return 1
+        case .thirdJohn: return 1
+        case .jude: return 1
+        case .revelation: return 22
+        }
+    }
+
+    /// Resolves any common book name, abbreviation, Douay-Rheims or Latin title to a canonical BibleBook.
+    public static func find(named rawName: String) -> BibleBook? {
+        var clean = rawName
+            .lowercased()
+            .replacingOccurrences(of: ".", with: "")
+            .replacingOccurrences(of: "first", with: "1")
+            .replacingOccurrences(of: "second", with: "2")
+            .replacingOccurrences(of: "third", with: "3")
+            .replacingOccurrences(of: "i ", with: "1 ")
+            .replacingOccurrences(of: "ii ", with: "2 ")
+            .replacingOccurrences(of: "iii ", with: "3 ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if clean.hasPrefix("see ") {
+            clean = String(clean.dropFirst(4)).trimmingCharacters(in: .whitespaces)
+        }
+        if clean.hasPrefix("cf ") {
+            clean = String(clean.dropFirst(3)).trimmingCharacters(in: .whitespaces)
+        }
+        if clean.hasPrefix("psalm") || clean.hasPrefix("ps") {
+            return .psalms
+        }
+        if !clean.isEmpty && clean.allSatisfy({ $0.isNumber }) {
+            return .psalms
+        }
+        if clean == "phiippians" || clean == "phippians" {
+            return .philippians
+        }
+        if clean == "sirarch" {
+            return .sirach
+        }
+        if clean == "col1" {
+            return .colossians
+        }
+        if clean == "mt13" {
+            return .matthew
+        }
+
+        switch clean {
+        case "gn", "gen", "genesis": return .genesis
+        case "ex", "exod", "exodus": return .exodus
+        case "lv", "lev", "leviticus": return .leviticus
+        case "nm", "num", "numbers": return .numbers
+        case "dt", "deut", "deuteronomy": return .deuteronomy
+        case "jos", "josh", "joshua", "josue": return .joshua
+        case "jg", "jgs", "judg", "judges": return .judges
+        case "ru", "ruth": return .ruth
+        case "1 sm", "1 sam", "1 samuel", "1 kgs (drb)", "1 kings (drb)": return .firstSamuel
+        case "2 sm", "2 sam", "2 samuel", "2 kgs (drb)", "2 kings (drb)": return .secondSamuel
+        case "1 kgs", "1 ki", "1 kings", "3 kgs", "3 kings": return .firstKings
+        case "2 kgs", "2 ki", "2 kings", "4 kgs", "4 kings": return .secondKings
+        case "1 chr", "1 chron", "1 chronicles", "1 paralipomenon": return .firstChronicles
+        case "2 chr", "2 chron", "2 chronicles", "2 paralipomenon": return .secondChronicles
+        case "ezr", "ezra", "1 esdras": return .ezra
+        case "neh", "nehemiah", "2 esdras": return .nehemiah
+        case "tb", "tob", "tobit", "tobias": return .tobit
+        case "jdt", "jth", "judith": return .judith
+        case "est", "esth", "esther": return .esther
+        case "jb", "job": return .job
+        case "ps", "pss", "psalm", "psalms": return .psalms
+        case "prv", "prov", "proverbs": return .proverbs
+        case "eccl", "qoh", "ecclesiastes", "qoheleth": return .ecclesiastes
+        case "sg", "song", "cant", "canticle of canticles", "song of songs", "song of solomon": return .songOfSongs
+        case "ws", "wis", "wisdom", "wisdom of solomon": return .wisdom
+        case "sir", "sirach", "ecclus", "ecclesiasticus": return .sirach
+        case "is", "isa", "isaiah", "isaias": return .isaiah
+        case "jr", "jer", "jeremiah", "jeremias": return .jeremiah
+        case "lm", "lam", "lamentations": return .lamentations
+        case "ba", "bar", "baruch": return .baruch
+        case "ez", "ezek", "ezekiel", "ezechiel": return .ezekiel
+        case "dn", "dan", "daniel": return .daniel
+        case "os", "hos", "hosea", "osee": return .hosea
+        case "jl", "joel": return .joel
+        case "am", "amos": return .amos
+        case "ob", "obad", "obadiah", "abdias": return .obadiah
+        case "jon", "jonah", "jonas": return .jonah
+        case "mi", "mic", "micah", "micheas": return .micah
+        case "na", "nah", "nahum": return .nahum
+        case "hb", "hab", "habakkuk", "habacuc": return .habakkuk
+        case "zep", "zeph", "zephaniah", "sophanias", "sophonia": return .zephaniah
+        case "hg", "hag", "haggai", "aggeus": return .haggai
+        case "zc", "zec", "zech", "zechariah", "zacharias": return .zechariah
+        case "ml", "mal", "malachi", "malachias": return .malachi
+        case "1 mc", "1 macc", "1 maccabees", "1 machabees": return .firstMaccabees
+        case "2 mc", "2 macc", "2 maccabees", "2 machabees": return .secondMaccabees
+        case "mt", "matt", "matthew": return .matthew
+        case "mk", "mrk", "mark": return .mark
+        case "lk", "luk", "luke": return .luke
+        case "jn", "jhn", "john": return .john
+        case "ac", "act", "acts", "acts of the apostles": return .acts
+        case "ro", "rom", "romans": return .romans
+        case "1 co", "1 cor", "1 corinthians": return .firstCorinthians
+        case "2 co", "2 cor", "2 corinthians": return .secondCorinthians
+        case "ga", "gal", "galatians": return .galatians
+        case "ep", "eph", "ephesians": return .ephesians
+        case "php", "phil", "philippians": return .philippians
+        case "col", "colossians": return .colossians
+        case "1 th", "1 thes", "1 thess", "1 thessalonians": return .firstThessalonians
+        case "2 th", "2 thes", "2 thess", "2 thessalonians": return .secondThessalonians
+        case "1 tm", "1 tim", "1 timothy": return .firstTimothy
+        case "2 tm", "2 tim", "2 timothy": return .secondTimothy
+        case "ti", "tit", "titus": return .titus
+        case "phm", "phlm", "philemon": return .philemon
+        case "heb", "hebrews": return .hebrews
+        case "jm", "jas", "james": return .james
+        case "1 pt", "1 pet", "1 peter": return .firstPeter
+        case "2 pt", "2 pet", "2 peter": return .secondPeter
+        case "1 jn", "1 john": return .firstJohn
+        case "2 jn", "2 john": return .secondJohn
+        case "3 jn", "3 john": return .thirdJohn
+        case "jd", "jude": return .jude
+        case "rv", "rev", "revelation", "apoc", "apocalypse": return .revelation
+        default:
+            // Match against canonical name
+            return BibleBook.allCases.first { $0.canonicalName.lowercased() == clean }
+        }
+    }
+}
+
+// MARK: - BibleDatabase Actor
+
+/// Thread-safe SQLite query layer for the bundled Douay-Rheims Bible.
+/// Uses the raw SQLite3 C API to query verses efficiently.
+public actor BibleDatabase {
+    private nonisolated(unsafe) var dbPointer: OpaquePointer?
+    private let databaseURL: URL?
+    
+    /// Default shared actor instance using the bundled Douay-Rheims SQLite file.
+    public static let shared = BibleDatabase()
+
+    /// Initializes the database connection with an optional custom file URL.
+    /// If no URL is provided, it looks for "bible_drb.sqlite" in the main bundle.
+    public init(databaseURL: URL? = nil) {
+        let url = databaseURL ?? Bundle.main.url(forResource: "bible_drb", withExtension: "sqlite")
+        self.databaseURL = url
+        
+        guard let targetURL = url else {
+            self.dbPointer = nil
+            return
+        }
+        var db: OpaquePointer?
+        let flags = SQLITE_OPEN_READONLY | SQLITE_OPEN_FULLMUTEX
+        if sqlite3_open_v2(targetURL.path, &db, flags, nil) == SQLITE_OK {
+            self.dbPointer = db
+        } else {
+            if let db {
+                sqlite3_close(db)
+            }
+            self.dbPointer = nil
+        }
+    }
+
+    deinit {
+        if let db = dbPointer {
+            sqlite3_close(db)
+        }
+    }
+
+    // MARK: - Verse Range Parsing
+
+    /// Parses complex liturgical verse specifications into an ordered array of unique verse numbers.
+    /// Handles ranges: "1-5", "1–5"
+    /// Handles lists: "1, 3-4, 6"
+    /// Handles sub-verse liturgical notations: "1-3a, 3b-4" -> [1, 2, 3, 4]
+    public static func parseVerseNumbers(from verseString: String) -> [Int] {
+        let trimmed = verseString.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+
+        var resultVerses = Set<Int>()
+        // Normalize en-dashes and em-dashes to standard hyphens
+        let normalized = trimmed
+            .replacingOccurrences(of: "–", with: "-")
+            .replacingOccurrences(of: "—", with: "-")
+            .replacingOccurrences(of: ";", with: ",")
+
+        // Split comma-delimited segments
+        let segments = normalized.split(separator: ",")
+        for rawSegment in segments {
+            let segment = rawSegment.trimmingCharacters(in: .whitespaces)
+            guard !segment.isEmpty else { continue }
+
+            if segment.contains("-") {
+                let rangeParts = segment.split(separator: "-")
+                if rangeParts.count >= 2 {
+                    let startStr = extractLeadingDigits(from: String(rangeParts[0]))
+                    let endStr = extractLeadingDigits(from: String(rangeParts[1]))
+                    if let start = Int(startStr), let end = Int(endStr), start <= end {
+                        for v in start...end {
+                            resultVerses.insert(v)
+                        }
+                    } else if let single = Int(startStr) {
+                        resultVerses.insert(single)
+                    }
+                }
+            } else {
+                let singleStr = extractLeadingDigits(from: segment)
+                if let v = Int(singleStr) {
+                    resultVerses.insert(v)
+                }
+            }
+        }
+
+        return resultVerses.sorted()
+    }
+
+    private static func extractLeadingDigits(from string: String) -> String {
+        var digits = ""
+        for char in string.trimmingCharacters(in: .whitespaces) {
+            if char.isNumber {
+                digits.append(char)
+            } else if !digits.isEmpty {
+                // Stop once we hit a non-digit like 'a', 'b', etc.
+                break
+            }
+        }
+        return digits
+    }
+
+    // MARK: - Query Methods
+
+    /// Queries the Bible database using a `ReadingCitation`.
+    public func queryVerses(citation: ReadingCitation) -> [BibleVerse] {
+        guard let book = BibleBook.find(named: citation.book) else {
+            return []
+        }
+        let chapter = citation.chapter ?? 1
+        return queryVerses(bookId: book.rawValue, chapter: chapter, verseString: citation.verses)
+    }
+
+    /// Queries the Bible database by book name, chapter, and verse range.
+    public func queryVerses(bookName: String, chapter: Int?, verses: String) -> [BibleVerse] {
+        guard let book = BibleBook.find(named: bookName) else {
+            return []
+        }
+        let ch = chapter ?? 1
+        return queryVerses(bookId: book.rawValue, chapter: ch, verseString: verses)
+    }
+
+    /// Queries verses by book ID, chapter, and verse range string.
+    public func queryVerses(bookId: Int, chapter: Int, verseString: String) -> [BibleVerse] {
+        let requestedVerseNumbers = Self.parseVerseNumbers(from: verseString)
+        return queryVerses(bookId: bookId, chapter: chapter, verseNumbers: requestedVerseNumbers)
+    }
+
+    /// Queries specific verse numbers within a book and chapter.
+    /// If `verseNumbers` is empty, returns all verses of the chapter.
+    public func queryVerses(bookId: Int, chapter: Int, verseNumbers: [Int]) -> [BibleVerse] {
+        guard let db = dbPointer else {
+            // When bundled database is not present, return a placeholder verse
+            let bookName = BibleBook(rawValue: bookId)?.canonicalName ?? "Scripture"
+            let versesText = verseNumbers.isEmpty ? "All" : verseNumbers.map(String.init).joined(separator: ", ")
+            return [
+                BibleVerse(
+                    id: (bookId * 100_000) + (chapter * 1_000) + (verseNumbers.first ?? 1),
+                    bookId: bookId,
+                    bookName: bookName,
+                    chapter: chapter,
+                    verse: verseNumbers.first ?? 1,
+                    text: "[\(bookName) \(chapter):\(versesText) — Douay-Rheims text loaded from Bible database.]"
+                )
+            ]
+        }
+
+        // Query the chapter rows and filter/sort in memory
+        let query = """
+            SELECT id, book_id, chapter, verse, text
+            FROM verses
+            WHERE book_id = ? AND chapter = ?
+            ORDER BY verse ASC;
+        """
+
+        var statement: OpaquePointer?
+        guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
+            return fallbackQueryWithAlternateSchema(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)
+        }
+        defer { sqlite3_finalize(statement) }
+
+        sqlite3_bind_int(statement, 1, Int32(bookId))
+        sqlite3_bind_int(statement, 2, Int32(chapter))
+
+        var chapterVerses: [BibleVerse] = []
+        let bookName = BibleBook(rawValue: bookId)?.canonicalName ?? "Unknown"
+
+        while sqlite3_step(statement) == SQLITE_ROW {
+            let id = Int(sqlite3_column_int(statement, 0))
+            let bId = Int(sqlite3_column_int(statement, 1))
+            let ch = Int(sqlite3_column_int(statement, 2))
+            let v = Int(sqlite3_column_int(statement, 3))
+            let text: String
+            if let textPtr = sqlite3_column_text(statement, 4) {
+                text = String(cString: textPtr)
+            } else {
+                text = ""
+            }
+
+            let verse = BibleVerse(
+                id: id,
+                bookId: bId,
+                bookName: bookName,
+                chapter: ch,
+                verse: v,
+                text: text
+            )
+            chapterVerses.append(verse)
+        }
+
+        if verseNumbers.isEmpty {
+            return chapterVerses
+        }
+
+        let requestedSet = Set(verseNumbers)
+        return chapterVerses.filter { requestedSet.contains($0.verse) }
+    }
+
+    /// Queries the entire contents of a chapter.
+    public func queryChapter(bookId: Int, chapter: Int) -> [BibleVerse] {
+        return queryVerses(bookId: bookId, chapter: chapter, verseNumbers: [])
+    }
+
+    /// Alternate schema query fallback (handles databases where column is named 'book' instead of 'book_id').
+    private func fallbackQueryWithAlternateSchema(bookId: Int, chapter: Int, verseNumbers: [Int]) -> [BibleVerse] {
+        guard let db = dbPointer else { return [] }
+        let query = """
+            SELECT id, book, chapter, verse, text
+            FROM verses
+            WHERE book = ? AND chapter = ?
+            ORDER BY verse ASC;
+        """
+        var statement: OpaquePointer?
+        guard sqlite3_prepare_v2(db, query, -1, &statement, nil) == SQLITE_OK else {
+            return []
+        }
+        defer { sqlite3_finalize(statement) }
+
+        sqlite3_bind_int(statement, 1, Int32(bookId))
+        sqlite3_bind_int(statement, 2, Int32(chapter))
+
+        var results: [BibleVerse] = []
+        let bookName = BibleBook(rawValue: bookId)?.canonicalName ?? "Unknown"
+        let requestedSet = Set(verseNumbers)
+
+        while sqlite3_step(statement) == SQLITE_ROW {
+            let id = Int(sqlite3_column_int(statement, 0))
+            let bId = Int(sqlite3_column_int(statement, 1))
+            let ch = Int(sqlite3_column_int(statement, 2))
+            let v = Int(sqlite3_column_int(statement, 3))
+            let text: String
+            if let textPtr = sqlite3_column_text(statement, 4) {
+                text = String(cString: textPtr)
+            } else {
+                text = ""
+            }
+
+            if verseNumbers.isEmpty || requestedSet.contains(v) {
+                results.append(
+                    BibleVerse(
+                        id: id,
+                        bookId: bId,
+                        bookName: bookName,
+                        chapter: ch,
+                        verse: v,
+                        text: text
+                    )
+                )
+            }
+        }
+
+        return results
+    }
+
+    /// Formats an array of BibleVerse items into a cohesive reading text block.
+    public func formattedText(for verses: [BibleVerse], includeVerseNumbers: Bool = false) -> String {
+        guard !verses.isEmpty else { return "" }
+        if includeVerseNumbers {
+            return verses
+                .map { "[\($0.verse)] \($0.text.trimmingCharacters(in: .whitespaces))" }
+                .joined(separator: " ")
+        } else {
+            return verses
+                .map { $0.text.trimmingCharacters(in: .whitespaces) }
+                .joined(separator: " ")
+        }
+    }
+}
