@@ -1,6 +1,6 @@
 # DailyReadings — Project Status & TODOS
 
-**Last Updated:** 2026-11-09  
+**Last Updated:** 2026-11-10  
 **Current Version:** 1.0.0 (Build 2)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
@@ -62,6 +62,16 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Resolved artificial line-break fragmentation in NAB readings in [`Reading.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Models/Reading.swift#L152-L185) and [`EvangelizioService.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/EvangelizioService.swift#L299-L335).
 - Single-line verse breaks from the raw API export are now seamlessly flowed into natural, cohesive paragraphs matching the Douay-Rheims Bible, while preserving stanza structure in Responsorial Psalms.
 - Integrated into `Reading.init(from: decoder)` so existing SwiftData cached readings automatically format into smooth paragraphs immediately.
+
+### 8. Automatic 30-Day Offline NAB Pre-Fetching Engine (`ReadingsRepository`, `SettingsView`, `TodayViewModel`)
+- Douay-Rheims (1609/1752) is in the public domain and bundled directly in the app SQLite database. The NAB translation is copyrighted by USCCB/CCD, which prohibits bundling the entire Bible in the app binary without a commercial license.
+- Implemented an automatic 30-day liturgical lectionary pre-fetch engine in [`ReadingsRepository.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/ReadingsRepository.swift):
+  - Fetches the upcoming 30 days of NAB Mass readings in the background whenever NAB is active.
+  - Caches readings in SwiftData (`CachedReading`) with 90-day retention, providing seamless 100% offline access in church basements, airplanes, or while traveling.
+  - Implements polite 120ms rate-limiting between days to respect server infrastructure.
+  - Backfills missing book citations from official liturgical pericope calendar indices.
+- Added an **Offline Availability** status card and manual trigger in [`SettingsView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Settings/SettingsView.swift) displaying the exact count of locally cached days (e.g., *"30 of 30 days stored"*), a progress bar during download, and a *"Download / Refresh"* button.
+- Wired automatic background prefetch checks in [`TodayViewModel.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/ViewModels/TodayViewModel.swift) when NAB is selected.
 
 ---
 

@@ -28,6 +28,21 @@ public final class ReadingsRepository: @unchecked Sendable {
     public var lastError: String?
     /// The translation of the currently active readings ("NAB" or "DRB").
     public var activeTranslation: String = "NAB"
+    
+    // MARK: - Pre-fetching & Offline Cache State
+    
+    /// Whether NAB offline pre-fetching is currently running.
+    public var isPrefetching: Bool = false
+    /// Progress of pre-fetching from 0.0 to 1.0.
+    public var prefetchProgress: Double = 0.0
+    /// Total days targeted for pre-fetching.
+    public var prefetchTotal: Int = 30
+    /// Current day index being processed during pre-fetching.
+    public var prefetchCurrent: Int = 0
+    /// User-facing status string describing the current pre-fetch action.
+    public var prefetchStatus: String = ""
+    /// Total count of days in the next 30 days cached locally for NAB.
+    public var cachedNABDaysCount: Int = 0
 
     // Dependencies
     private var modelContainer: ModelContainer?
@@ -54,6 +69,10 @@ public final class ReadingsRepository: @unchecked Sendable {
     /// Configures the SwiftData ModelContainer for persistent caching.
     public func configure(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
+        purgeExpiredCache()
+        Task { @MainActor in
+            self.cachedNABDaysCount = self.countCachedNABDays(daysAhead: 30)
+        }
     }
 
     // MARK: - Main Coordination API
@@ -95,40 +114,11 @@ public final class ReadingsRepository: @unchecked Sendable {
 
             // Step 1B: Fetch from Evangelizo API
             do {
-                let onlineReadings = try await evangelizioService.fetchReadings(for: date)
-                
-                // Safety net: ensure all citations are complete, backfilling from official USCCB lectionary if necessary
-                let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
-                let lectionaryEntries = pericoreIndex.entries(for: liturgicalDay)
-                
-                let verifiedReadings = onlineReadings.readings.map { reading -> Reading in
-                    if reading.citation.book.trimmingCharacters(in: .whitespaces).isEmpty,
-                       let match = lectionaryEntries.first(where: { $0.type == reading.type }) {
-                        return Reading(
-                            id: reading.id,
-                            type: reading.type,
-                            citation: match.citation,
-                            text: reading.text,
-                            response: reading.response,
-                            translation: "NAB"
-                        )
-                    }
-                    return reading
-                }
-                
-                let finalDailyReadings = DailyReadings(
-                    id: onlineReadings.id,
-                    date: onlineReadings.date,
-                    liturgicalTitle: onlineReadings.liturgicalTitle,
-                    readings: verifiedReadings,
-                    translation: "NAB"
-                )
-
-                // Cache successful verified response in SwiftData
-                saveToCache(readings: finalDailyReadings, translation: "NAB")
-                self.currentReadings = finalDailyReadings
+                let onlineReadings = try await fetchAndVerifyOnlineReadings(for: date)
+                self.currentReadings = onlineReadings
                 self.activeTranslation = "NAB"
-                return finalDailyReadings
+                self.cachedNABDaysCount = countCachedNABDays(daysAhead: 30)
+                return onlineReadings
             } catch {
                 self.lastError = "Online fetch unavailable: \(error.localizedDescription). Using Douay-Rheims Bible."
             }
@@ -141,6 +131,149 @@ public final class ReadingsRepository: @unchecked Sendable {
         return fallbackReadings
     }
 
+    /// Fetches and verifies NAB readings from the Evangelizo API, backfilling any missing citations
+    /// from the official liturgical calendar/pericope index and saving them directly into SwiftData cache.
+    @discardableResult
+    public func fetchAndVerifyOnlineReadings(for date: Date) async throws -> DailyReadings {
+        let onlineReadings = try await evangelizioService.fetchReadings(for: date)
+        
+        let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
+        let lectionaryEntries = pericoreIndex.entries(for: liturgicalDay)
+        
+        let verifiedReadings = onlineReadings.readings.map { reading -> Reading in
+            if reading.citation.book.trimmingCharacters(in: .whitespaces).isEmpty,
+               let match = lectionaryEntries.first(where: { $0.type == reading.type }) {
+                return Reading(
+                    id: reading.id,
+                    type: reading.type,
+                    citation: match.citation,
+                    text: reading.text,
+                    response: reading.response,
+                    translation: "NAB"
+                )
+            }
+            return reading
+        }
+        
+        let finalDailyReadings = DailyReadings(
+            id: onlineReadings.id,
+            date: onlineReadings.date,
+            liturgicalTitle: onlineReadings.liturgicalTitle,
+            readings: verifiedReadings,
+            translation: "NAB"
+        )
+
+        // Cache successful verified response in SwiftData
+        saveToCache(readings: finalDailyReadings, translation: "NAB")
+        return finalDailyReadings
+    }
+
+    // MARK: - Offline Pre-fetching Engine
+
+    /// Calculates how many days within the next `daysAhead` window currently have unexpired NAB readings stored locally.
+    @MainActor
+    public func countCachedNABDays(daysAhead: Int = 30) -> Int {
+        guard let container = modelContainer else { return 0 }
+        let context = ModelContext(container)
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        let descriptor = FetchDescriptor<CachedReading>(
+            predicate: #Predicate { $0.translation == "NAB" }
+        )
+        guard let allCached = try? context.fetch(descriptor) else { return 0 }
+
+        let validKeys = Set(allCached.filter { !$0.isExpired }.map { $0.dateKey })
+
+        var count = 0
+        for offset in 0..<daysAhead {
+            guard let targetDate = calendar.date(byAdding: .day, value: offset, to: today) else { continue }
+            let key = CachedReading.makeDateKey(from: targetDate)
+            if validKeys.contains(key) {
+                count += 1
+            }
+        }
+        return count
+    }
+
+    /// Pre-fetches and caches the next `daysAhead` days of NAB Mass readings into local SwiftData storage.
+    ///
+    /// Respects server etiquette with gentle 120ms pauses between days and reports live progress.
+    /// Skips any days that are already cached and valid.
+    ///
+    /// - Parameter daysAhead: The number of days ahead to ensure are cached (default: 30).
+    /// - Returns: The number of newly downloaded and saved days.
+    @MainActor
+    @discardableResult
+    public func prefetchNABReadings(daysAhead: Int = 30) async -> Int {
+        guard !isPrefetching else { return 0 }
+
+        isPrefetching = true
+        prefetchProgress = 0.0
+        prefetchTotal = daysAhead
+        prefetchCurrent = 0
+        prefetchStatus = "Checking offline cache..."
+
+        defer {
+            isPrefetching = false
+            self.cachedNABDaysCount = countCachedNABDays(daysAhead: daysAhead)
+            prefetchProgress = 1.0
+        }
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        var newlyFetched = 0
+
+        for offset in 0..<daysAhead {
+            guard let targetDate = calendar.date(byAdding: .day, value: offset, to: today) else { continue }
+            let key = CachedReading.makeDateKey(from: targetDate)
+
+            prefetchCurrent = offset + 1
+            prefetchProgress = Double(offset + 1) / Double(daysAhead)
+
+            // If already cached and valid, skip network fetch
+            if let cached = fetchFromCache(dateKey: key, translation: "NAB"), !cached.isExpired {
+                if let decoded = try? cached.decodeReadings() {
+                    let hasMissing = decoded.readings.contains { $0.citation.book.trimmingCharacters(in: .whitespaces).isEmpty }
+                    if !hasMissing {
+                        continue
+                    }
+                }
+            }
+
+            let dateLabel = targetDate.formatted(.dateTime.month(.abbreviated).day())
+            prefetchStatus = "Downloading readings for \(dateLabel)..."
+
+            do {
+                _ = try await fetchAndVerifyOnlineReadings(for: targetDate)
+                newlyFetched += 1
+                self.cachedNABDaysCount = countCachedNABDays(daysAhead: daysAhead)
+                // Polite delay between API calls to avoid server rate limits
+                try? await Task.sleep(nanoseconds: 120_000_000)
+            } catch {
+                // If a day fails, continue so the rest of the batch completes
+                continue
+            }
+        }
+
+        prefetchStatus = newlyFetched > 0 ? "Downloaded \(newlyFetched) days of readings." : "All 30 days are up to date."
+        return newlyFetched
+    }
+
+    /// Automatically triggers a background pre-fetch if fewer than 14 days of NAB readings are cached locally.
+    @MainActor
+    public func triggerBackgroundPrefetchIfNeeded() {
+        guard !isPrefetching else { return }
+        let cached = countCachedNABDays(daysAhead: 30)
+        self.cachedNABDaysCount = cached
+
+        if cached < 14 {
+            Task(priority: .utility) { [weak self] in
+                await self?.prefetchNABReadings(daysAhead: 30)
+            }
+        }
+    }
+
     /// Directly generates Douay-Rheims readings entirely offline without performing any network requests.
     public func getOfflineReadings(for date: Date) async -> DailyReadings {
         return await generateOfflineDouayRheimsReadings(for: date)
@@ -149,28 +282,15 @@ public final class ReadingsRepository: @unchecked Sendable {
     // MARK: - Offline Generation Pipeline
 
     private func generateOfflineDouayRheimsReadings(for date: Date) async -> DailyReadings {
-        let dateKey = CachedReading.makeDateKey(from: date)
-
-        // Check if DRB reading is already cached in SwiftData
-        if let cached = fetchFromCache(dateKey: dateKey, translation: "DRB"),
-           !cached.isExpired,
-           let readings = try? cached.decodeReadings() {
-            return readings
-        }
-
-        // 1. Determine liturgical day and feast via LiturgicalCalendar engine
         let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
-
-        // 2. Query Lectionary citations and entries via PericoreIndex
         let entries = pericoreIndex.entries(for: liturgicalDay)
 
-        // 3. Query Douay-Rheims verses from BibleDatabase
         var readings: [Reading] = []
 
         for entry in entries {
             let verses = await bibleDatabase.queryVerses(citation: entry.citation)
             let formattedText = await bibleDatabase.formattedText(for: verses)
-            
+
             let text = formattedText.isEmpty
                 ? "[\(entry.citation.displayReference) — Douay-Rheims offline text.]"
                 : formattedText
@@ -185,17 +305,12 @@ public final class ReadingsRepository: @unchecked Sendable {
             readings.append(reading)
         }
 
-        let dailyReadings = DailyReadings(
+        return DailyReadings(
             date: date,
             liturgicalTitle: liturgicalDay.title,
             readings: readings,
             translation: "DRB"
         )
-
-        // Cache the offline-generated readings for fast subsequent access
-        saveToCache(readings: dailyReadings, translation: "DRB")
-
-        return dailyReadings
     }
 
     // MARK: - SwiftData Persistence Helpers
@@ -203,7 +318,7 @@ public final class ReadingsRepository: @unchecked Sendable {
     private func fetchFromCache(dateKey: String, translation: String) -> CachedReading? {
         guard let container = modelContainer else { return nil }
         let context = ModelContext(container)
-        
+
         var descriptor = FetchDescriptor<CachedReading>(
             predicate: #Predicate { $0.dateKey == dateKey && $0.translation == translation }
         )
@@ -222,8 +337,22 @@ public final class ReadingsRepository: @unchecked Sendable {
         let context = ModelContext(container)
 
         do {
-            let cached = try CachedReading.create(from: readings, translation: translation)
-            context.insert(cached)
+            let key = CachedReading.makeDateKey(from: readings.date)
+            var descriptor = FetchDescriptor<CachedReading>(
+                predicate: #Predicate { $0.dateKey == key }
+            )
+            descriptor.fetchLimit = 1
+
+            if let existing = try context.fetch(descriptor).first {
+                existing.translation = translation
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = .iso8601
+                existing.readingsJSON = try encoder.encode(readings)
+                existing.fetchedAt = .now
+            } else {
+                let cached = try CachedReading.create(from: readings, translation: translation)
+                context.insert(cached)
+            }
             try context.save()
         } catch {
             // Non-critical caching error: ignore and proceed
@@ -234,7 +363,7 @@ public final class ReadingsRepository: @unchecked Sendable {
     public func purgeExpiredCache() {
         guard let container = modelContainer else { return }
         let context = ModelContext(container)
-        
+
         let descriptor = FetchDescriptor<CachedReading>()
         guard let allCached = try? context.fetch(descriptor) else { return }
 

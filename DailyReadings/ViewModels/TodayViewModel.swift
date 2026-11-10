@@ -105,6 +105,9 @@ public final class TodayViewModel {
             if let repository = readingsRepository {
                 let readings = await repository.getReadings(for: date, preferredTranslation: targetTranslation)
                 self.dailyReadings = readings
+                if targetTranslation == "NAB" {
+                    repository.triggerBackgroundPrefetchIfNeeded()
+                }
             } else {
                 // Fallback: create a minimal ReadingsRepository without SwiftData cache
                 let fallbackRepo = ReadingsRepository()

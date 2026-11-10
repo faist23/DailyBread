@@ -23,6 +23,7 @@ public struct SettingsView: View {
     
     @State private var notificationManager = NotificationManager.shared
     @State private var audioPlayer = AudioReadingPlayer.shared
+    @State private var readingsRepository = ReadingsRepository.shared
     @State private var showSettingsAlert: Bool = false
     
     // MARK: - Translation Options
@@ -81,6 +82,13 @@ public struct SettingsView: View {
         .onAppear {
             if selectedVoiceId.isEmpty {
                 selectedVoiceId = audioPlayer.selectedVoiceIdentifier
+            }
+            readingsRepository.cachedNABDaysCount = readingsRepository.countCachedNABDays(daysAhead: 30)
+        }
+        .onChange(of: selectedTranslation) { _, newTranslation in
+            if newTranslation.contains("NAB") {
+                readingsRepository.cachedNABDaysCount = readingsRepository.countCachedNABDays(daysAhead: 30)
+                readingsRepository.triggerBackgroundPrefetchIfNeeded()
             }
         }
     }
@@ -160,13 +168,75 @@ public struct SettingsView: View {
                 }
             }
             .pickerStyle(.menu)
+
+            if selectedTranslation.contains("NAB") {
+                offlineNABRow
+            }
         } header: {
             Text("Scripture Translation")
         } footer: {
-            Text("Select between the historic Douay-Rheims Catholic translation and the New American Bible lectionary text.")
-                .font(.footnote)
-                .foregroundStyle(Color.secondary)
+            if selectedTranslation.contains("NAB") {
+                Text("NAB readings are automatically pre-downloaded 30 days in advance so you can pray without an internet connection (e.g. in church or while traveling).")
+                    .font(.footnote)
+                    .foregroundStyle(Color.secondary)
+            } else {
+                Text("Douay-Rheims (1609/1752) is bundled directly in the app with all 73 Catholic books and is always 100% available offline.")
+                    .font(.footnote)
+                    .foregroundStyle(Color.secondary)
+            }
         }
+    }
+
+    private var offlineNABRow: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label {
+                    Text("Offline Availability")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                } icon: {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .foregroundStyle(Color.accentColor)
+                }
+                Spacer()
+                Text("\(readingsRepository.cachedNABDaysCount) of 30 days stored")
+                    .font(.footnote)
+                    .foregroundStyle(Color.secondary)
+            }
+            
+            if readingsRepository.isPrefetching {
+                VStack(alignment: .leading, spacing: 6) {
+                    ProgressView(value: readingsRepository.prefetchProgress)
+                        .tint(Color.accentColor)
+                    HStack {
+                        Text(readingsRepository.prefetchStatus.isEmpty ? "Downloading readings..." : readingsRepository.prefetchStatus)
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary)
+                        Spacer()
+                        Text("\(Int(readingsRepository.prefetchProgress * 100))%")
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary)
+                            .monospacedDigit()
+                    }
+                }
+            } else {
+                Button {
+                    Task {
+                        await readingsRepository.prefetchNABReadings(daysAhead: 30)
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: readingsRepository.cachedNABDaysCount >= 28 ? "arrow.clockwise" : "arrow.down.circle")
+                        Text(readingsRepository.cachedNABDaysCount >= 28 ? "Refresh 30-Day Offline Cache" : "Download Next 30 Days for Offline Use")
+                    }
+                    .font(.footnote)
+                    .fontWeight(.medium)
+                    .foregroundStyle(Color.accentColor)
+                }
+                .buttonStyle(.borderless)
+            }
+        }
+        .padding(.vertical, 4)
     }
     
     // MARK: - Audio & Lector Section
