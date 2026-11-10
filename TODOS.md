@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
 **Last Updated:** 2026-11-10  
-**Current Version:** 1.0.0 (Build 6)  
+**Current Version:** 1.0.0 (Build 7)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
@@ -91,6 +91,17 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Implemented `BookmarkManager` with persistence for bookmarked scripture passages, citations, liturgical titles, and dates.
 - Added one-tap bookmark icon buttons with active gold highlight on `ReadingCard`, `PsalmView`, and `ReadingDetailView`.
 - Built `BookmarksView` accessible from Settings under *Personal Devotions*, complete with scripture preview, swipe-to-delete, and full-screen reading presentation.
+
+### 12. Thread Concurrency Fix for Now Playing Artwork
+- Resolved `_dispatch_assert_queue_fail` crash (EXC_BREAKPOINT / SIGTRAP) occurring on device when tapping "Listen".
+- Root cause: `MPMediaItemArtwork(boundsSize:requestHandler:)` closure inherited `@MainActor` from `AudioReadingPlayer`, but `MediaPlayer` calls it from its background worker queue (`Thread 8`).
+- Fix: Extracted artwork creation to a `nonisolated public static func makeMediaItemArtwork(from image: UIImage) -> MPMediaItemArtwork` function in `LiturgicalArtworkGenerator`, removing actor isolation from the handler.
+
+### 13. Continuous Background Audio & Lock Screen Recitation (`Info.plist`, `AudioReadingPlayer`)
+- Enabled `UIBackgroundModes = ["audio"]` capability via `Info.plist` and `INFOPLIST_FILE` build configuration.
+- Standardized `AVAudioSession` configuration with `options: []` for uninterrupted spoken word recitation.
+- Added `UIApplication.shared.beginReceivingRemoteControlEvents()` to ensure lock screen and headphone play/pause/skip commands route reliably to the app.
+- Added `UIBackgroundTaskIdentifier` safeguard during inter-utterance transitions in `speechSynthesizer(_:didFinish:)` so iOS will not suspend the process when advancing across readings while the device is locked.
 
 ---
 

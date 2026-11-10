@@ -241,7 +241,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     private func setupAudioSession() {
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+            try session.setCategory(.playback, mode: .spokenAudio, options: [])
         } catch {
             print("Failed to configure audio session: \(error)")
         }
@@ -266,6 +266,8 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     private func setupRemoteCommands() {
         guard !remoteCommandsConfigured else { return }
         remoteCommandsConfigured = true
+        
+        UIApplication.shared.beginReceivingRemoteControlEvents()
         
         let center = MPRemoteCommandCenter.shared()
         
@@ -653,8 +655,21 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
                 return
             }
             if self.currentReadingIndex + 1 < self.activeReadings.count {
+                var bgTask: UIBackgroundTaskIdentifier = .invalid
+                bgTask = UIApplication.shared.beginBackgroundTask(withName: "AdvanceLiturgicalReading") {
+                    if bgTask != .invalid {
+                        UIApplication.shared.endBackgroundTask(bgTask)
+                        bgTask = .invalid
+                    }
+                }
+                
                 self.currentReadingIndex += 1
                 self.speakCurrentReading()
+                
+                if bgTask != .invalid {
+                    UIApplication.shared.endBackgroundTask(bgTask)
+                    bgTask = .invalid
+                }
             } else {
                 self.stop()
             }
