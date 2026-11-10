@@ -19,6 +19,7 @@ public struct SettingsView: View {
     @AppStorage("readingLineSpacing") private var readingLineSpacing: Double = 7.0
     @AppStorage("reminderEnabled") private var reminderEnabled: Bool = false
     @AppStorage("reminderTimeInterval") private var reminderTimeInterval: Double = 25200 // 7:00 AM (7 * 3600)
+    @AppStorage("selectedAudioVoiceId") private var selectedVoiceId: String = ""
     
     @State private var notificationManager = NotificationManager.shared
     @State private var audioPlayer = AudioReadingPlayer.shared
@@ -76,6 +77,11 @@ public struct SettingsView: View {
         }
         .task {
             await notificationManager.checkAuthorization()
+        }
+        .onAppear {
+            if selectedVoiceId.isEmpty {
+                selectedVoiceId = audioPlayer.selectedVoiceIdentifier
+            }
         }
     }
     
@@ -167,15 +173,15 @@ public struct SettingsView: View {
     
     private var audioSection: some View {
         Section {
-            Picker("Lector Voice", selection: Binding(
-                get: { audioPlayer.selectedVoiceIdentifier },
-                set: { audioPlayer.selectedVoiceIdentifier = $0 }
-            )) {
+            Picker("Lector Voice", selection: $selectedVoiceId) {
                 ForEach(audioPlayer.availableVoices) { voice in
                     Text(voice.displayName).tag(voice.id)
                 }
             }
             .pickerStyle(.menu)
+            .onChange(of: selectedVoiceId) { _, newId in
+                audioPlayer.selectedVoiceIdentifier = newId
+            }
             
             Picker("Speech Pacing", selection: Binding(
                 get: { audioPlayer.speed },
@@ -188,7 +194,8 @@ public struct SettingsView: View {
             .pickerStyle(.menu)
             
             Button {
-                audioPlayer.audition(voiceId: audioPlayer.selectedVoiceIdentifier)
+                let idToTest = selectedVoiceId.isEmpty ? audioPlayer.selectedVoiceIdentifier : selectedVoiceId
+                audioPlayer.audition(voiceId: idToTest)
             } label: {
                 HStack {
                     Image(systemName: "speaker.wave.2.fill")
@@ -196,7 +203,7 @@ public struct SettingsView: View {
                     Text("Preview Voice")
                         .foregroundStyle(Color.primary)
                     Spacer()
-                    Text("The Word of the Lord")
+                    Text("Audition Lector")
                         .font(.footnote)
                         .foregroundStyle(Color.secondary)
                 }
@@ -204,9 +211,12 @@ public struct SettingsView: View {
         } header: {
             Text("Audio & Lector Voice")
         } footer: {
-            Text("Select a natural voice for daily scripture listening. Enhanced Siri and accessibility voices downloaded in iOS Settings → Accessibility → Spoken Content will also appear here.")
-                .font(.footnote)
-                .foregroundStyle(Color.secondary)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Select your preferred voice and pacing for daily scripture.")
+                Text("✨ Tip: For ultra-realistic studio voices, download Apple's free Enhanced voices in your iPhone Settings → Accessibility → Spoken Content → Voices → English (such as Daniel Enhanced, Samantha Enhanced, or Ava). They will automatically appear here.")
+            }
+            .font(.footnote)
+            .foregroundStyle(Color.secondary)
         }
     }
     

@@ -42,9 +42,13 @@ public struct VoiceOption: Identifiable, Hashable, Sendable {
     public let name: String
     public let localeName: String
     public let qualityDescription: String
+    public let isHighQuality: Bool
     
     public var displayName: String {
-        "\(name) • \(localeName) (\(qualityDescription))"
+        if isHighQuality {
+            return "✨ \(name) (\(localeName)) • \(qualityDescription)"
+        }
+        return "\(name) (\(localeName))"
     }
 }
 
@@ -77,12 +81,9 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     /// User-selected speech voice identifier.
     public var selectedVoiceIdentifier: String {
-        get {
-            UserDefaults.standard.string(forKey: "selectedAudioVoiceId") ?? defaultVoiceIdentifier
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: "selectedAudioVoiceId")
-            if isPlaying {
+        didSet {
+            UserDefaults.standard.set(selectedVoiceIdentifier, forKey: "selectedAudioVoiceId")
+            if isPlaying && !isAuditioning {
                 synthesizer.stopSpeaking(at: .immediate)
                 speakCurrentReading()
             }
@@ -99,100 +100,128 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         "jester", "superstar"
     ]
     
-    /// Filtered list of natural, human-sounding English voices available on the user's device.
+    /// Filtered list of natural English voices available on the user's device.
     public var availableVoices: [VoiceOption] {
         let all = AVSpeechSynthesisVoice.speechVoices()
         let english = all.filter { v in
             v.language.starts(with: "en") &&
             !Self.excludedVoiceNames.contains(v.name.lowercased()) &&
-            !v.identifier.contains("eloquence")
+            !v.identifier.contains("eloquence") &&
+            !v.identifier.contains("siri") && // Siri voices cannot be spoken by AVSpeechSynthesizer in 3rd party apps
+            !v.voiceTraits.contains(.isNoveltyVoice)
+        }
+        
+        let sorted = english.sorted { (v1, v2) -> Bool in
+            if v1.quality.rawValue != v2.quality.rawValue {
+                return v1.quality.rawValue > v2.quality.rawValue
+            }
+            let p1 = Self.voicePriority(v1.name)
+            let p2 = Self.voicePriority(v2.name)
+            if p1 != p2 {
+                return p1 < p2
+            }
+            return v1.name < v2.name
         }
         
         var seenKeys = Set<String>()
         var options: [VoiceOption] = []
         
-        let sorted = english.sorted {
-            if $0.quality.rawValue != $1.quality.rawValue {
-                return $0.quality.rawValue > $1.quality.rawValue
-            }
-            return $0.name < $1.name
-        }
-        
         for v in sorted {
-            let key = "\(v.name)_\(v.language)"
+            let key = "\(v.name.lowercased())_\(v.language)"
             if !seenKeys.contains(key) {
                 seenKeys.insert(key)
                 let region: String
                 switch v.language {
-                case "en-US": region = "American"
-                case "en-GB": region = "British"
-                case "en-IE": region = "Irish"
-                case "en-AU": region = "Australian"
-                case "en-IN": region = "Indian"
-                case "en-ZA": region = "South African"
+                case "en-US": region = "US"
+                case "en-GB": region = "UK"
+                case "en-IE": region = "Ireland"
+                case "en-AU": region = "Australia"
+                case "en-IN": region = "India"
+                case "en-ZA": region = "South Africa"
                 default: region = v.language
                 }
                 
-                let quality: String
-                if v.identifier.contains("natural") || v.identifier.contains("siri") {
-                    quality = "Neural / Siri"
-                } else if v.quality == .premium {
-                    quality = "Premium"
+                let isHighQuality = (v.quality == .premium || v.quality == .enhanced)
+                let qualityDesc: String
+                if v.quality == .premium {
+                    qualityDesc = "Premium Studio"
                 } else if v.quality == .enhanced {
-                    quality = "Enhanced"
+                    qualityDesc = "Enhanced"
                 } else {
-                    quality = "Natural"
+                    qualityDesc = "Standard"
                 }
-                
-                let displayName = v.name == "Voice 4" ? "Siri (Voice 4)" : v.name
                 
                 options.append(VoiceOption(
                     id: v.identifier,
-                    name: displayName,
+                    name: v.name,
                     localeName: region,
-                    qualityDescription: quality
+                    qualityDescription: qualityDesc,
+                    isHighQuality: isHighQuality
                 ))
             }
         }
         return options
     }
     
-    /// Default natural voice (prefers Siri Natural, Daniel, Samantha, Ava, Oliver, or Serena).
-    public var defaultVoiceIdentifier: String {
-        let options = availableVoices
-        if let siri = options.first(where: { $0.id.contains("natural") || $0.id.contains("siri") }) {
-            return siri.id
+    private static func voicePriority(_ name: String) -> Int {
+        let lower = name.lowercased()
+        if lower.contains("daniel") { return 1 }
+        if lower.contains("samantha") { return 2 }
+        if lower.contains("ava") { return 3 }
+        if lower.contains("moira") { return 4 }
+        if lower.contains("karen") { return 5 }
+        if lower.contains("oliver") { return 6 }
+        if lower.contains("serena") { return 7 }
+        return 10
+    }
+    
+    /// Determines the best natural voice identifier available on the device.
+    public static func determineDefaultVoiceIdentifier() -> String {
+        let all = AVSpeechSynthesisVoice.speechVoices()
+        let english = all.filter { v in
+            v.language.starts(with: "en") &&
+            !Self.excludedVoiceNames.contains(v.name.lowercased()) &&
+            !v.identifier.contains("eloquence") &&
+            !v.identifier.contains("siri") &&
+            !v.voiceTraits.contains(.isNoveltyVoice)
         }
-        if let daniel = options.first(where: { $0.name.localizedCaseInsensitiveContains("daniel") }) {
-            return daniel.id
+        
+        // 1. Any installed Premium or Enhanced voice
+        if let highQuality = english.first(where: { $0.quality == .premium || $0.quality == .enhanced }) {
+            return highQuality.identifier
         }
-        if let samantha = options.first(where: { $0.name.localizedCaseInsensitiveContains("samantha") }) {
-            return samantha.id
+        // 2. Daniel (British lectionary cadence)
+        if let daniel = english.first(where: { $0.name.localizedCaseInsensitiveContains("daniel") }) {
+            return daniel.identifier
         }
-        if let ava = options.first(where: { $0.name.localizedCaseInsensitiveContains("ava") }) {
-            return ava.id
+        // 3. Samantha (American clean tone)
+        if let samantha = english.first(where: { $0.name.localizedCaseInsensitiveContains("samantha") }) {
+            return samantha.identifier
         }
-        if let serena = options.first(where: { $0.name.localizedCaseInsensitiveContains("serena") }) {
-            return serena.id
+        // 4. Ava or Moira
+        if let other = english.first(where: { $0.name.localizedCaseInsensitiveContains("ava") || $0.name.localizedCaseInsensitiveContains("moira") }) {
+            return other.identifier
         }
-        if let oliver = options.first(where: { $0.name.localizedCaseInsensitiveContains("oliver") }) {
-            return oliver.id
-        }
-        if let moira = options.first(where: { $0.name.localizedCaseInsensitiveContains("moira") }) {
-            return moira.id
-        }
-        return options.first?.id ?? ""
+        return english.first?.identifier ?? ""
     }
     
     // MARK: - Private Properties
     
     private let synthesizer = AVSpeechSynthesizer()
     private var isInterrupted: Bool = false
+    private var isAuditioning: Bool = false
     private var remoteCommandsConfigured: Bool = false
     
     // MARK: - Initialization
     
     override private init() {
+        let savedVoice = UserDefaults.standard.string(forKey: "selectedAudioVoiceId") ?? ""
+        if !savedVoice.isEmpty, AVSpeechSynthesisVoice(identifier: savedVoice) != nil {
+            self.selectedVoiceIdentifier = savedVoice
+        } else {
+            self.selectedVoiceIdentifier = Self.determineDefaultVoiceIdentifier()
+        }
+        
         super.init()
         synthesizer.delegate = self
         
@@ -448,33 +477,32 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     /// Selects the chosen or highest quality natural English voice available on the user's device.
     public func selectNaturalVoice() -> AVSpeechSynthesisVoice? {
-        let voiceId = selectedVoiceIdentifier
-        if !voiceId.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: voiceId) {
+        if !selectedVoiceIdentifier.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: selectedVoiceIdentifier) {
             return voice
         }
         
-        let defId = defaultVoiceIdentifier
+        let defId = Self.determineDefaultVoiceIdentifier()
         if !defId.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: defId) {
-            return voice
-        }
-        
-        let naturalOptions = availableVoices
-        if let first = naturalOptions.first, let voice = AVSpeechSynthesisVoice(identifier: first.id) {
             return voice
         }
         
         return AVSpeechSynthesisVoice(language: "en-US")
     }
     
-    /// Auditions a specific voice by reciting a brief liturgical acclamation.
+    /// Auditions a specific voice by introducing itself and reciting a liturgical acclamation.
     public func audition(voiceId: String) {
-        stop()
+        isAuditioning = true
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
         activateAudioSession()
         
-        let voice = AVSpeechSynthesisVoice(identifier: voiceId) ?? selectNaturalVoice()
+        let targetId = voiceId.isEmpty ? selectedVoiceIdentifier : voiceId
+        let voice = AVSpeechSynthesisVoice(identifier: targetId) ?? selectNaturalVoice()
+        let voiceName = voice?.name ?? "Lector"
         
-        let utterance = AVSpeechUtterance(string: "The Word of the Lord. Thanks be to God.")
-        utterance.rate = speed.rawValue
+        let utterance = AVSpeechUtterance(string: "Hello, this is \(voiceName). The Word of the Lord. Thanks be to God.")
+        utterance.rate = 0.48
         utterance.pitchMultiplier = 1.0
         utterance.volume = 1.0
         utterance.voice = voice
@@ -524,15 +552,16 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         return parts.joined(separator: "\n\n")
     }
     
-    /// Cleans verse numbering, annotations, or symbols for natural speech.
+    /// Cleans verse numbering, annotations, or symbols for natural, reverent speech.
     private func cleanScriptureForSpeech(_ text: String) -> String {
         var cleaned = text
             .replacingOccurrences(of: "\\[\\d+\\]", with: "", options: .regularExpression)
             .replacingOccurrences(of: "\\(\\w\\)", with: "", options: .regularExpression)
-            .replacingOccurrences(of: "℟.", with: "Response:")
-            .replacingOccurrences(of: "℣.", with: "Verse:")
-            .replacingOccurrences(of: "\n+", with: ". ", options: .regularExpression)
-            .replacingOccurrences(of: "\\.{2,}", with: ".", options: .regularExpression)
+            .replacingOccurrences(of: "℟.", with: "Response, ")
+            .replacingOccurrences(of: "℣.", with: "Verse, ")
+            .replacingOccurrences(of: "([.,!?;:])\\s*\\n+", with: "$1 ", options: .regularExpression)
+            .replacingOccurrences(of: "\\n+", with: ", ", options: .regularExpression)
+            .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned
     }
@@ -541,6 +570,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
         Task { @MainActor in
+            guard !self.isAuditioning else { return }
             self.isPlaying = true
             self.isPaused = false
             self.updateNowPlayingInfo()
@@ -549,6 +579,10 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         Task { @MainActor in
+            if self.isAuditioning {
+                self.isAuditioning = false
+                return
+            }
             if self.currentReadingIndex + 1 < self.activeReadings.count {
                 self.currentReadingIndex += 1
                 self.speakCurrentReading()
@@ -560,6 +594,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didPause utterance: AVSpeechUtterance) {
         Task { @MainActor in
+            guard !self.isAuditioning else { return }
             self.isPlaying = false
             self.isPaused = true
             self.updateNowPlayingInfo()
@@ -568,6 +603,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didContinue utterance: AVSpeechUtterance) {
         Task { @MainActor in
+            guard !self.isAuditioning else { return }
             self.isPlaying = true
             self.isPaused = false
             self.updateNowPlayingInfo()
@@ -576,6 +612,10 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
         Task { @MainActor in
+            if self.isAuditioning {
+                self.isAuditioning = false
+                return
+            }
             self.isPlaying = false
             self.isPaused = false
         }
