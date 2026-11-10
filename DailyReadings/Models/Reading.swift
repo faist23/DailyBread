@@ -149,13 +149,38 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
     /// Translation identifier: "DRB" (Douay-Rheims) or "NAB" (New American Bible).
     public let translation: String
     
-    /// Sanitizes scripture text by stripping inline lectionary verse tags like `[[Jn 2,13]]` or `[[...]]`.
-    public static func sanitizeText(_ rawText: String) -> String {
+    /// Sanitizes and formats scripture text:
+    /// - Strips Evangelizo inline verse reference brackets like `[[Jn 2,13]]` or `[[...]]`.
+    /// - For prose readings (Epistles, Gospels, OT narrative), joins individual verses into flowing paragraphs.
+    /// - For psalms, preserves stanzas separated by `\n\n` while keeping poetic lines cleanly spaced.
+    public static func sanitizeText(_ rawText: String, type: ReadingType? = nil) -> String {
         var text = rawText
+            // 1. Strip inline verse reference brackets like [[Jn 2,13]] or [[Ap 7,2]]
             .replacingOccurrences(of: "\\[\\[[^\\]]+\\]\\]", with: "", options: .regularExpression)
-            .replacingOccurrences(of: "(?m)^[ \\t]+", with: "", options: .regularExpression)
-            .replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+            // 2. Standardize line endings
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
+
+        // 3. For Psalms, preserve stanza structure
+        if type == .responsorialPsalm {
+            text = text.replacingOccurrences(of: "(?m)^[ \\t]+", with: "", options: .regularExpression)
+            text = text.replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // 4. For prose readings (First Reading, Second Reading, Gospel, Acclamation, Sequence):
+        // Preserve intentional paragraph breaks (two or more newlines) while flowing single-line verse breaks
+        let paragraphs = text.components(separatedBy: "\n\n")
+
+        let cleanedParagraphs = paragraphs.compactMap { paragraph -> String? in
+            let flow = paragraph
+                .replacingOccurrences(of: "\n", with: " ")
+                .replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return flow.isEmpty ? nil : flow
+        }
+
+        return cleanedParagraphs.joined(separator: "\n\n")
     }
 
     /// Designated initializer.
@@ -171,9 +196,9 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
         self.id = id
         self.type = type
         self.citation = citation
-        self.text = Self.sanitizeText(text)
+        self.text = Self.sanitizeText(text, type: type)
         let rawResp = response ?? psalmResponse
-        self.response = rawResp != nil ? Self.sanitizeText(rawResp!) : nil
+        self.response = rawResp != nil ? Self.sanitizeText(rawResp!, type: type) : nil
         self.translation = translation
     }
     
@@ -189,9 +214,9 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
         self.type = try container.decode(ReadingType.self, forKey: .type)
         self.citation = try container.decode(ReadingCitation.self, forKey: .citation)
         let rawText = try container.decode(String.self, forKey: .text)
-        self.text = Self.sanitizeText(rawText)
+        self.text = Self.sanitizeText(rawText, type: self.type)
         if let rawResp = try container.decodeIfPresent(String.self, forKey: .response) {
-            self.response = Self.sanitizeText(rawResp)
+            self.response = Self.sanitizeText(rawResp, type: self.type)
         } else {
             self.response = nil
         }

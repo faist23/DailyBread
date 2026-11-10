@@ -125,12 +125,12 @@ public actor EvangelizioService {
             let rawText = (item["text"] as? String)
                 ?? (item["content"] as? String)
                 ?? ""
-            let cleanText = cleanHTML(rawText)
+            let cleanText = cleanHTML(rawText, type: type)
 
             let rawResponse = (item["response"] as? String)
                 ?? (item["verse_response"] as? String)
                 ?? (item["refrain"] as? String)
-            let cleanResponse = rawResponse != nil ? cleanHTML(rawResponse!) : nil
+            let cleanResponse = rawResponse != nil ? cleanHTML(rawResponse!, type: type) : nil
 
             let reading = Reading(
                 type: type,
@@ -296,7 +296,7 @@ public actor EvangelizioService {
 
     // MARK: - HTML Sanitization
 
-    private func cleanHTML(_ html: String) -> String {
+    private func cleanHTML(_ html: String, type: ReadingType? = nil) -> String {
         var text = html
             // Strip Evangelizo inline scripture reference tags like [[Jn 2,13]] or [[Ez 47,1]]
             .replacingOccurrences(of: "\\[\\[[^\\]]+\\]\\]", with: "", options: .regularExpression)
@@ -313,11 +313,25 @@ public actor EvangelizioService {
             .replacingOccurrences(of: "&rdquo;", with: "”")
             .replacingOccurrences(of: "&mdash;", with: "—")
             .replacingOccurrences(of: "&ndash;", with: "–")
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .replacingOccurrences(of: "\r", with: "\n")
 
-        // Clean redundant indentation and line breaks
-        text = text.replacingOccurrences(of: "(?m)^[ \\t]+", with: "", options: .regularExpression)
-        text = text.replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if type == .responsorialPsalm {
+            text = text.replacingOccurrences(of: "(?m)^[ \\t]+", with: "", options: .regularExpression)
+            text = text.replacingOccurrences(of: "\n{3,}", with: "\n\n", options: .regularExpression)
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        // For prose readings (Epistles, Gospels, narrative), join single verse linebreaks into flowing paragraphs
+        let paragraphs = text.components(separatedBy: "\n\n")
+        let cleaned = paragraphs.compactMap { paragraph -> String? in
+            let flow = paragraph
+                .replacingOccurrences(of: "\n", with: " ")
+                .replacingOccurrences(of: "[ \\t]+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return flow.isEmpty ? nil : flow
+        }
+        return cleaned.joined(separator: "\n\n")
     }
 
     private func formatDate(_ date: Date) -> String {
