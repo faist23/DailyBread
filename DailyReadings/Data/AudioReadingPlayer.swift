@@ -36,6 +36,18 @@ public enum PlaybackSpeed: Float, CaseIterable, Identifiable, Sendable {
     }
 }
 
+/// A human-friendly representation of an available text-to-speech voice option.
+public struct VoiceOption: Identifiable, Hashable, Sendable {
+    public let id: String
+    public let name: String
+    public let localeName: String
+    public let qualityDescription: String
+    
+    public var displayName: String {
+        "\(name) • \(localeName) (\(qualityDescription))"
+    }
+}
+
 /// Service managing reverent text-to-speech recitation of Catholic daily Mass readings.
 ///
 /// Features:
@@ -61,6 +73,115 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         didSet {
             UserDefaults.standard.set(speed.rawValue, forKey: "audioReadingSpeed")
         }
+    }
+    
+    /// User-selected speech voice identifier.
+    public var selectedVoiceIdentifier: String {
+        get {
+            UserDefaults.standard.string(forKey: "selectedAudioVoiceId") ?? defaultVoiceIdentifier
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "selectedAudioVoiceId")
+            if isPlaying {
+                synthesizer.stopSpeaking(at: .immediate)
+                speakCurrentReading()
+            }
+        }
+    }
+    
+    // MARK: - Excluded Legacy 1980s Novelty Voices
+    
+    private static let excludedVoiceNames: Set<String> = [
+        "albert", "bad news", "bahh", "bells", "boing", "bubbles", "cellos",
+        "deranged", "fred", "good news", "hysterical", "junior", "kathy",
+        "organ", "princess", "ralph", "trinoids", "whisper", "zarvox", "wobble",
+        "eddy", "flo", "grandma", "grandpa", "reed", "rocko", "sandy", "shelley",
+        "jester", "superstar"
+    ]
+    
+    /// Filtered list of natural, human-sounding English voices available on the user's device.
+    public var availableVoices: [VoiceOption] {
+        let all = AVSpeechSynthesisVoice.speechVoices()
+        let english = all.filter { v in
+            v.language.starts(with: "en") &&
+            !Self.excludedVoiceNames.contains(v.name.lowercased()) &&
+            !v.identifier.contains("eloquence")
+        }
+        
+        var seenKeys = Set<String>()
+        var options: [VoiceOption] = []
+        
+        let sorted = english.sorted {
+            if $0.quality.rawValue != $1.quality.rawValue {
+                return $0.quality.rawValue > $1.quality.rawValue
+            }
+            return $0.name < $1.name
+        }
+        
+        for v in sorted {
+            let key = "\(v.name)_\(v.language)"
+            if !seenKeys.contains(key) {
+                seenKeys.insert(key)
+                let region: String
+                switch v.language {
+                case "en-US": region = "American"
+                case "en-GB": region = "British"
+                case "en-IE": region = "Irish"
+                case "en-AU": region = "Australian"
+                case "en-IN": region = "Indian"
+                case "en-ZA": region = "South African"
+                default: region = v.language
+                }
+                
+                let quality: String
+                if v.identifier.contains("natural") || v.identifier.contains("siri") {
+                    quality = "Neural / Siri"
+                } else if v.quality == .premium {
+                    quality = "Premium"
+                } else if v.quality == .enhanced {
+                    quality = "Enhanced"
+                } else {
+                    quality = "Natural"
+                }
+                
+                let displayName = v.name == "Voice 4" ? "Siri (Voice 4)" : v.name
+                
+                options.append(VoiceOption(
+                    id: v.identifier,
+                    name: displayName,
+                    localeName: region,
+                    qualityDescription: quality
+                ))
+            }
+        }
+        return options
+    }
+    
+    /// Default natural voice (prefers Siri Natural, Daniel, Samantha, Ava, Oliver, or Serena).
+    public var defaultVoiceIdentifier: String {
+        let options = availableVoices
+        if let siri = options.first(where: { $0.id.contains("natural") || $0.id.contains("siri") }) {
+            return siri.id
+        }
+        if let daniel = options.first(where: { $0.name.localizedCaseInsensitiveContains("daniel") }) {
+            return daniel.id
+        }
+        if let samantha = options.first(where: { $0.name.localizedCaseInsensitiveContains("samantha") }) {
+            return samantha.id
+        }
+        if let ava = options.first(where: { $0.name.localizedCaseInsensitiveContains("ava") }) {
+            return ava.id
+        }
+        if let serena = options.first(where: { $0.name.localizedCaseInsensitiveContains("serena") }) {
+            return serena.id
+        }
+        if let oliver = options.first(where: { $0.name.localizedCaseInsensitiveContains("oliver") }) {
+            return oliver.id
+        }
+        if let moira = options.first(where: { $0.name.localizedCaseInsensitiveContains("moira") }) {
+            return moira.id
+        }
+        return options.first?.id ?? ""
     }
     
     // MARK: - Private Properties
@@ -325,20 +446,40 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         synthesizer.speak(utterance)
     }
     
-    /// Selects the highest quality natural English voice available on the user's device.
-    private func selectNaturalVoice() -> AVSpeechSynthesisVoice? {
-        let voices = AVSpeechSynthesisVoice.speechVoices().filter {
-            $0.language.starts(with: "en-") && ($0.language == "en-US" || $0.language == "en-GB")
+    /// Selects the chosen or highest quality natural English voice available on the user's device.
+    public func selectNaturalVoice() -> AVSpeechSynthesisVoice? {
+        let voiceId = selectedVoiceIdentifier
+        if !voiceId.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: voiceId) {
+            return voice
         }
         
-        if let premium = voices.first(where: { $0.quality == .premium }) {
-            return premium
-        }
-        if let enhanced = voices.first(where: { $0.quality == .enhanced }) {
-            return enhanced
+        let defId = defaultVoiceIdentifier
+        if !defId.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: defId) {
+            return voice
         }
         
-        return AVSpeechSynthesisVoice(language: "en-US") ?? AVSpeechSynthesisVoice(language: Locale.current.identifier)
+        let naturalOptions = availableVoices
+        if let first = naturalOptions.first, let voice = AVSpeechSynthesisVoice(identifier: first.id) {
+            return voice
+        }
+        
+        return AVSpeechSynthesisVoice(language: "en-US")
+    }
+    
+    /// Auditions a specific voice by reciting a brief liturgical acclamation.
+    public func audition(voiceId: String) {
+        stop()
+        activateAudioSession()
+        
+        let voice = AVSpeechSynthesisVoice(identifier: voiceId) ?? selectNaturalVoice()
+        
+        let utterance = AVSpeechUtterance(string: "The Word of the Lord. Thanks be to God.")
+        utterance.rate = speed.rawValue
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
+        utterance.voice = voice
+        
+        synthesizer.speak(utterance)
     }
     
     /// Formats scripture text with liturgical introductory announcements and acclamations.

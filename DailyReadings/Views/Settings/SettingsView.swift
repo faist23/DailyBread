@@ -21,6 +21,7 @@ public struct SettingsView: View {
     @AppStorage("reminderTimeInterval") private var reminderTimeInterval: Double = 25200 // 7:00 AM (7 * 3600)
     
     @State private var notificationManager = NotificationManager.shared
+    @State private var audioPlayer = AudioReadingPlayer.shared
     @State private var showSettingsAlert: Bool = false
     
     // MARK: - Translation Options
@@ -44,7 +45,10 @@ public struct SettingsView: View {
                 // Section 2: Translation Picker
                 translationSection
                 
-                // Section 3: Typography & Sizing
+                // Section 3: Audio & Lector Voice
+                audioSection
+                
+                // Section 4: Typography & Sizing
                 typographySection
                 
                 // Section 4: Live Reading Preview
@@ -156,6 +160,61 @@ public struct SettingsView: View {
             Text("Select between the historic Douay-Rheims Catholic translation and the New American Bible lectionary text.")
                 .font(.footnote)
                 .foregroundStyle(Color.secondary)
+        }
+    }
+    
+    // MARK: - Audio & Lector Section
+    
+    private var audioSection: some View {
+        Section {
+            Picker("Lector Voice", selection: Binding(
+                get: { audioPlayer.selectedVoiceIdentifier },
+                set: { audioPlayer.selectedVoiceIdentifier = $0 }
+            )) {
+                ForEach(audioPlayer.availableVoices) { voice in
+                    Text(voice.displayName).tag(voice.id)
+                }
+            }
+            .pickerStyle(.menu)
+            
+            Picker("Speech Pacing", selection: Binding(
+                get: { audioPlayer.speed },
+                set: { audioPlayer.speed = $0 }
+            )) {
+                ForEach(PlaybackSpeed.allCases) { speed in
+                    Text("\(speed.label) (\(speedTitle(speed)))").tag(speed)
+                }
+            }
+            .pickerStyle(.menu)
+            
+            Button {
+                audioPlayer.audition(voiceId: audioPlayer.selectedVoiceIdentifier)
+            } label: {
+                HStack {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .foregroundStyle(AppTheme.Colors.solemnGold)
+                    Text("Preview Voice")
+                        .foregroundStyle(Color.primary)
+                    Spacer()
+                    Text("The Word of the Lord")
+                        .font(.footnote)
+                        .foregroundStyle(Color.secondary)
+                }
+            }
+        } header: {
+            Text("Audio & Lector Voice")
+        } footer: {
+            Text("Select a natural voice for daily scripture listening. Enhanced Siri and accessibility voices downloaded in iOS Settings → Accessibility → Spoken Content will also appear here.")
+                .font(.footnote)
+                .foregroundStyle(Color.secondary)
+        }
+    }
+    
+    private func speedTitle(_ speed: PlaybackSpeed) -> String {
+        switch speed {
+        case .reverent: return "Contemplative"
+        case .normal: return "Standard"
+        case .brisk: return "Attentive"
         }
     }
     
