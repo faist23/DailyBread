@@ -173,15 +173,24 @@ public struct SettingsView: View {
     
     private var audioSection: some View {
         Section {
-            Picker("Lector Voice", selection: $selectedVoiceId) {
+            Picker("Lector Voice", selection: Binding(
+                get: {
+                    if !selectedVoiceId.isEmpty {
+                        return selectedVoiceId
+                    }
+                    return audioPlayer.selectedVoiceIdentifier
+                },
+                set: { newId in
+                    selectedVoiceId = newId
+                    audioPlayer.selectedVoiceIdentifier = newId
+                    UserDefaults.standard.set(newId, forKey: "selectedAudioVoiceId")
+                }
+            )) {
                 ForEach(audioPlayer.availableVoices) { voice in
                     Text(voice.displayName).tag(voice.id)
                 }
             }
             .pickerStyle(.menu)
-            .onChange(of: selectedVoiceId) { _, newId in
-                audioPlayer.selectedVoiceIdentifier = newId
-            }
             
             Picker("Speech Pacing", selection: Binding(
                 get: { audioPlayer.speed },

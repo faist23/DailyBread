@@ -477,7 +477,14 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     /// Selects the chosen or highest quality natural English voice available on the user's device.
     public func selectNaturalVoice() -> AVSpeechSynthesisVoice? {
-        if !selectedVoiceIdentifier.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: selectedVoiceIdentifier) {
+        let idToUse: String = {
+            if let saved = UserDefaults.standard.string(forKey: "selectedAudioVoiceId"), !saved.isEmpty {
+                return saved
+            }
+            return selectedVoiceIdentifier
+        }()
+        
+        if !idToUse.isEmpty, let voice = AVSpeechSynthesisVoice(identifier: idToUse) {
             return voice
         }
         
@@ -491,6 +498,11 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     /// Auditions a specific voice by introducing itself and reciting a liturgical acclamation.
     public func audition(voiceId: String) {
+        if !voiceId.isEmpty {
+            self.selectedVoiceIdentifier = voiceId
+            UserDefaults.standard.set(voiceId, forKey: "selectedAudioVoiceId")
+        }
+        
         isAuditioning = true
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
