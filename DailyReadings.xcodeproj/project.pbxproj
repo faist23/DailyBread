@@ -383,7 +383,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.craigfaist.DailyReadings;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridepro.DailyReadings;
 				PRODUCT_NAME = DailyReadings;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -475,7 +475,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.craigfaist.DailyReadings;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridepro.DailyReadings;
 				PRODUCT_NAME = DailyReadings;
 				SDKROOT = iphoneos;
 				SWIFT_STRICT_CONCURRENCY = complete;

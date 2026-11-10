@@ -22,8 +22,8 @@ public final class NotificationManager {
     public static let shared = NotificationManager()
     
     /// Notification identifier prefix for scheduled daily reminders.
-    private static let identifierPrefix = "com.craigfaist.DailyReadings.reminder."
-    private static let fallbackIdentifier = "com.craigfaist.DailyReadings.reminder.recurring"
+    private static let identifierPrefix = "com.ridepro.DailyReadings.reminder."
+    private static let fallbackIdentifier = "com.ridepro.DailyReadings.reminder.recurring"
     
     /// Current notification authorization status.
     public var authorizationStatus: UNAuthorizationStatus = .notDetermined
