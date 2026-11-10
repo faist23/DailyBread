@@ -19,6 +19,7 @@ public struct DateReadingsView: View {
     @State private var viewModel: TodayViewModel
     @State private var date: Date
     @State private var readingToPresent: Reading?
+    @State private var audioPlayer = AudioReadingPlayer.shared
     
     // MARK: - Initialization
     
@@ -31,7 +32,7 @@ public struct DateReadingsView: View {
     // MARK: - Body
     
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             AppTheme.Colors.groupedBackground
                 .ignoresSafeArea()
             
@@ -47,11 +48,34 @@ public struct DateReadingsView: View {
                     contentScrollView
                 }
             }
+            
+            // Floating Audio Mini Player Bar
+            AudioMiniPlayerBar(liturgicalColor: currentColor)
+                .padding(.bottom, AppTheme.Spacing.small)
         }
         .navigationTitle(navigationTitleString)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
+                if let readings = viewModel.dailyReadings?.readings, !readings.isEmpty {
+                    Button {
+                        if audioPlayer.isPlaying {
+                            audioPlayer.pause()
+                        } else if audioPlayer.isPaused {
+                            audioPlayer.resume()
+                        } else {
+                            let title = viewModel.liturgicalDay?.title ?? formattedFullDateString(for: date)
+                            audioPlayer.start(readings: readings, liturgicalTitle: title)
+                        }
+                    } label: {
+                        Image(systemName: audioPlayer.isPlaying ? "waveform" : "headphones")
+                            .font(.system(size: 14, weight: .semibold))
+                            .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
+                            .foregroundStyle(currentColor.uiAccentColor)
+                    }
+                    .accessibilityLabel(audioPlayer.isPlaying ? "Pause audio reading" : "Listen to readings")
+                }
+                
                 Button {
                     navigateDay(by: -1)
                 } label: {

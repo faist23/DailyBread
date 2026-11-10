@@ -23,6 +23,11 @@ public struct ReadingCard: View {
     
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @State private var isCollapsed: Bool = false
+    @State private var audioPlayer = AudioReadingPlayer.shared
+    
+    private var isSpeaking: Bool {
+        audioPlayer.currentReading?.id == reading.id && (audioPlayer.isPlaying || audioPlayer.isPaused)
+    }
     
     // MARK: - Initialization
     
@@ -66,7 +71,7 @@ public struct ReadingCard: View {
             backgroundColor: AppTheme.Colors.cardBackground,
             cornerRadius: AppTheme.CornerRadius.large,
             padding: AppTheme.Spacing.medium,
-            borderColor: reading.type == .gospel ? liturgicalColor.swiftUIColor.opacity(0.3) : nil
+            borderColor: isSpeaking ? liturgicalColor.uiAccentColor : (reading.type == .gospel ? liturgicalColor.swiftUIColor.opacity(0.3) : nil)
         )
     }
     
@@ -83,6 +88,21 @@ public struct ReadingCard: View {
                         Image(systemName: "cross.fill")
                             .font(.system(size: 10))
                             .foregroundStyle(liturgicalColor.swiftUIColor)
+                    }
+                    
+                    if isSpeaking {
+                        HStack(spacing: 3) {
+                            Image(systemName: "waveform")
+                                .font(.system(size: 10, weight: .semibold))
+                                .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
+                            Text("Speaking")
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundStyle(liturgicalColor.uiAccentColor)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(liturgicalColor.swiftUIColor.opacity(0.12))
+                        .clipShape(Capsule())
                     }
                 }
                 
@@ -135,6 +155,26 @@ public struct ReadingCard: View {
     
     private var footerView: some View {
         HStack {
+            Button {
+                if isSpeaking && audioPlayer.isPlaying {
+                    audioPlayer.pause()
+                } else if isSpeaking && audioPlayer.isPaused {
+                    audioPlayer.resume()
+                } else {
+                    audioPlayer.start(readings: [reading], liturgicalTitle: reading.type.displayTitle)
+                }
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: isSpeaking && audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text(isSpeaking && audioPlayer.isPlaying ? "Pause audio" : "Listen")
+                        .font(.system(size: 13, weight: .medium))
+                }
+                .foregroundStyle(liturgicalColor.uiAccentColor)
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+            
             Spacer()
             
             if let onSelect {

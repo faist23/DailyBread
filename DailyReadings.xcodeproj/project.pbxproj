@@ -11,6 +11,7 @@
 		04D4D8CD6C8C46A062078785 /* ReadingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63267A8300B10AABA379D16 /* ReadingsRepository.swift */; };
 		07A14511DB781B0BC6B7854D /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0746E67BAA496208984026D6 /* AppTheme.swift */; };
 		0C109939EC76B9E26DED5AB1 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA01285060492A2DA9008352 /* TodayViewModel.swift */; };
+		1E4AC155467A1FCC41C0B6E0 /* AudioReadingPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */; };
 		219B796F4BC3BAF744D192D6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9189985265926497006E0 /* SettingsView.swift */; };
 		289B855F91E7D1EE0258B294 /* BibleVerse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E7F6722DAA38BEA83A4B7F /* BibleVerse.swift */; };
 		319995F6E17EE18E1C08B57C /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52AF38D16515D7E368426DD7 /* CalendarDayCell.swift */; };
@@ -25,6 +26,7 @@
 		4EDD734561B637779732EF81 /* SaintOfDayCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1624493DBFCEB1BD89E691B /* SaintOfDayCard.swift */; };
 		5079529899DACB3D22EB3F57 /* saints.json in Resources */ = {isa = PBXBuildFile; fileRef = CF6BBDF73735F3069BD4A39A /* saints.json */; };
 		65AD65474142F3C1D6D1DAA9 /* Saint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04F7F870754738266D3655E /* Saint.swift */; };
+		66871DB8DFA78C9F04E8BDE5 /* AudioMiniPlayerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BEBB9872FC034837ED7288 /* AudioMiniPlayerBar.swift */; };
 		678B5F95EA83FAF295361C03 /* LiturgicalRank.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD74350639515CB1ED3743BE /* LiturgicalRank.swift */; };
 		7FBD438E98B27D1E55ADD626 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B3DFC75B7C54A2E2F93B4DA /* Assets.xcassets */; };
 		8EE2769CCE536062D3942BEF /* EvangelizioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D689436930180AC7D45074E /* EvangelizioService.swift */; };
@@ -57,6 +59,7 @@
 		14F6F3C9CD7FBB492AD266FF /* DailyReadings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReadings.swift; sourceTree = "<group>"; };
 		1D689436930180AC7D45074E /* EvangelizioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvangelizioService.swift; sourceTree = "<group>"; };
 		23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCalendar.swift; sourceTree = "<group>"; };
+		2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReadingPlayer.swift; sourceTree = "<group>"; };
 		31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCelebrationBlurbs.swift; sourceTree = "<group>"; };
 		512871096BF80A947B73D989 /* PericoreIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PericoreIndex.swift; sourceTree = "<group>"; };
@@ -69,6 +72,7 @@
 		786F97E2A2318C15B9E9CC1E /* lectionary_dates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary_dates.json; sourceTree = "<group>"; };
 		82795DFF5BFB79EADA889534 /* bible_drb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = bible_drb.sqlite; sourceTree = "<group>"; };
 		8736C5DDC352318513E4D4D9 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		98BEBB9872FC034837ED7288 /* AudioMiniPlayerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMiniPlayerBar.swift; sourceTree = "<group>"; };
 		9B3DFC75B7C54A2E2F93B4DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A360D90CC8A2612A7E1128E1 /* PsalmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsalmView.swift; sourceTree = "<group>"; };
 		A4C528D26D305DF86F50FD3B /* LiturgicalSeason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalSeason.swift; sourceTree = "<group>"; };
@@ -168,6 +172,7 @@
 		77E6BE704D21AC6AADEDD68E /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */,
 				B3AB7EBF254A8BED5742B587 /* BibleDatabase.swift */,
 				1D689436930180AC7D45074E /* EvangelizioService.swift */,
 				43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */,
@@ -190,6 +195,7 @@
 		8E91284DB10A0576D916C3BE /* Today */ = {
 			isa = PBXGroup;
 			children = (
+				98BEBB9872FC034837ED7288 /* AudioMiniPlayerBar.swift */,
 				A360D90CC8A2612A7E1128E1 /* PsalmView.swift */,
 				C4B36DD67C1AB02217612FF7 /* ReadingCard.swift */,
 				F1624493DBFCEB1BD89E691B /* SaintOfDayCard.swift */,
@@ -324,6 +330,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				07A14511DB781B0BC6B7854D /* AppTheme.swift in Sources */,
+				66871DB8DFA78C9F04E8BDE5 /* AudioMiniPlayerBar.swift in Sources */,
+				1E4AC155467A1FCC41C0B6E0 /* AudioReadingPlayer.swift in Sources */,
 				8F9C9C12DA4B70A7DF276FF3 /* BibleDatabase.swift in Sources */,
 				289B855F91E7D1EE0258B294 /* BibleVerse.swift in Sources */,
 				BFCF61BC800A35490CB100C2 /* CachedReading.swift in Sources */,
@@ -439,6 +447,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -524,6 +533,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UIBackgroundModes = audio;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

@@ -22,6 +22,11 @@ public struct PsalmView: View {
     
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @State private var isCollapsed: Bool = false
+    @State private var audioPlayer = AudioReadingPlayer.shared
+    
+    private var isSpeaking: Bool {
+        audioPlayer.currentReading?.id == reading.id && (audioPlayer.isPlaying || audioPlayer.isPaused)
+    }
     
     // MARK: - Initialization
     
@@ -64,7 +69,7 @@ public struct PsalmView: View {
             backgroundColor: psalmCardBackground,
             cornerRadius: AppTheme.CornerRadius.large,
             padding: AppTheme.Spacing.medium,
-            borderColor: liturgicalColor.swiftUIColor.opacity(0.18)
+            borderColor: isSpeaking ? liturgicalColor.uiAccentColor : liturgicalColor.swiftUIColor.opacity(0.18)
         )
     }
     
@@ -73,8 +78,25 @@ public struct PsalmView: View {
     private var headerSection: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(reading.type.displayTitle)
-                    .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
+                HStack(spacing: 6) {
+                    Text(reading.type.displayTitle)
+                        .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
+                    
+                    if isSpeaking {
+                        HStack(spacing: 3) {
+                            Image(systemName: "waveform")
+                                .font(.system(size: 10, weight: .semibold))
+                                .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
+                            Text("Speaking")
+                                .font(.system(size: 10, weight: .bold))
+                        }
+                        .foregroundStyle(liturgicalColor.uiAccentColor)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(liturgicalColor.swiftUIColor.opacity(0.12))
+                        .clipShape(Capsule())
+                    }
+                }
                 
                 Text(reading.citation.reference)
                     .readingCitationStyle()
@@ -159,18 +181,41 @@ public struct PsalmView: View {
     // MARK: - Action Button
     
     private func fullReadingButton(action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Text("Full Screen Reading")
-                    .font(.system(size: 13, weight: .medium))
-                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                    .font(.system(size: 11, weight: .medium))
+        HStack {
+            Button {
+                if isSpeaking && audioPlayer.isPlaying {
+                    audioPlayer.pause()
+                } else if isSpeaking && audioPlayer.isPaused {
+                    audioPlayer.resume()
+                } else {
+                    audioPlayer.start(readings: [reading], liturgicalTitle: reading.type.displayTitle)
+                }
+            } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: isSpeaking && audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                    Text(isSpeaking && audioPlayer.isPlaying ? "Pause audio" : "Listen")
+                        .font(.system(size: 13, weight: .medium))
+                }
+                .foregroundStyle(liturgicalColor.uiAccentColor)
+                .padding(.vertical, 6)
             }
-            .foregroundStyle(liturgicalColor.swiftUIColor)
-            .padding(.vertical, 6)
+            .buttonStyle(.plain)
+            
+            Spacer()
+            
+            Button(action: action) {
+                HStack(spacing: 6) {
+                    Text("Full Screen Reading")
+                        .font(.system(size: 13, weight: .medium))
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .foregroundStyle(liturgicalColor.swiftUIColor)
+                .padding(.vertical, 6)
+            }
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
-        .frame(maxWidth: .infinity, alignment: .trailing)
     }
     
     // MARK: - Styling

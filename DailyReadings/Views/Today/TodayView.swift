@@ -18,6 +18,7 @@ public struct TodayView: View {
     
     @Bindable public var viewModel: TodayViewModel
     @State private var readingToPresent: Reading?
+    @State private var audioPlayer = AudioReadingPlayer.shared
     
     // MARK: - Initialization
     
@@ -28,7 +29,7 @@ public struct TodayView: View {
     // MARK: - Body
     
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             // Background
             AppTheme.Colors.groupedBackground
                 .ignoresSafeArea()
@@ -46,6 +47,10 @@ public struct TodayView: View {
                     mainScrollView
                 }
             }
+            
+            // Floating Audio Mini Player Bar
+            AudioMiniPlayerBar(liturgicalColor: currentColor)
+                .padding(.bottom, AppTheme.Spacing.small)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -53,6 +58,37 @@ public struct TodayView: View {
                 Text("DailyReadings")
                     .font(.system(size: 16, weight: .semibold, design: .serif))
                     .foregroundStyle(Color.primary.opacity(0.85))
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                if let readings = viewModel.dailyReadings?.readings, !readings.isEmpty {
+                    Button {
+                        if audioPlayer.isPlaying {
+                            audioPlayer.pause()
+                        } else if audioPlayer.isPaused {
+                            audioPlayer.resume()
+                        } else {
+                            let title = viewModel.liturgicalDay?.title ?? "Today's Mass Readings"
+                            audioPlayer.start(readings: readings, liturgicalTitle: title)
+                        }
+                    } label: {
+                        HStack(spacing: 5) {
+                            Image(systemName: audioPlayer.isPlaying ? "waveform" : "headphones")
+                                .font(.system(size: 13, weight: .semibold))
+                                .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
+                            
+                            Text(audioPlayer.isPlaying ? "Playing" : "Listen")
+                                .font(.system(size: 13, weight: .semibold, design: .serif))
+                        }
+                        .foregroundStyle(currentColor.uiAccentColor)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(currentColor.swiftUIColor.opacity(0.12))
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(audioPlayer.isPlaying ? "Pause audio reading" : "Listen to readings")
+                }
             }
         }
         .sheet(item: $readingToPresent) { reading in
