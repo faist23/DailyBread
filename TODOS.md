@@ -5,7 +5,7 @@
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
-**GitHub Repository:** [https://github.com/faist23/DailyBread](https://github.com/faist23/DailyBread) (`main` branch)
+**GitHub Repository:** [https://github.com/faist23/DailyReadings](https://github.com/faist23/DailyReadings) (`main` branch)
 
 ---
 
