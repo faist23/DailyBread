@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E83CA09C6D68F05A257FDD4D"
-               BuildableName = "DailyBread.app"
-               BlueprintName = "DailyBread"
-               ReferencedContainer = "container:DailyBread.xcodeproj">
+               BlueprintIdentifier = "B80AE1FB043D9FFB899DB856"
+               BuildableName = "DailyReadings.app"
+               BlueprintName = "DailyReadings"
+               ReferencedContainer = "container:DailyReadings.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E83CA09C6D68F05A257FDD4D"
-            BuildableName = "DailyBread.app"
-            BlueprintName = "DailyBread"
-            ReferencedContainer = "container:DailyBread.xcodeproj">
+            BlueprintIdentifier = "B80AE1FB043D9FFB899DB856"
+            BuildableName = "DailyReadings.app"
+            BlueprintName = "DailyReadings"
+            ReferencedContainer = "container:DailyReadings.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -55,10 +55,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E83CA09C6D68F05A257FDD4D"
-            BuildableName = "DailyBread.app"
-            BlueprintName = "DailyBread"
-            ReferencedContainer = "container:DailyBread.xcodeproj">
+            BlueprintIdentifier = "B80AE1FB043D9FFB899DB856"
+            BuildableName = "DailyReadings.app"
+            BlueprintName = "DailyReadings"
+            ReferencedContainer = "container:DailyReadings.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -74,10 +74,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E83CA09C6D68F05A257FDD4D"
-            BuildableName = "DailyBread.app"
-            BlueprintName = "DailyBread"
-            ReferencedContainer = "container:DailyBread.xcodeproj">
+            BlueprintIdentifier = "B80AE1FB043D9FFB899DB856"
+            BuildableName = "DailyReadings.app"
+            BlueprintName = "DailyReadings"
+            ReferencedContainer = "container:DailyReadings.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

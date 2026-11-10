@@ -1,0 +1,567 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03B48E83B7250127AE539957 /* LiturgicalCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6B83AEB14F8E1169AB9683 /* LiturgicalCycle.swift */; };
+		04D4D8CD6C8C46A062078785 /* ReadingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63267A8300B10AABA379D16 /* ReadingsRepository.swift */; };
+		07A14511DB781B0BC6B7854D /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0746E67BAA496208984026D6 /* AppTheme.swift */; };
+		0C109939EC76B9E26DED5AB1 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA01285060492A2DA9008352 /* TodayViewModel.swift */; };
+		219B796F4BC3BAF744D192D6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9189985265926497006E0 /* SettingsView.swift */; };
+		289B855F91E7D1EE0258B294 /* BibleVerse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E7F6722DAA38BEA83A4B7F /* BibleVerse.swift */; };
+		319995F6E17EE18E1C08B57C /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52AF38D16515D7E368426DD7 /* CalendarDayCell.swift */; };
+		33B97AA76FEFCAC6F214FFB0 /* ReadingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA71552D1478FB0AFEDD6FFF /* ReadingDetailView.swift */; };
+		3A5675833BCF7A60817FBEE6 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEAFC1CE448C8D99A61F3C1 /* Typography.swift */; };
+		3C3CA0780C79F1F19E31493F /* FixedSolemnities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5609D2D598FDE978C6ABD4 /* FixedSolemnities.swift */; };
+		3D2ED3BCD72E2A99C89B3DD7 /* SaintsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542426414464C4B6036D9263 /* SaintsDatabase.swift */; };
+		3DA31EFBC7C3D1545EAE302D /* PericoreIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512871096BF80A947B73D989 /* PericoreIndex.swift */; };
+		46F0F23E24AE1A158052D3D8 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68495F80086EAD0FA67FC64 /* MainTabView.swift */; };
+		49ED87126D53DFBD8226A28E /* DateReadingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE43CB8EEE95F516C56C2D19 /* DateReadingsView.swift */; };
+		4B3140A7FE91B1990FF97528 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8736C5DDC352318513E4D4D9 /* CalendarView.swift */; };
+		4EDD734561B637779732EF81 /* SaintOfDayCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1624493DBFCEB1BD89E691B /* SaintOfDayCard.swift */; };
+		5079529899DACB3D22EB3F57 /* saints.json in Resources */ = {isa = PBXBuildFile; fileRef = CF6BBDF73735F3069BD4A39A /* saints.json */; };
+		65AD65474142F3C1D6D1DAA9 /* Saint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04F7F870754738266D3655E /* Saint.swift */; };
+		678B5F95EA83FAF295361C03 /* LiturgicalRank.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD74350639515CB1ED3743BE /* LiturgicalRank.swift */; };
+		7FBD438E98B27D1E55ADD626 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B3DFC75B7C54A2E2F93B4DA /* Assets.xcassets */; };
+		8EE2769CCE536062D3942BEF /* EvangelizioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D689436930180AC7D45074E /* EvangelizioService.swift */; };
+		8F9C9C12DA4B70A7DF276FF3 /* BibleDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB7EBF254A8BED5742B587 /* BibleDatabase.swift */; };
+		98F4D23C2108D520FE020165 /* DailyReadings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F6F3C9CD7FBB492AD266FF /* DailyReadings.swift */; };
+		9A9E8E55A627376526A75A4C /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */; };
+		9E77134AD25EC23A545BFF55 /* LiturgicalColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7266E23321476DAFAABC7C /* LiturgicalColors.swift */; };
+		A0C368C902EC93AC2D6BE9C0 /* LiturgicalColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71BFE20B8B02EF1E1DAC62D9 /* LiturgicalColor.swift */; };
+		A4FC7E742966D3409C55307E /* bible_drb.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 82795DFF5BFB79EADA889534 /* bible_drb.sqlite */; };
+		A54843ADCBAB63AB2F6217C3 /* ReadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4B36DD67C1AB02217612FF7 /* ReadingCard.swift */; };
+		A600D0CD620B8B2B9E909F34 /* Reading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597121C7FF29EA76AB4F3BBE /* Reading.swift */; };
+		AC62E1FAB65522A3EBF3982D /* LiturgicalCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */; };
+		AD16AB051ADE2C9DE524D963 /* lectionary_dates.json in Resources */ = {isa = PBXBuildFile; fileRef = 786F97E2A2318C15B9E9CC1E /* lectionary_dates.json */; };
+		B1F97CA3741DA5D792D630FA /* PsalmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A360D90CC8A2612A7E1128E1 /* PsalmView.swift */; };
+		B974936E99A6F7460C20C2B5 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15A9E58A4B08BD4E98CE2B0 /* TodayView.swift */; };
+		BAEB6015CE54FBCAF5EEBC40 /* DailyReadingsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76D00C2FDBC90D46FAA6CC0 /* DailyReadingsApp.swift */; };
+		BD0DF9DC197430AC1D71254A /* LiturgicalSeason.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C528D26D305DF86F50FD3B /* LiturgicalSeason.swift */; };
+		BD662E4EB754C9FC96534D00 /* Computus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6972237991E6AF1FE2917B71 /* Computus.swift */; };
+		BFCF61BC800A35490CB100C2 /* CachedReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08616990FED60478EA75579 /* CachedReading.swift */; };
+		C6B401DF31EE6BAF6AD09D1F /* LiturgicalDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C579F30F81C7EB40CF1A17E8 /* LiturgicalDay.swift */; };
+		DFE8FF898BB01811B2F357DB /* LiturgicalCelebrationBlurbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */; };
+		E8963E99B418FA751A0B3D09 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADD1A0409DD5B587A454955 /* NotificationManager.swift */; };
+		E9DE4025482A3AFC27E46306 /* lectionary.json in Resources */ = {isa = PBXBuildFile; fileRef = C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0746E67BAA496208984026D6 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		0A7266E23321476DAFAABC7C /* LiturgicalColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalColors.swift; sourceTree = "<group>"; };
+		0B5609D2D598FDE978C6ABD4 /* FixedSolemnities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedSolemnities.swift; sourceTree = "<group>"; };
+		14F6F3C9CD7FBB492AD266FF /* DailyReadings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReadings.swift; sourceTree = "<group>"; };
+		1D689436930180AC7D45074E /* EvangelizioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvangelizioService.swift; sourceTree = "<group>"; };
+		23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCalendar.swift; sourceTree = "<group>"; };
+		31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
+		43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCelebrationBlurbs.swift; sourceTree = "<group>"; };
+		512871096BF80A947B73D989 /* PericoreIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PericoreIndex.swift; sourceTree = "<group>"; };
+		52AF38D16515D7E368426DD7 /* CalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDayCell.swift; sourceTree = "<group>"; };
+		542426414464C4B6036D9263 /* SaintsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaintsDatabase.swift; sourceTree = "<group>"; };
+		597121C7FF29EA76AB4F3BBE /* Reading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
+		6972237991E6AF1FE2917B71 /* Computus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computus.swift; sourceTree = "<group>"; };
+		6FEAFC1CE448C8D99A61F3C1 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		71BFE20B8B02EF1E1DAC62D9 /* LiturgicalColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalColor.swift; sourceTree = "<group>"; };
+		786F97E2A2318C15B9E9CC1E /* lectionary_dates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary_dates.json; sourceTree = "<group>"; };
+		82795DFF5BFB79EADA889534 /* bible_drb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = bible_drb.sqlite; sourceTree = "<group>"; };
+		8736C5DDC352318513E4D4D9 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		9B3DFC75B7C54A2E2F93B4DA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A360D90CC8A2612A7E1128E1 /* PsalmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PsalmView.swift; sourceTree = "<group>"; };
+		A4C528D26D305DF86F50FD3B /* LiturgicalSeason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalSeason.swift; sourceTree = "<group>"; };
+		A63267A8300B10AABA379D16 /* ReadingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsRepository.swift; sourceTree = "<group>"; };
+		A7E9189985265926497006E0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		ABBB033C5AB974A39AE019BA /* DailyReadings.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyReadings.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B08616990FED60478EA75579 /* CachedReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedReading.swift; sourceTree = "<group>"; };
+		B3AB7EBF254A8BED5742B587 /* BibleDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleDatabase.swift; sourceTree = "<group>"; };
+		BA71552D1478FB0AFEDD6FFF /* ReadingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingDetailView.swift; sourceTree = "<group>"; };
+		BADD1A0409DD5B587A454955 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		C4B36DD67C1AB02217612FF7 /* ReadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingCard.swift; sourceTree = "<group>"; };
+		C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary.json; sourceTree = "<group>"; };
+		C579F30F81C7EB40CF1A17E8 /* LiturgicalDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalDay.swift; sourceTree = "<group>"; };
+		C68495F80086EAD0FA67FC64 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		CE43CB8EEE95F516C56C2D19 /* DateReadingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateReadingsView.swift; sourceTree = "<group>"; };
+		CF6B83AEB14F8E1169AB9683 /* LiturgicalCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCycle.swift; sourceTree = "<group>"; };
+		CF6BBDF73735F3069BD4A39A /* saints.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = saints.json; sourceTree = "<group>"; };
+		D15A9E58A4B08BD4E98CE2B0 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		D76D00C2FDBC90D46FAA6CC0 /* DailyReadingsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReadingsApp.swift; sourceTree = "<group>"; };
+		DD74350639515CB1ED3743BE /* LiturgicalRank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalRank.swift; sourceTree = "<group>"; };
+		E04F7F870754738266D3655E /* Saint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Saint.swift; sourceTree = "<group>"; };
+		EA01285060492A2DA9008352 /* TodayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewModel.swift; sourceTree = "<group>"; };
+		F1624493DBFCEB1BD89E691B /* SaintOfDayCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaintOfDayCard.swift; sourceTree = "<group>"; };
+		F7E7F6722DAA38BEA83A4B7F /* BibleVerse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleVerse.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0BD3E547EAA9C4DB3C9C3042 /* DailyReadings */ = {
+			isa = PBXGroup;
+			children = (
+				9B3DFC75B7C54A2E2F93B4DA /* Assets.xcassets */,
+				D76D00C2FDBC90D46FAA6CC0 /* DailyReadingsApp.swift */,
+				77E6BE704D21AC6AADEDD68E /* Data */,
+				67DE78FA5F52C0B544029D40 /* Engine */,
+				F4D942594094526B5D325643 /* Models */,
+				9890DFDFFD6F7451ED9299FA /* Resources */,
+				AA162366E9217D3221C39AD2 /* Theme */,
+				70E89FBCE77194953DD2CB31 /* ViewModels */,
+				3545BAB6BDE5C0D58B1F59F8 /* Views */,
+			);
+			path = DailyReadings;
+			sourceTree = "<group>";
+		};
+		11CB8142CFC5FFE68487245F /* Reading */ = {
+			isa = PBXGroup;
+			children = (
+				BA71552D1478FB0AFEDD6FFF /* ReadingDetailView.swift */,
+			);
+			path = Reading;
+			sourceTree = "<group>";
+		};
+		3545BAB6BDE5C0D58B1F59F8 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C68495F80086EAD0FA67FC64 /* MainTabView.swift */,
+				4C1594314155ABFB93ABAE99 /* Calendar */,
+				11CB8142CFC5FFE68487245F /* Reading */,
+				7D8FE8E8553A5D579FB023BE /* Settings */,
+				8E91284DB10A0576D916C3BE /* Today */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4C1594314155ABFB93ABAE99 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				52AF38D16515D7E368426DD7 /* CalendarDayCell.swift */,
+				8736C5DDC352318513E4D4D9 /* CalendarView.swift */,
+				CE43CB8EEE95F516C56C2D19 /* DateReadingsView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		67DE78FA5F52C0B544029D40 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				6972237991E6AF1FE2917B71 /* Computus.swift */,
+				0B5609D2D598FDE978C6ABD4 /* FixedSolemnities.swift */,
+				23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */,
+				71BFE20B8B02EF1E1DAC62D9 /* LiturgicalColor.swift */,
+				CF6B83AEB14F8E1169AB9683 /* LiturgicalCycle.swift */,
+				DD74350639515CB1ED3743BE /* LiturgicalRank.swift */,
+				A4C528D26D305DF86F50FD3B /* LiturgicalSeason.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		70E89FBCE77194953DD2CB31 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */,
+				EA01285060492A2DA9008352 /* TodayViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		77E6BE704D21AC6AADEDD68E /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				B3AB7EBF254A8BED5742B587 /* BibleDatabase.swift */,
+				1D689436930180AC7D45074E /* EvangelizioService.swift */,
+				43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */,
+				BADD1A0409DD5B587A454955 /* NotificationManager.swift */,
+				512871096BF80A947B73D989 /* PericoreIndex.swift */,
+				A63267A8300B10AABA379D16 /* ReadingsRepository.swift */,
+				542426414464C4B6036D9263 /* SaintsDatabase.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		7D8FE8E8553A5D579FB023BE /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				A7E9189985265926497006E0 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		8E91284DB10A0576D916C3BE /* Today */ = {
+			isa = PBXGroup;
+			children = (
+				A360D90CC8A2612A7E1128E1 /* PsalmView.swift */,
+				C4B36DD67C1AB02217612FF7 /* ReadingCard.swift */,
+				F1624493DBFCEB1BD89E691B /* SaintOfDayCard.swift */,
+				D15A9E58A4B08BD4E98CE2B0 /* TodayView.swift */,
+			);
+			path = Today;
+			sourceTree = "<group>";
+		};
+		9890DFDFFD6F7451ED9299FA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				82795DFF5BFB79EADA889534 /* bible_drb.sqlite */,
+				786F97E2A2318C15B9E9CC1E /* lectionary_dates.json */,
+				C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */,
+				CF6BBDF73735F3069BD4A39A /* saints.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		AA162366E9217D3221C39AD2 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				0746E67BAA496208984026D6 /* AppTheme.swift */,
+				0A7266E23321476DAFAABC7C /* LiturgicalColors.swift */,
+				6FEAFC1CE448C8D99A61F3C1 /* Typography.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		BA0E3EC5152BAFD51F5D0A68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ABBB033C5AB974A39AE019BA /* DailyReadings.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BDFEDEA2E32FF3BD89C9FF2D = {
+			isa = PBXGroup;
+			children = (
+				0BD3E547EAA9C4DB3C9C3042 /* DailyReadings */,
+				BA0E3EC5152BAFD51F5D0A68 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F4D942594094526B5D325643 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F7E7F6722DAA38BEA83A4B7F /* BibleVerse.swift */,
+				B08616990FED60478EA75579 /* CachedReading.swift */,
+				14F6F3C9CD7FBB492AD266FF /* DailyReadings.swift */,
+				C579F30F81C7EB40CF1A17E8 /* LiturgicalDay.swift */,
+				597121C7FF29EA76AB4F3BBE /* Reading.swift */,
+				E04F7F870754738266D3655E /* Saint.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B80AE1FB043D9FFB899DB856 /* DailyReadings */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 95759594C5DED63DB709FC03 /* Build configuration list for PBXNativeTarget "DailyReadings" */;
+			buildPhases = (
+				B3A8E7B1974008C800D4132C /* Sources */,
+				5BC426AB0B7756E465435882 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DailyReadings;
+			packageProductDependencies = (
+			);
+			productName = DailyReadings;
+			productReference = ABBB033C5AB974A39AE019BA /* DailyReadings.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A729D7A99C43FE320B2232CF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					B80AE1FB043D9FFB899DB856 = {
+						DevelopmentTeam = DT58WA8N32;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 3ABE83664E0BEBCDCA7051E9 /* Build configuration list for PBXProject "DailyReadings" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = BDFEDEA2E32FF3BD89C9FF2D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = BA0E3EC5152BAFD51F5D0A68 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B80AE1FB043D9FFB899DB856 /* DailyReadings */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5BC426AB0B7756E465435882 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FBD438E98B27D1E55ADD626 /* Assets.xcassets in Resources */,
+				A4FC7E742966D3409C55307E /* bible_drb.sqlite in Resources */,
+				E9DE4025482A3AFC27E46306 /* lectionary.json in Resources */,
+				AD16AB051ADE2C9DE524D963 /* lectionary_dates.json in Resources */,
+				5079529899DACB3D22EB3F57 /* saints.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B3A8E7B1974008C800D4132C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				07A14511DB781B0BC6B7854D /* AppTheme.swift in Sources */,
+				8F9C9C12DA4B70A7DF276FF3 /* BibleDatabase.swift in Sources */,
+				289B855F91E7D1EE0258B294 /* BibleVerse.swift in Sources */,
+				BFCF61BC800A35490CB100C2 /* CachedReading.swift in Sources */,
+				319995F6E17EE18E1C08B57C /* CalendarDayCell.swift in Sources */,
+				4B3140A7FE91B1990FF97528 /* CalendarView.swift in Sources */,
+				9A9E8E55A627376526A75A4C /* CalendarViewModel.swift in Sources */,
+				BD662E4EB754C9FC96534D00 /* Computus.swift in Sources */,
+				98F4D23C2108D520FE020165 /* DailyReadings.swift in Sources */,
+				BAEB6015CE54FBCAF5EEBC40 /* DailyReadingsApp.swift in Sources */,
+				49ED87126D53DFBD8226A28E /* DateReadingsView.swift in Sources */,
+				8EE2769CCE536062D3942BEF /* EvangelizioService.swift in Sources */,
+				3C3CA0780C79F1F19E31493F /* FixedSolemnities.swift in Sources */,
+				AC62E1FAB65522A3EBF3982D /* LiturgicalCalendar.swift in Sources */,
+				DFE8FF898BB01811B2F357DB /* LiturgicalCelebrationBlurbs.swift in Sources */,
+				A0C368C902EC93AC2D6BE9C0 /* LiturgicalColor.swift in Sources */,
+				9E77134AD25EC23A545BFF55 /* LiturgicalColors.swift in Sources */,
+				03B48E83B7250127AE539957 /* LiturgicalCycle.swift in Sources */,
+				C6B401DF31EE6BAF6AD09D1F /* LiturgicalDay.swift in Sources */,
+				678B5F95EA83FAF295361C03 /* LiturgicalRank.swift in Sources */,
+				BD0DF9DC197430AC1D71254A /* LiturgicalSeason.swift in Sources */,
+				46F0F23E24AE1A158052D3D8 /* MainTabView.swift in Sources */,
+				E8963E99B418FA751A0B3D09 /* NotificationManager.swift in Sources */,
+				3DA31EFBC7C3D1545EAE302D /* PericoreIndex.swift in Sources */,
+				B1F97CA3741DA5D792D630FA /* PsalmView.swift in Sources */,
+				A600D0CD620B8B2B9E909F34 /* Reading.swift in Sources */,
+				A54843ADCBAB63AB2F6217C3 /* ReadingCard.swift in Sources */,
+				33B97AA76FEFCAC6F214FFB0 /* ReadingDetailView.swift in Sources */,
+				04D4D8CD6C8C46A062078785 /* ReadingsRepository.swift in Sources */,
+				65AD65474142F3C1D6D1DAA9 /* Saint.swift in Sources */,
+				4EDD734561B637779732EF81 /* SaintOfDayCard.swift in Sources */,
+				3D2ED3BCD72E2A99C89B3DD7 /* SaintsDatabase.swift in Sources */,
+				219B796F4BC3BAF744D192D6 /* SettingsView.swift in Sources */,
+				B974936E99A6F7460C20C2B5 /* TodayView.swift in Sources */,
+				0C109939EC76B9E26DED5AB1 /* TodayViewModel.swift in Sources */,
+				3A5675833BCF7A60817FBEE6 /* Typography.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0A014956468924C6C7A30E17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = DailyReadings;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.craigfaist.DailyReadings;
+				PRODUCT_NAME = DailyReadings;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		32A7BD9972700A1346E81E48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = DT58WA8N32;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8BA2A8C89A571701703F7659 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = DailyReadings;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.craigfaist.DailyReadings;
+				PRODUCT_NAME = DailyReadings;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F891F999523696EB28E58792 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = DT58WA8N32;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3ABE83664E0BEBCDCA7051E9 /* Build configuration list for PBXProject "DailyReadings" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32A7BD9972700A1346E81E48 /* Debug */,
+				F891F999523696EB28E58792 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		95759594C5DED63DB709FC03 /* Build configuration list for PBXNativeTarget "DailyReadings" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8BA2A8C89A571701703F7659 /* Debug */,
+				0A014956468924C6C7A30E17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A729D7A99C43FE320B2232CF /* Project object */;
+}
