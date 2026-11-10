@@ -1,4 +1,4 @@
-name: DailyBread
+name: DailyReadings
 options:
   bundleIdPrefix: com.craigfaist
   deploymentTarget:
@@ -22,38 +22,38 @@ settings:
     GENERATE_INFOPLIST_FILE: true
 
 schemes:
-  DailyBread:
+  DailyReadings:
     build:
       targets:
-        DailyBread: all
+        DailyReadings: all
     run:
       config: Debug
     archive:
       config: Release
 
 targets:
-  DailyBread:
+  DailyReadings:
     type: application
     platform: iOS
     sources:
-      - path: DailyBread
+      - path: DailyReadings
         excludes:
           - "**/*.metadata.json"
           - ".DS_Store"
     resources:
-      - path: DailyBread/Resources/bible_drb.sqlite
+      - path: DailyReadings/Resources/bible_drb.sqlite
         buildPhase: resources
-      - path: DailyBread/Resources/saints.json
+      - path: DailyReadings/Resources/saints.json
         buildPhase: resources
-      - path: DailyBread/Resources/lectionary.json
+      - path: DailyReadings/Resources/lectionary.json
         buildPhase: resources
-      - path: DailyBread/Resources/lectionary_dates.json
+      - path: DailyReadings/Resources/lectionary_dates.json
         buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.craigfaist.DailyBread
-        PRODUCT_NAME: DailyBread
+        PRODUCT_BUNDLE_IDENTIFIER: com.craigfaist.DailyReadings
+        PRODUCT_NAME: DailyReadings
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        INFOPLIST_KEY_CFBundleDisplayName: DailyBread
+        INFOPLIST_KEY_CFBundleDisplayName: DailyReadings
         SWIFT_STRICT_CONCURRENCY: complete
     dependencies: []

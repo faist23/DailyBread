@@ -1,6 +1,6 @@
-# DailyBread 🍞✝️
+# DailyReadings 📖✝️
 
-**DailyBread** is a Catholic daily Mass readings and liturgical calendar app for iOS, crafted with SwiftUI and Swift 6. Designed with reverent, missal-inspired typography and quiet whitespace, DailyBread offers a calm, contemplative reading environment for personal prayer and devotion.
+**DailyReadings** is a Catholic daily Mass readings and liturgical calendar app for iOS, crafted with SwiftUI and Swift 6. Designed with reverent, missal-inspired typography and quiet whitespace, DailyReadings offers a calm, contemplative reading environment for personal prayer and devotion.
 
 ![iOS 17+](https://img.shields.io/badge/iOS-17%2B-blue.svg)
 ![Swift 6.0](https://img.shields.io/badge/Swift-6.0-orange.svg)
@@ -55,13 +55,13 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/faist23/DailyBread.git
-   cd DailyBread
+   git clone https://github.com/faist23/DailyReadings.git
+   cd DailyReadings
    ```
 
 2. Open the Xcode project:
    ```bash
-   open DailyBread.xcodeproj
+   open DailyReadings.xcodeproj
    ```
 
 3. Select your target simulator (e.g. iPhone 16) and press **Run** (⌘R).
