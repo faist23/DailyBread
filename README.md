@@ -12,8 +12,14 @@
 ## Features
 
 - **Daily Mass Readings**:
-  - First Reading, Responsorial Psalm with antiphon cue, Second Reading (Sundays/Solemnities), Gospel Acclamation, and the Holy Gospel.
-  - Multi-tier offline & online support: online New American Bible (NAB) via Evangelizo API, cached locally in SwiftData, with guaranteed full offline fallback to the complete Douay-Rheims Bible (DRB).
+  - First Reading, Responsorial Psalm with antiphon banner and stanza response cues, Second Reading (Sundays/Solemnities), Gospel Acclamation, and the Holy Gospel.
+  - Multi-tier offline & online support: online New American Bible (NAB) via Evangelizo API with automatic 30-day background pre-fetching, cached locally in SwiftData, with guaranteed full offline fallback to the complete Douay-Rheims Bible (DRB).
+- **Personal Devotions & Bookmarking**:
+  - One-tap scripture passage bookmarks on all reading cards and detail views.
+  - Dedicated Bookmarks collection screen in Settings with full-screen reading access.
+- **Holy Days of Obligation Vigil Alerts**:
+  - Canon Law and USCCB abrogation rule evaluation for non-Sunday obligations.
+  - 7:00 PM evening vigil push notifications and prominent banners on Today's view.
 - **Comprehensive Liturgical Engine**:
   - Full implementation of Meeus/Jones/Butcher Computus algorithm for movable feasts.
   - Conforms to the *Universal Norms for the Liturgical Year* and *Proper Calendar for the Dioceses of the United States of America* (USCCB).
@@ -25,9 +31,9 @@
 - **Saint of the Day**:
   - Daily saint commemorations with historical era, patronages, and biography (expanded view with liturgical context by default).
 - **Reverent Audio Recitation**:
-  - Continuous, sequential text-to-speech recitation of all Mass readings with proper liturgical announcements and acclamations.
-  - Background audio playback using `AVAudioSession` (`.playback` / `.spokenAudio`).
-  - Lock Screen & Control Center Now Playing integration (`MPNowPlayingInfoCenter`, `MPRemoteCommandCenter`).
+  - Continuous, sequential text-to-speech recitation of all Mass readings with proper liturgical announcements, responses, and acclamations.
+  - Background audio playback using `AVAudioSession` (`.playback` / `.spokenAudio`) and `UIBackgroundModes` audio capability.
+  - Lock Screen & Control Center Now Playing integration (`MPNowPlayingInfoCenter`, `MPRemoteCommandCenter`) with dynamic illuminated liturgical missal artwork matching vestment seasons.
   - Floating mini-player bar for uninterrupted devotional listening.
   - Natural, modern voice engine (Daniel British lectionary voice, Samantha, Ava, Moira, Karen) with support for Apple's high-definition Enhanced and Premium Studio neural voices.
   - In-app Voice Selector and Pacing control in Settings with live preview auditions.
@@ -43,6 +49,8 @@
 - **Engine Layer**: `LiturgicalCalendar`, `Computus`, `LiturgicalSeason`, `LiturgicalRank`, `LiturgicalColor`, `FixedSolemnities`
 - **Data Layer**:
   - `ReadingsRepository`: Multi-tier coordinator (SwiftData cache → Evangelizo API → Douay-Rheims Bible).
+  - `PsalmResponseProvider`: Canonical Lectionary psalter response provider covering all 150 Psalms and Biblical Canticles.
+  - `BookmarkManager`: Devotional scripture bookmarks coordinator with JSON persistence.
   - `BibleDatabase`: SQLite actor querying the bundled Douay-Rheims Bible.
   - `PericoreIndex`: Maps liturgical days and calendar dates (2023–2027) to lectionary citations.
   - `SaintsDatabase`: Bundled saints database indexed by feast date.

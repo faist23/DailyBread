@@ -114,7 +114,7 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 ## Active & Upcoming TODOS
 
 ### P1 — App Store Submission & TestFlight Monitoring
-- [x] **Bump build version to 1.0.0 (Build 4)** in Xcode and upload to TestFlight.
+- [x] **Bump build version to 1.0.0 (Build 9)** in Xcode and upload to TestFlight.
 - [ ] **App Store Connect Store Listing**:
   - App Name: `DailyReadings App` (or chosen brand name).
   - Subtitle: *Catholic Daily Mass Readings*.
@@ -133,9 +133,12 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 
 ## Key Files Reference
 
-- **Audio Engine**: [`DailyReadings/Data/AudioReadingPlayer.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/AudioReadingPlayer.swift)
+- **Audio Engine & Lock Screen**: [`DailyReadings/Data/AudioReadingPlayer.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/AudioReadingPlayer.swift)
+- **Psalm Response Provider**: [`DailyReadings/Data/PsalmResponseProvider.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/PsalmResponseProvider.swift)
+- **Readings Repository & Offline Cache**: [`DailyReadings/Data/ReadingsRepository.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/ReadingsRepository.swift)
 - **Settings View**: [`DailyReadings/Views/Settings/SettingsView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Settings/SettingsView.swift)
 - **Today Readings View**: [`DailyReadings/Views/Today/TodayView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Today/TodayView.swift)
+- **Psalm View Component**: [`DailyReadings/Views/Today/PsalmView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Today/PsalmView.swift)
 - **Mini Player Bar**: [`DailyReadings/Views/Components/AudioMiniPlayerBar.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Components/AudioMiniPlayerBar.swift)
 - **Liturgical Engine**: [`DailyReadings/Engine/LiturgicalCalendar.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Engine/LiturgicalCalendar.swift)
 - **Privacy Manifest**: [`DailyReadings/PrivacyInfo.xcprivacy`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/PrivacyInfo.xcprivacy)
