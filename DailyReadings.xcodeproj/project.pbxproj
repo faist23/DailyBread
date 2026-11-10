@@ -48,6 +48,7 @@
 		BFCF61BC800A35490CB100C2 /* CachedReading.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08616990FED60478EA75579 /* CachedReading.swift */; };
 		C6B401DF31EE6BAF6AD09D1F /* LiturgicalDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C579F30F81C7EB40CF1A17E8 /* LiturgicalDay.swift */; };
 		DFE8FF898BB01811B2F357DB /* LiturgicalCelebrationBlurbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */; };
+		E6DDDF13D102409A3A70941B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */; };
 		E8963E99B418FA751A0B3D09 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADD1A0409DD5B587A454955 /* NotificationManager.swift */; };
 		E9DE4025482A3AFC27E46306 /* lectionary.json in Resources */ = {isa = PBXBuildFile; fileRef = C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */; };
 /* End PBXBuildFile section */
@@ -59,6 +60,7 @@
 		14F6F3C9CD7FBB492AD266FF /* DailyReadings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReadings.swift; sourceTree = "<group>"; };
 		1D689436930180AC7D45074E /* EvangelizioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvangelizioService.swift; sourceTree = "<group>"; };
 		23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCalendar.swift; sourceTree = "<group>"; };
+		25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReadingPlayer.swift; sourceTree = "<group>"; };
 		31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCelebrationBlurbs.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 			children = (
 				9B3DFC75B7C54A2E2F93B4DA /* Assets.xcassets */,
 				D76D00C2FDBC90D46FAA6CC0 /* DailyReadingsApp.swift */,
+				25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */,
 				77E6BE704D21AC6AADEDD68E /* Data */,
 				67DE78FA5F52C0B544029D40 /* Engine */,
 				F4D942594094526B5D325643 /* Models */,
@@ -315,6 +318,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7FBD438E98B27D1E55ADD626 /* Assets.xcassets in Resources */,
+				E6DDDF13D102409A3A70941B /* PrivacyInfo.xcprivacy in Resources */,
 				A4FC7E742966D3409C55307E /* bible_drb.sqlite in Resources */,
 				E9DE4025482A3AFC27E46306 /* lectionary.json in Resources */,
 				AD16AB051ADE2C9DE524D963 /* lectionary_dates.json in Resources */,
@@ -426,7 +430,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = DT58WA8N32;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -447,7 +451,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_UIBackgroundModes = audio;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -518,7 +521,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = DT58WA8N32;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -533,7 +536,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
-				INFOPLIST_KEY_UIBackgroundModes = audio;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
