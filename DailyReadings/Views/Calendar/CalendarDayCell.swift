@@ -71,8 +71,12 @@ public struct CalendarDayCell: View {
         return day.rank == .solemnity || day.rank == .feast || day.isHolyDayOfObligation
     }
     
+    private var isWhiteDay: Bool {
+        liturgicalDay?.color == .white
+    }
+    
     private var liturgicalColor: Color {
-        liturgicalDay?.color.swiftUIColor ?? LiturgicalColors.green
+        liturgicalDay?.color.uiAccentColor ?? LiturgicalColors.green
     }
     
     private var dayFont: Font {
@@ -96,22 +100,21 @@ public struct CalendarDayCell: View {
     }
     
     private var liturgicalDot: some View {
-        Group {
+        let dotSize: CGFloat = isMajorFeast ? 7 : 5
+        return Group {
             if isSelected {
                 Circle()
                     .fill(Color.white)
                     .frame(width: 5, height: 5)
-            } else if isMajorFeast {
-                // Larger distinctive dot or star for solemnities/feasts
-                ZStack {
-                    Circle()
-                        .fill(liturgicalColor)
-                        .frame(width: 7, height: 7)
-                }
+            } else if isWhiteDay {
+                Circle()
+                    .fill(Color.white)
+                    .overlay(Circle().stroke(LiturgicalColors.goldAccent, lineWidth: 1.2))
+                    .frame(width: dotSize, height: dotSize)
             } else {
                 Circle()
                     .fill(liturgicalColor)
-                    .frame(width: 5, height: 5)
+                    .frame(width: dotSize, height: dotSize)
             }
         }
     }
@@ -121,7 +124,7 @@ public struct CalendarDayCell: View {
             if isSelected {
                 liturgicalColor
             } else if isToday {
-                liturgicalColor.opacity(0.12)
+                liturgicalColor.opacity(0.14)
             } else {
                 Color.clear
             }

@@ -171,6 +171,8 @@ public struct CalendarView: View {
     private func selectedDaySummaryCard(for date: Date) -> some View {
         let day = viewModel.liturgicalDay(for: date)
         let color = day?.color ?? .green
+        let accentColor = color.uiAccentColor
+        let isWhite = (color == .white)
         
         return VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             HStack {
@@ -188,16 +190,23 @@ public struct CalendarView: View {
                 
                 Spacer()
                 
-                Circle()
-                    .fill(color.swiftUIColor)
-                    .frame(width: 14, height: 14)
+                if isWhite {
+                    Circle()
+                        .fill(Color.white)
+                        .overlay(Circle().stroke(LiturgicalColors.goldAccent, lineWidth: 1.5))
+                        .frame(width: 14, height: 14)
+                } else {
+                    Circle()
+                        .fill(accentColor)
+                        .frame(width: 14, height: 14)
+                }
             }
             
             HStack {
                 if let day {
                     Text("\(day.rank.displayName) • \(day.color.displayName)")
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(color.swiftUIColor)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(accentColor)
                 }
                 
                 Spacer()
@@ -214,7 +223,7 @@ public struct CalendarView: View {
                     .foregroundStyle(Color.white)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 8)
-                    .background(color.swiftUIColor)
+                    .background(accentColor)
                     .clipShape(Capsule())
                 }
                 .buttonStyle(.plain)
@@ -225,7 +234,7 @@ public struct CalendarView: View {
             backgroundColor: AppTheme.Colors.cardBackground,
             cornerRadius: AppTheme.CornerRadius.large,
             padding: AppTheme.Spacing.medium,
-            borderColor: color.swiftUIColor.opacity(0.3)
+            borderColor: accentColor.opacity(0.35)
         )
         .transition(.scale(scale: 0.98).combined(with: .opacity))
     }
@@ -233,17 +242,59 @@ public struct CalendarView: View {
     // MARK: - Liturgical Legend
     
     private var liturgicalLegendCard: some View {
-        VStack(alignment: .leading, spacing: AppTheme.Spacing.compact) {
+        VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             Text("LITURGICAL COLORS")
                 .font(.system(size: 11, weight: .bold))
                 .foregroundStyle(Color.secondary.opacity(0.8))
                 .tracking(1.0)
             
-            HStack(spacing: 12) {
-                legendItem(name: "Green", color: LiturgicalColors.green, description: "Ordinary Time")
-                legendItem(name: "Violet", color: LiturgicalColors.violet, description: "Advent/Lent")
-                legendItem(name: "White", color: LiturgicalColors.goldAccent, description: "Feasts/Solemnities")
-                legendItem(name: "Red", color: LiturgicalColors.red, description: "Martyrs/Pentecost")
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 145), spacing: 8)], spacing: 8) {
+                legendItem(
+                    name: "White / Gold",
+                    dot: AnyView(
+                        Circle()
+                            .fill(Color.white)
+                            .overlay(Circle().stroke(LiturgicalColors.goldAccent, lineWidth: 1.5))
+                            .frame(width: 10, height: 10)
+                    ),
+                    description: "Feasts & Solemnities"
+                )
+                legendItem(
+                    name: "Green",
+                    dot: AnyView(
+                        Circle()
+                            .fill(LiturgicalColors.green)
+                            .frame(width: 10, height: 10)
+                    ),
+                    description: "Ordinary Time"
+                )
+                legendItem(
+                    name: "Violet",
+                    dot: AnyView(
+                        Circle()
+                            .fill(LiturgicalColors.violet)
+                            .frame(width: 10, height: 10)
+                    ),
+                    description: "Advent & Lent"
+                )
+                legendItem(
+                    name: "Red",
+                    dot: AnyView(
+                        Circle()
+                            .fill(LiturgicalColors.red)
+                            .frame(width: 10, height: 10)
+                    ),
+                    description: "Martyrs & Pentecost"
+                )
+                legendItem(
+                    name: "Rose",
+                    dot: AnyView(
+                        Circle()
+                            .fill(LiturgicalColors.rose)
+                            .frame(width: 10, height: 10)
+                    ),
+                    description: "Gaudete & Laetare"
+                )
             }
         }
         .cardStyle(
@@ -253,14 +304,18 @@ public struct CalendarView: View {
         )
     }
     
-    private func legendItem(name: String, color: Color, description: String) -> some View {
-        HStack(spacing: 4) {
-            Circle()
-                .fill(color)
-                .frame(width: 8, height: 8)
-            Text(name)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(Color.primary.opacity(0.8))
+    private func legendItem(name: String, dot: AnyView, description: String) -> some View {
+        HStack(spacing: 6) {
+            dot
+            VStack(alignment: .leading, spacing: 1) {
+                Text(name)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.primary)
+                Text(description)
+                    .font(.system(size: 10, weight: .regular))
+                    .foregroundStyle(Color.secondary)
+            }
+            Spacer(minLength: 0)
         }
     }
     

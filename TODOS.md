@@ -53,6 +53,11 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Saint of the Day card on Today's view now defaults to expanded state with biographical blurbs and feast day notes.
 - Punctuation cleaner for audio recitation replaces hard line breaks with natural comma pauses and maintains reverent 0.48 speech rate.
 
+### 6. Liturgical Calendar Legibility & Color Consistency
+- Fixed white day selection square visibility in [`CalendarDayCell.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Calendar/CalendarDayCell.swift): White/Gold days now render with rich liturgical gold background and crisp white date text when selected. Unselected dots render as a white circle with a gold rim.
+- Fixed "View Readings >" button and feast rank text in [`CalendarView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Calendar/CalendarView.swift): Switched from raw off-white to `uiAccentColor` (warm liturgical gold), ensuring high contrast and 100% legibility.
+- Enhanced Liturgical Colors legend: Added "White / Gold" with a dual white-and-gold dot and expanded coverage to all canonical colors (White/Gold, Green, Violet, Red, Rose) in an adaptive grid that never clips.
+
 ---
 
 ## Active & Upcoming TODOS
