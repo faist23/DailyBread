@@ -23,7 +23,14 @@
   - Month-by-month calendar view with liturgical color dots and feast rankings.
   - Browse past and future daily readings with swipe gestures.
 - **Saint of the Day**:
-  - Daily saint commemorations with historical era, patronages, and biography.
+  - Daily saint commemorations with historical era, patronages, and biography (expanded view with liturgical context by default).
+- **Reverent Audio Recitation**:
+  - Continuous, sequential text-to-speech recitation of all Mass readings with proper liturgical announcements and acclamations.
+  - Background audio playback using `AVAudioSession` (`.playback` / `.spokenAudio`).
+  - Lock Screen & Control Center Now Playing integration (`MPNowPlayingInfoCenter`, `MPRemoteCommandCenter`).
+  - Floating mini-player bar for uninterrupted devotional listening.
+  - Natural, modern voice engine (Daniel British lectionary voice, Samantha, Ava, Moira, Karen) with support for Apple's high-definition Enhanced and Premium Studio neural voices.
+  - In-app Voice Selector and Pacing control in Settings with live preview auditions.
 - **Contemplative Reading Experience**:
   - New York serif typography on scripture paper tone.
   - Pinch-to-zoom and font sizing controls.

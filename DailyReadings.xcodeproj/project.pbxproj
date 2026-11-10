@@ -60,7 +60,7 @@
 		14F6F3C9CD7FBB492AD266FF /* DailyReadings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyReadings.swift; sourceTree = "<group>"; };
 		1D689436930180AC7D45074E /* EvangelizioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvangelizioService.swift; sourceTree = "<group>"; };
 		23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCalendar.swift; sourceTree = "<group>"; };
-		25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReadingPlayer.swift; sourceTree = "<group>"; };
 		31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCelebrationBlurbs.swift; sourceTree = "<group>"; };
@@ -80,7 +80,7 @@
 		A4C528D26D305DF86F50FD3B /* LiturgicalSeason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalSeason.swift; sourceTree = "<group>"; };
 		A63267A8300B10AABA379D16 /* ReadingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingsRepository.swift; sourceTree = "<group>"; };
 		A7E9189985265926497006E0 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		ABBB033C5AB974A39AE019BA /* DailyReadings.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = DailyReadings.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ABBB033C5AB974A39AE019BA /* DailyReadings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyReadings.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B08616990FED60478EA75579 /* CachedReading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedReading.swift; sourceTree = "<group>"; };
 		B3AB7EBF254A8BED5742B587 /* BibleDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleDatabase.swift; sourceTree = "<group>"; };
 		BA71552D1478FB0AFEDD6FFF /* ReadingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingDetailView.swift; sourceTree = "<group>"; };
@@ -382,6 +382,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_KEY_CFBundleDisplayName = DailyReadings;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -473,6 +474,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 3;
 				INFOPLIST_KEY_CFBundleDisplayName = DailyReadings;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
