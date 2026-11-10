@@ -335,7 +335,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
             cachedArtwork = (key: cacheKey, image: artworkImage)
         }
         
-        info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: artworkImage.size) { _ in artworkImage }
+        info[MPMediaItemPropertyArtwork] = LiturgicalArtworkGenerator.makeMediaItemArtwork(from: artworkImage)
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
@@ -702,6 +702,14 @@ public enum LiturgicalArtworkGenerator {
             desc = italicDesc
         }
         return UIFont(descriptor: desc, size: size)
+    }
+    
+    /// Creates an MPMediaItemArtwork with a non-isolated request handler.
+    /// This prevents Swift Concurrency MainActor assertion crashes when MediaPlayer queries the artwork on a background thread.
+    nonisolated public static func makeMediaItemArtwork(from image: UIImage) -> MPMediaItemArtwork {
+        MPMediaItemArtwork(boundsSize: image.size) { _ in
+            image
+        }
     }
     
     /// Generates a high-resolution, missal-styled cover artwork for the Lock Screen media player.
