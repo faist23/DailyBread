@@ -58,6 +58,11 @@ public struct LiturgicalDay: Identifiable, Hashable, Codable, Sendable, CustomSt
     /// Whether this day is a day of mandatory fasting and abstinence from meat (Ash Wednesday and Good Friday).
     public let isFastAndAbstinence: Bool
 
+    /// Indicates whether this is a non-Sunday Holy Day of Obligation (such as Christmas, Immaculate Conception, Assumption, or All Saints).
+    public var isNonSundayHolyDayOfObligation: Bool {
+        isHolyDayOfObligation && !isSunday
+    }
+
     /// Whether this day is a day of mandatory abstinence from meat (Fridays of Lent in the US).
     public let isAbstinence: Bool
 

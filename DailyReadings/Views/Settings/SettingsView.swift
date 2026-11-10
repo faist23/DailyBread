@@ -19,11 +19,13 @@ public struct SettingsView: View {
     @AppStorage("readingLineSpacing") private var readingLineSpacing: Double = 7.0
     @AppStorage("reminderEnabled") private var reminderEnabled: Bool = false
     @AppStorage("reminderTimeInterval") private var reminderTimeInterval: Double = 25200 // 7:00 AM (7 * 3600)
+    @AppStorage("holyDayAlertsEnabled") private var holyDayAlertsEnabled: Bool = true
     @AppStorage("selectedAudioVoiceId") private var selectedVoiceId: String = ""
     
     @State private var notificationManager = NotificationManager.shared
     @State private var audioPlayer = AudioReadingPlayer.shared
     @State private var readingsRepository = ReadingsRepository.shared
+    @State private var bookmarkManager = BookmarkManager.shared
     @State private var showSettingsAlert: Bool = false
     
     // MARK: - Translation Options
@@ -47,7 +49,10 @@ public struct SettingsView: View {
                 // Section 2: Translation Picker
                 translationSection
                 
-                // Section 3: Audio & Lector Voice
+                // Section 3: Devotional Bookmarks
+                bookmarksSection
+                
+                // Section 4: Audio & Lector Voice
                 audioSection
                 
                 // Section 4: Typography & Sizing
@@ -149,10 +154,30 @@ public struct SettingsView: View {
                 )
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
+            
+            Toggle("Holy Day Vigil Alerts", isOn: Binding(
+                get: { holyDayAlertsEnabled },
+                set: { newValue in
+                    holyDayAlertsEnabled = newValue
+                    Task {
+                        if newValue {
+                            let granted = await notificationManager.requestAuthorization()
+                            if granted {
+                                await notificationManager.scheduleHolyDayVigilAlerts()
+                            } else {
+                                holyDayAlertsEnabled = false
+                                showSettingsAlert = true
+                            }
+                        } else {
+                            await notificationManager.cancelHolyDayAlerts()
+                        }
+                    }
+                }
+            ))
         } header: {
-            Text("Daily Prayer Reminder")
+            Text("Prayer Reminders & Alerts")
         } footer: {
-            Text("Receive a gentle daily notification with today's liturgical feast and a reminder to pray.")
+            Text("Receive daily notifications with the feast title and vigil alerts at 7:00 PM the evening before Holy Days of Obligation.")
                 .font(.footnote)
                 .foregroundStyle(Color.secondary)
         }
@@ -237,6 +262,37 @@ public struct SettingsView: View {
             }
         }
         .padding(.vertical, 4)
+    }
+    
+    // MARK: - Devotional Bookmarks Section
+    
+    private var bookmarksSection: some View {
+        Section {
+            NavigationLink {
+                BookmarksView()
+            } label: {
+                HStack {
+                    Label {
+                        Text("Saved Scripture & Bookmarks")
+                    } icon: {
+                        Image(systemName: "bookmark.fill")
+                            .foregroundStyle(LiturgicalColors.goldAccent)
+                    }
+                    Spacer()
+                    if !bookmarkManager.bookmarks.isEmpty {
+                        Text("\(bookmarkManager.bookmarks.count)")
+                            .font(.subheadline)
+                            .foregroundStyle(Color.secondary)
+                    }
+                }
+            }
+        } header: {
+            Text("Personal Devotions")
+        } footer: {
+            Text("Access your bookmarked Mass readings and Psalms for personal prayer and meditation.")
+                .font(.footnote)
+                .foregroundStyle(Color.secondary)
+        }
     }
     
     // MARK: - Audio & Lector Section
@@ -460,6 +516,87 @@ public struct SettingsView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 8)
         }
+    }
+}
+
+// MARK: - Bookmarks & Saved Scripture View
+
+/// View displaying all bookmarked Mass readings and Psalms for personal prayer and meditation.
+public struct BookmarksView: View {
+    @State private var bookmarkManager = BookmarkManager.shared
+    @State private var selectedBookmark: SavedBookmark?
+
+    public var body: some View {
+        ZStack {
+            AppTheme.Colors.groupedBackground
+                .ignoresSafeArea()
+
+            if bookmarkManager.bookmarks.isEmpty {
+                emptyBookmarksView
+            } else {
+                List {
+                    ForEach(bookmarkManager.bookmarks) { bookmark in
+                        Button {
+                            selectedBookmark = bookmark
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack {
+                                    Text(bookmark.readingType.displayTitle)
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(LiturgicalColors.goldAccent)
+                                        .textCase(.uppercase)
+                                    Spacer()
+                                    Text(bookmark.date.formatted(.dateTime.month(.abbreviated).day().year()))
+                                        .font(.caption2)
+                                        .foregroundStyle(Color.secondary)
+                                }
+
+                                Text(bookmark.citation.displayReference)
+                                    .font(.headline)
+                                    .foregroundStyle(Color.primary)
+
+                                Text(bookmark.text.prefix(140) + (bookmark.text.count > 140 ? "..." : ""))
+                                    .font(.subheadline)
+                                    .foregroundStyle(Color.secondary)
+                                    .lineLimit(2)
+                                    .lineSpacing(3)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                    .onDelete { offsets in
+                        bookmarkManager.removeBookmark(at: offsets)
+                    }
+                }
+                .scrollContentBackground(.hidden)
+            }
+        }
+        .navigationTitle("Saved Scripture")
+        .sheet(item: $selectedBookmark) { bookmark in
+            NavigationStack {
+                ReadingDetailView(reading: bookmark.asReading)
+            }
+        }
+    }
+
+    private var emptyBookmarksView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "bookmark")
+                .font(.system(size: 48))
+                .foregroundStyle(Color.secondary.opacity(0.4))
+
+            Text("No Saved Readings Yet")
+                .font(.title3)
+                .fontWeight(.semibold)
+
+            Text("Tap the bookmark icon on any scripture reading or Psalm to save it here for prayer and meditation.")
+                .font(.subheadline)
+                .foregroundStyle(Color.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

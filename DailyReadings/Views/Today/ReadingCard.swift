@@ -24,9 +24,14 @@ public struct ReadingCard: View {
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @State private var isCollapsed: Bool = false
     @State private var audioPlayer = AudioReadingPlayer.shared
+    @State private var bookmarkManager = BookmarkManager.shared
     
     private var isSpeaking: Bool {
         audioPlayer.currentReading?.id == reading.id && (audioPlayer.isPlaying || audioPlayer.isPaused)
+    }
+    
+    private var isBookmarked: Bool {
+        bookmarkManager.isBookmarked(reading: reading)
     }
     
     // MARK: - Initialization
@@ -176,6 +181,22 @@ public struct ReadingCard: View {
             .buttonStyle(.plain)
             
             Spacer()
+            
+            Button {
+                bookmarkManager.toggleBookmark(
+                    reading: reading,
+                    date: .now,
+                    liturgicalTitle: reading.type.displayTitle
+                )
+            } label: {
+                Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(isBookmarked ? LiturgicalColors.goldAccent : Color.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isBookmarked ? "Remove bookmark" : "Bookmark this reading")
             
             if let onSelect {
                 Button(action: onSelect) {

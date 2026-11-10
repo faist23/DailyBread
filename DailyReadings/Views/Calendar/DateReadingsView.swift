@@ -65,7 +65,11 @@ public struct DateReadingsView: View {
                             audioPlayer.resume()
                         } else {
                             let title = viewModel.liturgicalDay?.title ?? formattedFullDateString(for: date)
-                            audioPlayer.start(readings: readings, liturgicalTitle: title)
+                            audioPlayer.start(
+                                readings: readings,
+                                liturgicalTitle: title,
+                                liturgicalColor: viewModel.liturgicalDay?.color
+                            )
                         }
                     } label: {
                         Image(systemName: audioPlayer.isPlaying ? "waveform" : "headphones")

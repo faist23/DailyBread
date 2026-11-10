@@ -73,6 +73,8 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     public private(set) var currentReading: Reading?
     public private(set) var activeReadings: [Reading] = []
     public private(set) var liturgicalTitle: String = ""
+    public private(set) var currentLiturgicalColor: LiturgicalColor?
+    private var cachedArtwork: (key: String, image: UIImage)?
     public var speed: PlaybackSpeed = .normal {
         didSet {
             UserDefaults.standard.set(speed.rawValue, forKey: "audioReadingSpeed")
@@ -317,6 +319,24 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
         info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         
+        // Render or fetch cached liturgical illuminated artwork for Lock Screen
+        let activeColor = currentLiturgicalColor ?? LiturgicalCalendar.shared.liturgicalDay(for: Date()).color
+        let cacheKey = "\(reading.id.uuidString)_\(activeColor.rawValue)_\(liturgicalTitle)"
+        
+        let artworkImage: UIImage
+        if let cached = cachedArtwork, cached.key == cacheKey {
+            artworkImage = cached.image
+        } else {
+            artworkImage = LiturgicalArtworkGenerator.generateArtwork(
+                reading: reading,
+                liturgicalTitle: liturgicalTitle,
+                color: activeColor
+            )
+            cachedArtwork = (key: cacheKey, image: artworkImage)
+        }
+        
+        info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: artworkImage.size) { _ in artworkImage }
+        
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
     
@@ -352,13 +372,19 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     // MARK: - Playback APIs
     
     /// Starts recitation of the provided readings.
-    public func start(readings: [Reading], liturgicalTitle: String, startIndex: Int = 0) {
+    public func start(
+        readings: [Reading],
+        liturgicalTitle: String,
+        startIndex: Int = 0,
+        liturgicalColor: LiturgicalColor? = nil
+    ) {
         guard !readings.isEmpty else { return }
         
         stop()
         
         self.activeReadings = readings
         self.liturgicalTitle = liturgicalTitle
+        self.currentLiturgicalColor = liturgicalColor ?? LiturgicalCalendar.shared.liturgicalDay(for: Date()).color
         self.currentReadingIndex = min(max(0, startIndex), readings.count - 1)
         self.currentReading = readings[self.currentReadingIndex]
         
@@ -369,18 +395,23 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     }
     
     /// Plays or resumes recitation.
-    public func play(readings: [Reading], liturgicalTitle: String) {
+    public func play(readings: [Reading], liturgicalTitle: String, liturgicalColor: LiturgicalColor? = nil) {
         if isPaused && activeReadings == readings {
             resume()
         } else {
-            start(readings: readings, liturgicalTitle: liturgicalTitle, startIndex: 0)
+            start(readings: readings, liturgicalTitle: liturgicalTitle, startIndex: 0, liturgicalColor: liturgicalColor)
         }
     }
     
     /// Starts recitation directly at a specific reading.
-    public func playSpecificReading(_ reading: Reading, in readings: [Reading], liturgicalTitle: String) {
+    public func playSpecificReading(
+        _ reading: Reading,
+        in readings: [Reading],
+        liturgicalTitle: String,
+        liturgicalColor: LiturgicalColor? = nil
+    ) {
         let index = readings.firstIndex(where: { $0.id == reading.id }) ?? 0
-        start(readings: readings, liturgicalTitle: liturgicalTitle, startIndex: index)
+        start(readings: readings, liturgicalTitle: liturgicalTitle, startIndex: index, liturgicalColor: liturgicalColor)
     }
     
     /// Pauses current speech playback.
@@ -564,6 +595,28 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         return parts.joined(separator: "\n\n")
     }
     
+    /// Phonetic pronunciations for biblical proper nouns that speech synthesizers often mispronounce.
+    private static let phoneticSubstitutions: [(pattern: String, replacement: String)] = [
+        ("\\bThessalonians\\b", "Thess-uh-lonians"),
+        ("\\bColossians\\b", "Cuh-losh-uns"),
+        ("\\bPhilemon\\b", "Figh-lee-mun"),
+        ("\\bEcclesiastes\\b", "Eccles-ee-as-tees"),
+        ("\\bDeuteronomy\\b", "Due-ter-on-uh-mee"),
+        ("\\bHabakkuk\\b", "Hab-uh-kuk"),
+        ("\\bZephaniah\\b", "Zef-uh-nigh-uh"),
+        ("\\bZechariah\\b", "Zek-uh-righ-uh"),
+        ("\\bNebuchadnezzar\\b", "Neb-yoo-kud-nez-er"),
+        ("\\bEphesians\\b", "Ee-fee-zhuns"),
+        ("\\bPhilippians\\b", "Fih-lip-ee-uns"),
+        ("\\bCorinthians\\b", "Cuh-rin-thee-uns"),
+        ("\\bGethsemane\\b", "Geth-sem-uh-nee"),
+        ("\\bGolgotha\\b", "Gol-guh-thuh"),
+        ("\\bCaiaphas\\b", "Kigh-uh-fus"),
+        ("\\bBarabbas\\b", "Buh-rab-us"),
+        ("\\bBethlehem\\b", "Beth-luh-hem"),
+        ("\\bNazareth\\b", "Naz-er-eth")
+    ]
+    
     /// Cleans verse numbering, annotations, or symbols for natural, reverent speech.
     private func cleanScriptureForSpeech(_ text: String) -> String {
         var cleaned = text
@@ -575,6 +628,10 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
             .replacingOccurrences(of: "\\n+", with: ", ", options: .regularExpression)
             .replacingOccurrences(of: "\\s{2,}", with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
+            
+        for (pattern, replacement) in Self.phoneticSubstitutions {
+            cleaned = cleaned.replacingOccurrences(of: pattern, with: replacement, options: .regularExpression)
+        }
         return cleaned
     }
     
@@ -631,5 +688,244 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
             self.isPlaying = false
             self.isPaused = false
         }
+    }
+}
+
+// MARK: - Liturgical Lock Screen Artwork Generator
+
+/// Generates illuminated, missal-inspired liturgical artwork for iOS Lock Screen & Now Playing controls.
+public enum LiturgicalArtworkGenerator {
+    
+    private static func serifFont(size: CGFloat, weight: UIFont.Weight = .regular, italic: Bool = false) -> UIFont {
+        var desc = UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor.withDesign(.serif) ?? UIFont.systemFont(ofSize: size, weight: weight).fontDescriptor
+        if italic, let italicDesc = desc.withSymbolicTraits(.traitItalic) {
+            desc = italicDesc
+        }
+        return UIFont(descriptor: desc, size: size)
+    }
+    
+    /// Generates a high-resolution, missal-styled cover artwork for the Lock Screen media player.
+    public static func generateArtwork(
+        reading: Reading?,
+        liturgicalTitle: String,
+        color: LiturgicalColor,
+        size: CGSize = CGSize(width: 600, height: 600)
+    ) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 2.0
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        
+        return renderer.image { context in
+            let cgContext = context.cgContext
+            let bounds = CGRect(origin: .zero, size: size)
+            
+            // 1. Background Gradient based on Liturgical Color
+            let (topColor, bottomColor) = gradientColors(for: color)
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let colors = [topColor.cgColor, bottomColor.cgColor] as CFArray
+            let locations: [CGFloat] = [0.0, 1.0]
+            
+            if let gradient = CGGradient(colorsSpace: colorSpace, colors: colors, locations: locations) {
+                cgContext.drawLinearGradient(
+                    gradient,
+                    start: CGPoint(x: size.width / 2, y: 0),
+                    end: CGPoint(x: size.width / 2, y: size.height),
+                    options: []
+                )
+            }
+            
+            // 2. Central Radiant Glow (subtle sacred aura)
+            let auraCenter = CGPoint(x: size.width / 2, y: 195)
+            let auraColors = [
+                UIColor(red: 235 / 255, green: 195 / 255, blue: 85 / 255, alpha: 0.18).cgColor,
+                UIColor.clear.cgColor
+            ] as CFArray
+            if let auraGradient = CGGradient(colorsSpace: colorSpace, colors: auraColors, locations: [0.0, 1.0]) {
+                cgContext.drawRadialGradient(
+                    auraGradient,
+                    startCenter: auraCenter,
+                    startRadius: 0,
+                    endCenter: auraCenter,
+                    endRadius: 160,
+                    options: []
+                )
+            }
+            
+            // 3. Illuminated Double Gold Borders
+            let goldColor = UIColor(red: 220 / 255, green: 180 / 255, blue: 75 / 255, alpha: 0.85)
+            let innerGoldColor = UIColor(red: 220 / 255, green: 180 / 255, blue: 75 / 255, alpha: 0.40)
+            
+            // Outer Border
+            let outerRect = bounds.insetBy(dx: 24, dy: 24)
+            let outerPath = UIBezierPath(roundedRect: outerRect, cornerRadius: 14)
+            outerPath.lineWidth = 1.5
+            goldColor.setStroke()
+            outerPath.stroke()
+            
+            // Inner Border
+            let innerRect = bounds.insetBy(dx: 32, dy: 32)
+            let innerPath = UIBezierPath(roundedRect: innerRect, cornerRadius: 10)
+            innerPath.lineWidth = 0.75
+            innerGoldColor.setStroke()
+            innerPath.stroke()
+            
+            // Corner Flourishes (small gold diamonds)
+            let corners = [
+                CGPoint(x: outerRect.minX + 8, y: outerRect.minY + 8),
+                CGPoint(x: outerRect.maxX - 8, y: outerRect.minY + 8),
+                CGPoint(x: outerRect.minX + 8, y: outerRect.maxY - 8),
+                CGPoint(x: outerRect.maxX - 8, y: outerRect.maxY - 8)
+            ]
+            for corner in corners {
+                drawDiamond(at: corner, size: 5, color: goldColor, in: cgContext)
+            }
+            
+            // 4. Sacred Latin Cross Emblem
+            drawLatinCross(center: auraCenter, color: goldColor, in: cgContext)
+            
+            // 5. Typography: App Header
+            let headerStyle = NSMutableParagraphStyle()
+            headerStyle.alignment = .center
+            let headerAttrs: [NSAttributedString.Key: Any] = [
+                .font: serifFont(size: 14, weight: .bold),
+                .foregroundColor: goldColor,
+                .kern: 3.5,
+                .paragraphStyle: headerStyle
+            ]
+            let headerText = "DAILY READINGS"
+            headerText.draw(in: CGRect(x: 40, y: 56, width: size.width - 80, height: 24), withAttributes: headerAttrs)
+            
+            // 6. Typography: Reading Title & Citation
+            let readingTypeStyle = NSMutableParagraphStyle()
+            readingTypeStyle.alignment = .center
+            let readingTypeAttrs: [NSAttributedString.Key: Any] = [
+                .font: serifFont(size: 21, weight: .bold),
+                .foregroundColor: UIColor.white,
+                .kern: 1.5,
+                .paragraphStyle: readingTypeStyle
+            ]
+            let typeTitle = reading?.type.displayTitle.uppercased() ?? "HOLY SCRIPTURE"
+            typeTitle.draw(in: CGRect(x: 40, y: 300, width: size.width - 80, height: 28), withAttributes: readingTypeAttrs)
+            
+            // Citation
+            let citationStyle = NSMutableParagraphStyle()
+            citationStyle.alignment = .center
+            let citationAttrs: [NSAttributedString.Key: Any] = [
+                .font: serifFont(size: 19, weight: .medium, italic: true),
+                .foregroundColor: goldColor,
+                .paragraphStyle: citationStyle
+            ]
+            let citationText = reading?.citation.displayReference ?? "Catholic Lectionary"
+            citationText.draw(in: CGRect(x: 40, y: 334, width: size.width - 80, height: 26), withAttributes: citationAttrs)
+            
+            // Decorative Divider Line
+            let dividerY: CGFloat = 378
+            let dividerPath = UIBezierPath()
+            dividerPath.move(to: CGPoint(x: 160, y: dividerY))
+            dividerPath.addLine(to: CGPoint(x: size.width - 160, y: dividerY))
+            dividerPath.lineWidth = 0.5
+            innerGoldColor.setStroke()
+            dividerPath.stroke()
+            drawDiamond(at: CGPoint(x: size.width / 2, y: dividerY), size: 4, color: goldColor, in: cgContext)
+            
+            // 7. Typography: Feast / Solemnity Title
+            let titleStyle = NSMutableParagraphStyle()
+            titleStyle.alignment = .center
+            titleStyle.lineBreakMode = .byTruncatingTail
+            let titleAttrs: [NSAttributedString.Key: Any] = [
+                .font: serifFont(size: 17, weight: .regular),
+                .foregroundColor: UIColor(white: 0.92, alpha: 1.0),
+                .paragraphStyle: titleStyle
+            ]
+            let displayTitle = liturgicalTitle.isEmpty ? "Catholic Daily Mass Readings" : liturgicalTitle
+            displayTitle.draw(in: CGRect(x: 48, y: 400, width: size.width - 96, height: 50), withAttributes: titleAttrs)
+            
+            // 8. Liturgical Season / Color Tag
+            let tagStyle = NSMutableParagraphStyle()
+            tagStyle.alignment = .center
+            let tagAttrs: [NSAttributedString.Key: Any] = [
+                .font: serifFont(size: 13, weight: .semibold),
+                .foregroundColor: UIColor(white: 0.75, alpha: 0.9),
+                .paragraphStyle: tagStyle
+            ]
+            let colorName = color.displayName
+            let tagText = "✦ Liturgical Color: \(colorName) ✦"
+            tagText.draw(in: CGRect(x: 40, y: 518, width: size.width - 80, height: 20), withAttributes: tagAttrs)
+        }
+    }
+    
+    private static func gradientColors(for color: LiturgicalColor) -> (top: UIColor, bottom: UIColor) {
+        switch color {
+        case .green:
+            return (
+                top: UIColor(red: 22 / 255, green: 74 / 255, blue: 48 / 255, alpha: 1.0),
+                bottom: UIColor(red: 10 / 255, green: 30 / 255, blue: 20 / 255, alpha: 1.0)
+            )
+        case .violet:
+            return (
+                top: UIColor(red: 68 / 255, green: 26 / 255, blue: 98 / 255, alpha: 1.0),
+                bottom: UIColor(red: 26 / 255, green: 10 / 255, blue: 42 / 255, alpha: 1.0)
+            )
+        case .red:
+            return (
+                top: UIColor(red: 128 / 255, green: 24 / 255, blue: 28 / 255, alpha: 1.0),
+                bottom: UIColor(red: 46 / 255, green: 8 / 255, blue: 14 / 255, alpha: 1.0)
+            )
+        case .rose:
+            return (
+                top: UIColor(red: 158 / 255, green: 82 / 255, blue: 108 / 255, alpha: 1.0),
+                bottom: UIColor(red: 68 / 255, green: 30 / 255, blue: 48 / 255, alpha: 1.0)
+            )
+        case .white:
+            // Solemn Midnight Charcoal & Luminous Gold
+            return (
+                top: UIColor(red: 40 / 255, green: 38 / 255, blue: 46 / 255, alpha: 1.0),
+                bottom: UIColor(red: 16 / 255, green: 15 / 255, blue: 20 / 255, alpha: 1.0)
+            )
+        case .black:
+            return (
+                top: UIColor(red: 32 / 255, green: 32 / 255, blue: 36 / 255, alpha: 1.0),
+                bottom: UIColor(red: 12 / 255, green: 12 / 255, blue: 14 / 255, alpha: 1.0)
+            )
+        }
+    }
+    
+    private static func drawLatinCross(center: CGPoint, color: UIColor, in context: CGContext) {
+        let vWidth: CGFloat = 13
+        let vHeight: CGFloat = 106
+        let hWidth: CGFloat = 66
+        let hHeight: CGFloat = 13
+        let crossbarYOffset: CGFloat = -18 // 1/3 down from top
+        
+        let verticalRect = CGRect(
+            x: center.x - vWidth / 2,
+            y: center.y - vHeight / 2,
+            width: vWidth,
+            height: vHeight
+        )
+        let horizontalRect = CGRect(
+            x: center.x - hWidth / 2,
+            y: center.y + crossbarYOffset - hHeight / 2,
+            width: hWidth,
+            height: hHeight
+        )
+        
+        color.setFill()
+        let vPath = UIBezierPath(roundedRect: verticalRect, cornerRadius: 2.5)
+        let hPath = UIBezierPath(roundedRect: horizontalRect, cornerRadius: 2.5)
+        vPath.fill()
+        hPath.fill()
+    }
+    
+    private static func drawDiamond(at center: CGPoint, size: CGFloat, color: UIColor, in context: CGContext) {
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: center.x, y: center.y - size))
+        path.addLine(to: CGPoint(x: center.x + size, y: center.y))
+        path.addLine(to: CGPoint(x: center.x, y: center.y + size))
+        path.addLine(to: CGPoint(x: center.x - size, y: center.y))
+        path.close()
+        color.setFill()
+        path.fill()
     }
 }

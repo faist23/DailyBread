@@ -913,6 +913,21 @@ public struct LiturgicalCalendar: Sendable {
         return false
     }
 
+    /// Scans upcoming days ahead and returns the next non-Sunday Holy Day of Obligation, if one occurs within `daysAhead`.
+    public func nextHolyDayOfObligation(from date: Date = .now, daysAhead: Int = 30) -> (day: LiturgicalDay, daysAway: Int)? {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: date)
+
+        for offset in 1...daysAhead {
+            guard let target = calendar.date(byAdding: .day, value: offset, to: start) else { continue }
+            let day = liturgicalDay(for: target)
+            if day.isNonSundayHolyDayOfObligation {
+                return (day, offset)
+            }
+        }
+        return nil
+    }
+
     // MARK: - Fasting and Abstinence Evaluation
 
     private static func isDayOfFastAndAbstinence(

@@ -24,6 +24,7 @@ public final class NotificationManager {
     /// Notification identifier prefix for scheduled daily reminders.
     private static let identifierPrefix = "com.ridepro.DailyReadings.reminder."
     private static let fallbackIdentifier = "com.ridepro.DailyReadings.reminder.recurring"
+    private static let holyDayIdentifierPrefix = "com.ridepro.DailyReadings.holyday."
     
     /// Current notification authorization status.
     public var authorizationStatus: UNAuthorizationStatus = .notDetermined
@@ -108,9 +109,19 @@ public final class NotificationManager {
             let liturgicalDay = LiturgicalCalendar.shared.liturgicalDay(for: targetDate)
             
             let content = UNMutableNotificationContent()
-            content.title = "DailyReadings 📖"
-            content.subtitle = liturgicalDay.title
-            content.body = "Today's Mass readings and scripture reflection are ready for your prayer."
+            if liturgicalDay.isNonSundayHolyDayOfObligation {
+                content.title = "Holy Day of Obligation 🔔"
+                content.subtitle = liturgicalDay.title
+                content.body = "Today is a Holy Day of Obligation. Daily Mass readings and scripture reflection are ready."
+            } else if liturgicalDay.isSunday {
+                content.title = "Sunday Mass Readings 📖"
+                content.subtitle = liturgicalDay.title
+                content.body = "Today's Sunday Mass readings and psalm reflection are ready for your prayer."
+            } else {
+                content.title = "DailyReadings 📖"
+                content.subtitle = liturgicalDay.title
+                content.body = "Today's Mass readings and scripture reflection are ready for your prayer."
+            }
             content.sound = .default
             
             let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
@@ -144,6 +155,70 @@ public final class NotificationManager {
         )
         
         try? await center.add(recurringRequest)
+        
+        // 3. Schedule Holy Day Vigil Alerts if enabled
+        let holyDayAlertsEnabled = UserDefaults.standard.bool(forKey: "holyDayAlertsEnabled")
+        if holyDayAlertsEnabled {
+            await scheduleHolyDayVigilAlerts()
+        }
+    }
+    
+    /// Schedules evening vigil alerts (at 7:00 PM the night before) for any Holy Days of Obligation in the next 30 days.
+    public func scheduleHolyDayVigilAlerts() async {
+        if authorizationStatus == .notDetermined {
+            let granted = await requestAuthorization()
+            guard granted else { return }
+        } else {
+            await checkAuthorization()
+            guard isAuthorized else { return }
+        }
+        
+        let center = UNUserNotificationCenter.current()
+        await cancelHolyDayAlerts()
+        
+        let calendar = Calendar.current
+        let now = Date.now
+        
+        for offset in 1...30 {
+            guard let targetDate = calendar.date(byAdding: .day, value: offset, to: now) else { continue }
+            let day = LiturgicalCalendar.shared.liturgicalDay(for: targetDate)
+            
+            if day.isNonSundayHolyDayOfObligation {
+                // Schedule for the evening before at 7:00 PM (19:00)
+                guard let vigilDate = calendar.date(byAdding: .day, value: -1, to: targetDate) else { continue }
+                var vigilComponents = calendar.dateComponents([.year, .month, .day], from: vigilDate)
+                vigilComponents.hour = 19
+                vigilComponents.minute = 0
+                vigilComponents.second = 0
+                
+                guard let fireDate = calendar.date(from: vigilComponents), fireDate > now else { continue }
+                
+                let content = UNMutableNotificationContent()
+                content.title = "Tomorrow is a Holy Day of Obligation 🔔"
+                content.subtitle = day.title
+                content.body = "Catholics are obliged to assist at Mass for this solemn feast. Remember to plan for Mass."
+                content.sound = .default
+                
+                let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
+                let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+                let request = UNNotificationRequest(
+                    identifier: "\(Self.holyDayIdentifierPrefix)\(day.id)",
+                    content: content,
+                    trigger: trigger
+                )
+                try? await center.add(request)
+            }
+        }
+    }
+    
+    /// Cancels scheduled Holy Day vigil reminders.
+    public func cancelHolyDayAlerts() async {
+        let center = UNUserNotificationCenter.current()
+        let pending = await center.pendingNotificationRequests()
+        let toRemove = pending
+            .map(\.identifier)
+            .filter { $0.hasPrefix(Self.holyDayIdentifierPrefix) }
+        center.removePendingNotificationRequests(withIdentifiers: toRemove)
     }
     
     /// Cancels all pending DailyReadings reminders.
@@ -152,7 +227,7 @@ public final class NotificationManager {
         let pending = await center.pendingNotificationRequests()
         let toRemove = pending
             .map(\.identifier)
-            .filter { $0.hasPrefix(Self.identifierPrefix) || $0 == Self.fallbackIdentifier }
+            .filter { $0.hasPrefix(Self.identifierPrefix) || $0 == Self.fallbackIdentifier || $0.hasPrefix(Self.holyDayIdentifierPrefix) }
         
         center.removePendingNotificationRequests(withIdentifiers: toRemove)
     }

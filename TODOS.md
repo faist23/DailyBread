@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
 **Last Updated:** 2026-11-10  
-**Current Version:** 1.0.0 (Build 2)  
+**Current Version:** 1.0.0 (Build 4)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
@@ -73,37 +73,44 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Added an **Offline Availability** status card and manual trigger in [`SettingsView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Settings/SettingsView.swift) displaying the exact count of locally cached days (e.g., *"30 of 30 days stored"*), a progress bar during download, and a *"Download / Refresh"* button.
 - Wired automatic background prefetch checks in [`TodayViewModel.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/ViewModels/TodayViewModel.swift) when NAB is selected.
 
+### 9. Dynamic Liturgical Lock Screen Artwork & Biblical Pronunciation Dictionary (`AudioReadingPlayer`)
+- Built `LiturgicalArtworkGenerator`: dynamically renders high-resolution (600x600, 2x) illuminated missal cover artwork for `MPMediaItemPropertyArtwork`.
+- Features canonical background gradients matching the liturgical season (Emerald, Royal Violet, Crimson, Gaudete Rose, Midnight Charcoal with Gold Radiance), double gold borders with diamond corner flourishes, a radiant Latin Cross emblem, tracked typography, scripture citations, and feast titles.
+- Integrated with `MPNowPlayingInfoCenter` on iOS Lock Screen, Control Center, Dynamic Island, Apple Watch, and CarPlay with memory-efficient per-reading caching.
+- Added phonetic pronunciation dictionary in `AudioReadingPlayer.cleanScriptureForSpeech` for commonly mispronounced biblical names (*Thessalonians, Colossians, Philemon, Ecclesiastes, Deuteronomy, Habakkuk, Zephaniah, Zechariah, Nebuchadnezzar, Ephesians, Philippians, Corinthians, Gethsemane, Golgotha, Caiaphas, Barabbas*).
+
+### 10. Holy Days of Obligation Vigil Alerts & Prominent Banners (`LiturgicalCalendar`, `NotificationManager`, `TodayView`, `SettingsView`)
+- Added Canon Law and USCCB abrogation rule evaluation for non-Sunday Holy Days of Obligation (Christmas, Immaculate Conception, Mary Mother of God, Assumption, All Saints).
+- Added `nextHolyDayOfObligation(from:daysAhead:)` to scan upcoming obligations.
+- Added automated evening vigil notifications at 7:00 PM the night before any non-Sunday Holy Day of Obligation, with a dedicated toggle in Settings under *Prayer Reminders & Alerts*.
+- Added prominent liturgical gold banners on Today's view:
+  - Day-of Banner: *"Catholics are obliged to assist at Mass today."*
+  - Vigil Banner: *"Vigil of [Feast Title] • Tomorrow is a Holy Day of Obligation."*
+
+### 11. Devotional Scripture Bookmarks (`BookmarkManager`, `ReadingCard`, `PsalmView`, `ReadingDetailView`, `BookmarksView`)
+- Implemented `BookmarkManager` with persistence for bookmarked scripture passages, citations, liturgical titles, and dates.
+- Added one-tap bookmark icon buttons with active gold highlight on `ReadingCard`, `PsalmView`, and `ReadingDetailView`.
+- Built `BookmarksView` accessible from Settings under *Personal Devotions*, complete with scripture preview, swipe-to-delete, and full-screen reading presentation.
+
 ---
 
 ## Active & Upcoming TODOS
 
-### P1 — App Store Submission & TestFlight Release
-- [ ] **Upload Build 2 to App Store Connect**:
-  - In Xcode: select **Any iOS Device (arm64)** → **Product → Archive** → **Distribute App** → **Upload**.
-  - Monitor TestFlight processing tab (build should appear within 5–15 minutes now that `PrivacyInfo.xcprivacy` and Build 2 are in place).
+### P1 — App Store Submission & TestFlight Monitoring
+- [x] **Bump build version to 1.0.0 (Build 4)** in Xcode and upload to TestFlight.
 - [ ] **App Store Connect Store Listing**:
   - App Name: `DailyReadings App` (or chosen brand name).
   - Subtitle: *Catholic Daily Mass Readings*.
   - Promotional text, description, support URL, and privacy policy URL.
   - App Store Screenshots (6.7" iPhone 16 Pro Max, 6.5" iPhone 11 Pro Max).
 
-### P2 — Audio & Player Polish
-- [ ] **Now Playing Album Artwork**:
-  - Render dynamic liturgical lock screen artwork (`MPMediaItemPropertyArtwork`) displaying the day's liturgical color banner or cross icon.
-- [ ] **Scripture Pronunciation Exceptions Dictionary**:
-  - Add custom phonetic substitution for difficult biblical proper nouns (e.g. *Thessalonians*, *Nebuchadnezzar*, *Colossians*, *Habakkuk*) using regex replace or `AVSpeechSynthesizer` IPASymbol strings if desired.
-- [ ] **Audio Interruption Testing**:
-  - Verify seamless pause/resume behavior when receiving phone calls or Siri interruptions on physical devices.
-
-### P3 — Content & Liturgical Calendar Enhancements
+### P2 — Audio & Devotional Enhancements
+- [ ] **Custom Phonetic Dictionary Expansion**:
+  - Add user-requested biblical name pronunciations if any specific verses require tuning.
 - [ ] **Expanded Saint of the Day Database**:
   - Expand biographies and patronage details for lesser-known regional memorials and optional feasts.
-- [ ] **Holy Days of Obligation Push Alerts**:
-  - Optional notification the evening before a Holy Day of Obligation (e.g., Immaculate Conception, Christmas, All Saints).
-- [ ] **Favorite Readings / Bookmarking**:
-  - Allow users to bookmark beloved Gospel or Psalm passages to a devotional collection.
 - [ ] **Scripture Card Image Sharing**:
-  - Generate elegant scripture quote images with New York serif styling for sharing via iOS Share Sheet.
+  - Generate shareable illuminated card images directly from bookmarked passages for Instagram / Messages / Camera Roll.
 
 ---
 

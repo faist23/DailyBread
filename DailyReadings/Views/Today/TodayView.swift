@@ -69,7 +69,11 @@ public struct TodayView: View {
                             audioPlayer.resume()
                         } else {
                             let title = viewModel.liturgicalDay?.title ?? "Today's Mass Readings"
-                            audioPlayer.start(readings: readings, liturgicalTitle: title)
+                            audioPlayer.start(
+                                readings: readings,
+                                liturgicalTitle: title,
+                                liturgicalColor: viewModel.liturgicalDay?.color
+                            )
                         }
                     } label: {
                         HStack(spacing: 5) {
@@ -113,6 +117,13 @@ public struct TodayView: View {
             VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
                 // Liturgical Header & Date
                 liturgicalHeaderSection
+                
+                // Holy Day of Obligation Alert Banner
+                if let day = viewModel.liturgicalDay, day.isNonSundayHolyDayOfObligation {
+                    holyDayBanner(for: day)
+                } else if let tomorrowHolyDay = LiturgicalCalendar.shared.nextHolyDayOfObligation(from: viewModel.currentDate, daysAhead: 1), tomorrowHolyDay.daysAway == 1 {
+                    vigilBanner(for: tomorrowHolyDay.day)
+                }
                 
                 // Error Alert if any
                 if let error = viewModel.error {
@@ -191,6 +202,60 @@ public struct TodayView: View {
         .padding(.vertical, 6)
         .background(day.color.badgeBackground)
         .clipShape(Capsule())
+    }
+    
+    // MARK: - Holy Day of Obligation Banners
+    
+    private func holyDayBanner(for day: LiturgicalDay) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "bell.badge.fill")
+                .font(.title3)
+                .foregroundStyle(LiturgicalColors.goldAccent)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Holy Day of Obligation")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.primary)
+                Text("Catholics are obliged to assist at Mass today.")
+                    .font(.caption)
+                    .foregroundStyle(Color.secondary)
+            }
+            Spacer()
+        }
+        .padding(AppTheme.Spacing.medium)
+        .background(LiturgicalColors.goldAccent.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium))
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(LiturgicalColors.goldAccent.opacity(0.35), lineWidth: 1)
+        )
+    }
+    
+    private func vigilBanner(for holyDay: LiturgicalDay) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "bell.fill")
+                .font(.subheadline)
+                .foregroundStyle(LiturgicalColors.goldAccent)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Vigil of \(holyDay.title)")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(Color.primary)
+                Text("Tomorrow is a Holy Day of Obligation. Remember to plan for Mass.")
+                    .font(.caption)
+                    .foregroundStyle(Color.secondary)
+            }
+            Spacer()
+        }
+        .padding(AppTheme.Spacing.compact)
+        .background(AppTheme.Colors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium))
+        .overlay(
+            RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium)
+                .stroke(AppTheme.Colors.cardBorder, lineWidth: 1)
+        )
     }
     
     // MARK: - Readings List

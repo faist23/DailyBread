@@ -24,6 +24,7 @@ public struct ReadingDetailView: View {
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 20.0
     @AppStorage("bibleTranslation") private var selectedTranslation: String = "Douay-Rheims"
     
+    @State private var bookmarkManager = BookmarkManager.shared
     @State private var currentMagnification: CGFloat = 1.0
     
     // MARK: - Initialization
@@ -109,14 +110,30 @@ public struct ReadingDetailView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                ShareLink(
-                    item: "\(reading.type.displayTitle)\n\(reading.citation.reference)\n\n\(reading.text)",
-                    subject: Text(reading.citation.reference),
-                    message: Text("DailyReadings Scripture Reading")
-                ) {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(liturgicalColor.swiftUIColor)
+                HStack(spacing: 16) {
+                    Button {
+                        bookmarkManager.toggleBookmark(
+                            reading: reading,
+                            date: .now,
+                            liturgicalTitle: reading.type.displayTitle
+                        )
+                    } label: {
+                        let isBookmarked = bookmarkManager.isBookmarked(reading: reading)
+                        Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(isBookmarked ? LiturgicalColors.goldAccent : liturgicalColor.swiftUIColor)
+                    }
+                    .accessibilityLabel(bookmarkManager.isBookmarked(reading: reading) ? "Remove bookmark" : "Bookmark this reading")
+
+                    ShareLink(
+                        item: "\(reading.type.displayTitle)\n\(reading.citation.reference)\n\n\(reading.text)",
+                        subject: Text(reading.citation.reference),
+                        message: Text("DailyReadings Scripture Reading")
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(liturgicalColor.swiftUIColor)
+                    }
                 }
             }
         }

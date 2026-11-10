@@ -373,3 +373,115 @@ public final class ReadingsRepository: @unchecked Sendable {
         try? context.save()
     }
 }
+
+// MARK: - Devotional Scripture Bookmarks
+
+/// Represents a saved/bookmarked scripture passage for personal meditation and devotional reflection.
+public struct SavedBookmark: Codable, Identifiable, Hashable, Sendable {
+    public let id: UUID
+    public let readingId: UUID
+    public let date: Date
+    public let liturgicalTitle: String
+    public let readingType: ReadingType
+    public let citation: ReadingCitation
+    public let text: String
+    public let response: String?
+    public let translation: String
+    public let savedAt: Date
+
+    public init(
+        id: UUID = UUID(),
+        reading: Reading,
+        date: Date = .now,
+        liturgicalTitle: String,
+        savedAt: Date = .now
+    ) {
+        self.id = id
+        self.readingId = reading.id
+        self.date = date
+        self.liturgicalTitle = liturgicalTitle
+        self.readingType = reading.type
+        self.citation = reading.citation
+        self.text = reading.text
+        self.response = reading.response
+        self.translation = reading.translation
+        self.savedAt = savedAt
+    }
+
+    /// Converts this saved bookmark back into a Reading model for reader presentation or audio playback.
+    public var asReading: Reading {
+        Reading(
+            id: readingId,
+            type: readingType,
+            citation: citation,
+            text: text,
+            response: response,
+            translation: translation
+        )
+    }
+}
+
+/// Service managing devotional bookmarks of beloved Catholic Mass readings and Psalms.
+@Observable
+@MainActor
+public final class BookmarkManager {
+    public static let shared = BookmarkManager()
+
+    private static let storageKey = "savedScriptureBookmarks"
+
+    public private(set) var bookmarks: [SavedBookmark] = []
+
+    public init() {
+        loadBookmarks()
+    }
+
+    public func isBookmarked(reading: Reading) -> Bool {
+        bookmarks.contains { $0.readingId == reading.id || ($0.citation == reading.citation && $0.readingType == reading.type) }
+    }
+
+    public func toggleBookmark(reading: Reading, date: Date = .now, liturgicalTitle: String = "") {
+        if let index = bookmarks.firstIndex(where: { $0.readingId == reading.id || ($0.citation == reading.citation && $0.readingType == reading.type) }) {
+            bookmarks.remove(at: index)
+        } else {
+            let newBookmark = SavedBookmark(
+                reading: reading,
+                date: date,
+                liturgicalTitle: liturgicalTitle.isEmpty ? reading.type.displayTitle : liturgicalTitle
+            )
+            bookmarks.insert(newBookmark, at: 0)
+        }
+        saveBookmarks()
+    }
+
+    public func removeBookmark(at offsets: IndexSet) {
+        bookmarks.remove(atOffsets: offsets)
+        saveBookmarks()
+    }
+
+    public func removeBookmark(id: UUID) {
+        bookmarks.removeAll { $0.id == id }
+        saveBookmarks()
+    }
+
+    private func loadBookmarks() {
+        guard let data = UserDefaults.standard.data(forKey: Self.storageKey) else { return }
+        do {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            self.bookmarks = try decoder.decode([SavedBookmark].self, from: data)
+        } catch {
+            print("Failed to load bookmarks: \(error)")
+        }
+    }
+
+    private func saveBookmarks() {
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(bookmarks)
+            UserDefaults.standard.set(data, forKey: Self.storageKey)
+        } catch {
+            print("Failed to save bookmarks: \(error)")
+        }
+    }
+}

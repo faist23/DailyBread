@@ -23,9 +23,14 @@ public struct PsalmView: View {
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @State private var isCollapsed: Bool = false
     @State private var audioPlayer = AudioReadingPlayer.shared
+    @State private var bookmarkManager = BookmarkManager.shared
     
     private var isSpeaking: Bool {
         audioPlayer.currentReading?.id == reading.id && (audioPlayer.isPlaying || audioPlayer.isPaused)
+    }
+    
+    private var isBookmarked: Bool {
+        bookmarkManager.isBookmarked(reading: reading)
     }
     
     // MARK: - Initialization
@@ -203,6 +208,22 @@ public struct PsalmView: View {
             .buttonStyle(.plain)
             
             Spacer()
+            
+            Button {
+                bookmarkManager.toggleBookmark(
+                    reading: reading,
+                    date: .now,
+                    liturgicalTitle: reading.type.displayTitle
+                )
+            } label: {
+                Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(isBookmarked ? LiturgicalColors.goldAccent : Color.secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 6)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isBookmarked ? "Remove bookmark" : "Bookmark this psalm")
             
             Button(action: action) {
                 HStack(spacing: 6) {
