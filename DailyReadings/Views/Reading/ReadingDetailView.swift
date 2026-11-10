@@ -59,14 +59,45 @@ public struct ReadingDetailView: View {
                             psalmResponseBanner(response: response)
                         }
                         
-                        // Full Scripture Text with Generous Leading
-                        Text(reading.text.trimmingCharacters(in: .whitespacesAndNewlines))
-                            .scriptureBodyStyle(
-                                fontSize: CGFloat(scriptureFontSize) * currentMagnification,
-                                lineSpacing: 9
-                            )
-                            .textSelection(.enabled)
-                            .fixedSize(horizontal: false, vertical: true)
+                        if reading.type == .responsorialPsalm {
+                            let stanzas = reading.text.components(separatedBy: "\n\n")
+                                .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+                            
+                            VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
+                                ForEach(Array(stanzas.enumerated()), id: \.offset) { index, stanza in
+                                    VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
+                                        Text(stanza.trimmingCharacters(in: .whitespacesAndNewlines))
+                                            .scriptureBodyStyle(
+                                                fontSize: CGFloat(scriptureFontSize) * currentMagnification,
+                                                lineSpacing: 9
+                                            )
+                                            .textSelection(.enabled)
+                                        
+                                        if let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
+                                            HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.xxsmall) {
+                                                Text("℟.")
+                                                    .font(.system(size: CGFloat(scriptureFontSize) * currentMagnification * 0.85, weight: .bold, design: .serif))
+                                                    .foregroundStyle(AppTheme.Colors.missalRed)
+                                                
+                                                Text(response)
+                                                    .font(.system(size: CGFloat(scriptureFontSize) * currentMagnification * 0.85, weight: .regular, design: .serif).italic())
+                                                    .foregroundStyle(Color.secondary)
+                                            }
+                                            .padding(.top, 4)
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // Full Scripture Text with Generous Leading
+                            Text(reading.text.trimmingCharacters(in: .whitespacesAndNewlines))
+                                .scriptureBodyStyle(
+                                    fontSize: CGFloat(scriptureFontSize) * currentMagnification,
+                                    lineSpacing: 9
+                                )
+                                .textSelection(.enabled)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                         
                         // Traditional Missal Rubric Footer
                         missalRubricFooter

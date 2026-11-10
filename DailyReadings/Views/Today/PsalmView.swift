@@ -164,9 +164,9 @@ public struct PsalmView: View {
                     Text(stanza.trimmingCharacters(in: .whitespacesAndNewlines))
                         .scriptureBodyStyle(fontSize: CGFloat(scriptureFontSize), lineSpacing: 6)
                     
-                    // Gentle repetition cue between stanzas
-                    if index < stanzas.count - 1, let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
-                        HStack(spacing: AppTheme.Spacing.xxsmall) {
+                    // Missal response refrain after each stanza (including the final stanza)
+                    if let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
+                        HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.xxsmall) {
                             Text("℟.")
                                 .font(.system(size: 13, weight: .bold, design: .serif))
                                 .foregroundStyle(AppTheme.Colors.missalRed)

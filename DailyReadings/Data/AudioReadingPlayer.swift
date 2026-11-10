@@ -572,12 +572,28 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
             
         case .responsorialPsalm:
             parts.append("Responsorial Psalm. From \(reading.citation.displayReference).")
-            if let response = reading.response, !response.isEmpty {
+            let response = (reading.response?.isEmpty == false ? reading.response : nil)
+                ?? reading.effectivePsalmResponse
+            if let response, !response.isEmpty {
                 parts.append("Response: \(cleanScriptureForSpeech(response)).")
             }
-            parts.append(cleanScriptureForSpeech(reading.text))
-            if let response = reading.response, !response.isEmpty {
-                parts.append("Response: \(cleanScriptureForSpeech(response)).")
+            
+            let stanzas = reading.text.components(separatedBy: "\n\n")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+            
+            if stanzas.count > 1 {
+                for stanza in stanzas {
+                    parts.append(cleanScriptureForSpeech(stanza))
+                    if let response, !response.isEmpty {
+                        parts.append("Response: \(cleanScriptureForSpeech(response)).")
+                    }
+                }
+            } else {
+                parts.append(cleanScriptureForSpeech(reading.text))
+                if let response, !response.isEmpty {
+                    parts.append("Response: \(cleanScriptureForSpeech(response)).")
+                }
             }
             
         case .gospel:
