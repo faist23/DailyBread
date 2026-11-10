@@ -57,7 +57,7 @@ public struct ReadingCard: View {
             if !isCollapsed {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                     // Responsorial Psalm Antiphon Highlight
-                    if reading.type == .responsorialPsalm, let response = reading.psalmResponse ?? reading.response {
+                    if reading.type == .responsorialPsalm, let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
                         psalmResponseHighlight(response: response)
                     }
                     

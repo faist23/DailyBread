@@ -141,18 +141,22 @@ public final class ReadingsRepository: @unchecked Sendable {
         let lectionaryEntries = pericoreIndex.entries(for: liturgicalDay)
         
         let verifiedReadings = onlineReadings.readings.map { reading -> Reading in
-            if reading.citation.book.trimmingCharacters(in: .whitespaces).isEmpty,
-               let match = lectionaryEntries.first(where: { $0.type == reading.type }) {
-                return Reading(
-                    id: reading.id,
-                    type: reading.type,
-                    citation: match.citation,
-                    text: reading.text,
-                    response: reading.response,
-                    translation: "NAB"
-                )
-            }
-            return reading
+            let match = lectionaryEntries.first(where: { $0.type == reading.type })
+            let citation = reading.citation.book.trimmingCharacters(in: .whitespaces).isEmpty && match != nil
+                ? match!.citation
+                : reading.citation
+            let response = (reading.response?.isEmpty == false ? reading.response : nil)
+                ?? match?.response
+                ?? (reading.type == .responsorialPsalm ? PsalmResponseProvider.response(for: citation, text: reading.text) : nil)
+            
+            return Reading(
+                id: reading.id,
+                type: reading.type,
+                citation: citation,
+                text: reading.text,
+                response: response,
+                translation: "NAB"
+            )
         }
         
         let finalDailyReadings = DailyReadings(

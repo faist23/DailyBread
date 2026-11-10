@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
 **Last Updated:** 2026-11-10  
-**Current Version:** 1.0.0 (Build 7)  
+**Current Version:** 1.0.0 (Build 8)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
@@ -102,6 +102,11 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Standardized `AVAudioSession` configuration with `options: []` for uninterrupted spoken word recitation.
 - Added `UIApplication.shared.beginReceivingRemoteControlEvents()` to ensure lock screen and headphone play/pause/skip commands route reliably to the app.
 - Added `UIBackgroundTaskIdentifier` safeguard during inter-utterance transitions in `speechSynthesizer(_:didFinish:)` so iOS will not suspend the process when advancing across readings while the device is locked.
+
+### 14. Responsorial Psalm Antiphon Banner & Stanza Cues Restoration (`PsalmResponseProvider`, `Reading`, `PsalmView`)
+- Built `PsalmResponseProvider` providing canonical Roman Catholic Lectionary responses across all 150 Psalms, biblical canticles (Exodus 15, 1 Sam 2, Daniel 3, Luke 1, etc.), and pericope overrides.
+- Added `effectivePsalmResponse` to `Reading` so any Responsorial Psalm reading (whether freshly fetched from NAB Evangelizo API, loaded from Douay-Rheims SQLite, or restored from SwiftData cache) is guaranteed to provide the liturgical antiphon.
+- Updated `PsalmView`, `ReadingCard`, `ReadingDetailView`, and `AudioReadingPlayer` to render the prominent missal-styled response banner with red "℟." rubric lettering and repeated response cues between stanzas, and recite the antiphon during audio playback.
 
 ---
 

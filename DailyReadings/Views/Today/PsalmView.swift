@@ -55,7 +55,7 @@ public struct PsalmView: View {
             if !isCollapsed {
                 VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                     // Prominent Antiphon / Response Box
-                    if let response = reading.psalmResponse ?? reading.response {
+                    if let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
                         responseBanner(response: response)
                     }
                     
@@ -165,7 +165,7 @@ public struct PsalmView: View {
                         .scriptureBodyStyle(fontSize: CGFloat(scriptureFontSize), lineSpacing: 6)
                     
                     // Gentle repetition cue between stanzas
-                    if index < stanzas.count - 1, let response = reading.psalmResponse ?? reading.response {
+                    if index < stanzas.count - 1, let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
                         HStack(spacing: AppTheme.Spacing.xxsmall) {
                             Text("℟.")
                                 .font(.system(size: 13, weight: .bold, design: .serif))
@@ -174,7 +174,6 @@ public struct PsalmView: View {
                             Text(response)
                                 .font(.system(size: 13, weight: .regular, design: .serif).italic())
                                 .foregroundStyle(Color.secondary)
-                                .lineLimit(1)
                         }
                         .padding(.top, 4)
                     }

@@ -97,7 +97,8 @@ public final class PericoreIndex: Sendable {
                     if let list = readingsDict[pKey] {
                         for item in list {
                             if let citStr = item["citation"] as? String, let cit = ReadingCitation.parse(from: citStr) {
-                                entries.append(LectionaryEntry(type: .responsorialPsalm, citation: cit))
+                                let resp = (item["response"] as? String) ?? PsalmResponseProvider.response(for: cit)
+                                entries.append(LectionaryEntry(type: .responsorialPsalm, citation: cit, response: resp))
                             }
                         }
                     }

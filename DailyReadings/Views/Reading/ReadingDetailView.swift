@@ -55,7 +55,7 @@ public struct ReadingDetailView: View {
                             .padding(.top, AppTheme.Spacing.medium)
                         
                         // Responsorial Psalm Antiphon Banner
-                        if reading.type == .responsorialPsalm, let response = reading.psalmResponse ?? reading.response {
+                        if reading.type == .responsorialPsalm, let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
                             psalmResponseBanner(response: response)
                         }
                         

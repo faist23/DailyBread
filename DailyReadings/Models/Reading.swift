@@ -146,6 +146,17 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
     public let response: String?
     /// Alias for response.
     public var psalmResponse: String? { response }
+    
+    /// For psalms: the canonical congregational refrain/response, guaranteed to return
+    /// the liturgical antiphon even if the remote API payload omitted it.
+    public var effectivePsalmResponse: String? {
+        guard type == .responsorialPsalm else { return nil }
+        if let response, !response.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return response.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return PsalmResponseProvider.response(for: citation, text: text)
+    }
+    
     /// Translation identifier: "DRB" (Douay-Rheims) or "NAB" (New American Bible).
     public let translation: String
     
@@ -198,7 +209,12 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
         self.citation = citation
         self.text = Self.sanitizeText(text, type: type)
         let rawResp = response ?? psalmResponse
-        self.response = rawResp != nil ? Self.sanitizeText(rawResp!, type: type) : nil
+        let cleanedResp = rawResp != nil ? Self.sanitizeText(rawResp!, type: type) : nil
+        if type == .responsorialPsalm && (cleanedResp == nil || cleanedResp?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == true) {
+            self.response = PsalmResponseProvider.response(for: citation, text: text)
+        } else {
+            self.response = cleanedResp
+        }
         self.translation = translation
     }
     
@@ -215,8 +231,11 @@ public struct Reading: Identifiable, Codable, Hashable, Sendable {
         self.citation = try container.decode(ReadingCitation.self, forKey: .citation)
         let rawText = try container.decode(String.self, forKey: .text)
         self.text = Self.sanitizeText(rawText, type: self.type)
-        if let rawResp = try container.decodeIfPresent(String.self, forKey: .response) {
+        if let rawResp = try container.decodeIfPresent(String.self, forKey: .response),
+           !rawResp.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             self.response = Self.sanitizeText(rawResp, type: self.type)
+        } else if self.type == .responsorialPsalm {
+            self.response = PsalmResponseProvider.response(for: self.citation, text: self.text)
         } else {
             self.response = nil
         }
