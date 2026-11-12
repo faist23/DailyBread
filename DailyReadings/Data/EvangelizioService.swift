@@ -129,6 +129,7 @@ public actor EvangelizioService {
 
             let rawResponse = (item["response"] as? String)
                 ?? (item["verse_response"] as? String)
+                ?? (item["chorus"] as? String)
                 ?? (item["refrain"] as? String)
             let cleanResponse = rawResponse != nil ? cleanHTML(rawResponse!, type: type) : nil
 
@@ -146,11 +147,16 @@ public actor EvangelizioService {
             throw EvangelizioError.noReadingsFound
         }
 
+        let copyrightNotice = (root["copyright"] as? String)
+            ?? (jsonObject["copyright"] as? String)
+            ?? "Scripture texts in this work are taken from the New American Bible, revised edition © Confraternity of Christian Doctrine, Washington, D.C. and are used by permission of the copyright owner."
+
         return DailyReadings(
             date: date,
             liturgicalTitle: liturgicalTitle,
             readings: parsedReadings,
-            translation: "NAB"
+            translation: "NAB",
+            copyright: copyrightNotice
         )
     }
 
@@ -180,16 +186,19 @@ public actor EvangelizioService {
             return .responsorialPsalm
         } else if index == total - 1 {
             return .gospel
-        } else if total >= 4 && index == total - 2 {
-            return .gospelAcclamation
         } else if total >= 4 && index == 2 {
             return .secondReading
+        } else if total >= 5 && index == total - 2 {
+            return .gospelAcclamation
         }
 
         return .firstReading
     }
 
     private func extractLiturgicalTitle(from dict: [String: Any]) -> String? {
+        if let title = dict["liturgic_title"] as? String, !title.isEmpty {
+            return cleanHTML(title)
+        }
         if let title = dict["liturgical_title"] as? String, !title.isEmpty {
             return cleanHTML(title)
         }

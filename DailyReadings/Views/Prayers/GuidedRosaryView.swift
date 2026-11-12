@@ -376,9 +376,11 @@ public struct GuidedRosaryView: View {
     
     private func speak(text: String) {
         stopSpeaking()
+        AudioReadingPlayer.shared.stop()
+        AudioReadingPlayer.shared.activateAudioSession()
         
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+        utterance.voice = AudioReadingPlayer.shared.selectNaturalVoice() ?? AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.88
         utterance.pitchMultiplier = 1.0
         

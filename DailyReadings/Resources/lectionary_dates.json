@@ -103,7 +103,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 JN 2:29—3:6",
+            "citation": "1 JN 2:29\u20143:6",
             "sources": [
               "USCCB"
             ]
@@ -799,7 +799,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Heb 7:25—8:6",
+            "citation": "Heb 7:25\u20148:6",
             "sources": [
               "USCCB"
             ]
@@ -920,7 +920,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Is 8:23—9:3",
+            "citation": "Is 8:23\u20149:3",
             "sources": [
               "USCCB"
             ]
@@ -1607,7 +1607,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Gn 1:20—2:4a",
+            "citation": "Gn 1:20\u20142:4a",
             "sources": [
               "USCCB"
             ]
@@ -2075,7 +2075,7 @@
         ],
         "gospel": [
           {
-            "citation": "Mk 8:34—9:1",
+            "citation": "Mk 8:34\u20149:1",
             "sources": [
               "USCCB"
             ]
@@ -2290,7 +2290,7 @@
         ],
         "second_reading": [
           {
-            "citation": "2 Cor 5:20—6:2",
+            "citation": "2 Cor 5:20\u20146:2",
             "sources": [
               "USCCB"
             ]
@@ -2657,6 +2657,14 @@
         "gospel": [
           {
             "citation": "Mt 7:7-12",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "first_reading": [
+          {
+            "citation": "Deuteronomy 30:15-20",
             "sources": [
               "USCCB"
             ]
@@ -4023,7 +4031,7 @@
             ]
           },
           {
-            "citation": "Mt 26:14—27:66",
+            "citation": "Mt 26:14\u201427:66",
             "sources": [
               "USCCB"
             ]
@@ -4190,12 +4198,12 @@
       "date": "2023-04-07",
       "url": "https://bible.usccb.org/bible/readings/040723.cfm",
       "lectionary_number": 40,
-      "feast": "Good Friday of the Lord’s Passion",
+      "feast": "Good Friday of the Lord\u2019s Passion",
       "mass": "default",
       "readings": {
         "first_reading": [
           {
-            "citation": "Is 52:13—53:12",
+            "citation": "Is 52:13\u201453:12",
             "sources": [
               "USCCB"
             ]
@@ -4227,7 +4235,7 @@
         ],
         "gospel": [
           {
-            "citation": "Jn 18:1—19:42",
+            "citation": "Jn 18:1\u201419:42",
             "sources": [
               "USCCB"
             ]
@@ -4246,7 +4254,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Gn 1:1—2:2",
+            "citation": "Gn 1:1\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -4296,7 +4304,7 @@
         ],
         "third_reading": [
           {
-            "citation": "Ex 14:15—15:1",
+            "citation": "Ex 14:15\u201415:1",
             "sources": [
               "USCCB"
             ]
@@ -6041,7 +6049,7 @@
         ],
         "gospel": [
           {
-            "citation": "Jn 15:26—16:4a",
+            "citation": "Jn 15:26\u201416:4a",
             "sources": [
               "USCCB"
             ]
@@ -6103,7 +6111,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 17:15, 22—18:1",
+            "citation": "Acts 17:15, 22\u201418:1",
             "sources": [
               "USCCB"
             ]
@@ -7232,7 +7240,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "2 Cor 3:15—4:1, 3-6",
+            "citation": "2 Cor 3:15\u20144:1, 3-6",
             "sources": [
               "USCCB"
             ]
@@ -7401,7 +7409,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 9:36—10:8",
+            "citation": "Matthew 9:36\u201410:8",
             "sources": [
               "USCCB"
             ]
@@ -8612,7 +8620,7 @@
         ],
         "gospel": [
           {
-            "citation": "Mt 10:34—11:1",
+            "citation": "Mt 10:34\u201411:1",
             "sources": [
               "USCCB"
             ]
@@ -8760,7 +8768,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Ex 11:10—12:14",
+            "citation": "Ex 11:10\u201412:14",
             "sources": [
               "USCCB"
             ]
@@ -9607,7 +9615,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Nm 13:1-2, 25—14:1, 26a-29a, 34-35",
+            "citation": "Nm 13:1-2, 25\u201414:1, 26a-29a, 34-35",
             "sources": [
               "USCCB"
             ]
@@ -9950,7 +9958,7 @@
         ],
         "gospel": [
           {
-            "citation": "Mt 18:21—19:1",
+            "citation": "Mt 18:21\u201419:1",
             "sources": [
               "USCCB"
             ]
@@ -11037,7 +11045,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Col1:24—2:3",
+            "citation": "Col1:24\u20142:3",
             "sources": [
               "USCCB"
             ]
@@ -11293,7 +11301,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Sir 27:30—28:7",
+            "citation": "Sir 27:30\u201428:7",
             "sources": [
               "USCCB"
             ]
@@ -11425,7 +11433,7 @@
       "date": "2023-09-20",
       "url": "https://bible.usccb.org/bible/readings/092023.cfm",
       "lectionary_number": 445,
-      "feast": "Memorial of Saints Andrew Kim Tae-gŏn, Priest, and Paul Chŏng Ha-sang, and Companions, Martyrs",
+      "feast": "Memorial of Saints Andrew Kim Tae-g\u014fn, Priest, and Paul Ch\u014fng Ha-sang, and Companions, Martyrs",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -12275,7 +12283,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Jon 1:1—2:1-2, 11",
+            "citation": "Jon 1:1\u20142:1-2, 11",
             "sources": [
               "USCCB"
             ]
@@ -12714,7 +12722,7 @@
       "date": "2023-10-19",
       "url": "https://bible.usccb.org/bible/readings/101923.cfm",
       "lectionary_number": 470,
-      "feast": "Memorial of Saints John de Brébeuf and Isaac Jogues, Priests, and Companions, Martyrs",
+      "feast": "Memorial of Saints John de Br\u00e9beuf and Isaac Jogues, Priests, and Companions, Martyrs",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -13891,7 +13899,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Wis 2:23—3:9",
+            "citation": "Wis 2:23\u20143:9",
             "sources": [
               "USCCB"
             ]
@@ -13977,7 +13985,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Wis 7:22b—8:1",
+            "citation": "Wis 7:22b\u20148:1",
             "sources": [
               "USCCB"
             ]
@@ -14979,7 +14987,7 @@
         ],
         "gospel": [
           {
-            "citation": "Mt 9:35—10:1, 5a, 6-8",
+            "citation": "Mt 9:35\u201410:1, 5a, 6-8",
             "sources": [
               "USCCB"
             ]
@@ -15705,7 +15713,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 Jn 1:5—2:2",
+            "citation": "1 Jn 1:5\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -15963,7 +15971,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 JN 2:29—3:6",
+            "citation": "1 JN 2:29\u20143:6",
             "sources": [
               "USCCB"
             ]
@@ -17152,7 +17160,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "2 Sm18:9-10, 14b, 24-25a, 30—19:3",
+            "citation": "2 Sm18:9-10, 14b, 24-25a, 30\u201419:3",
             "sources": [
               "USCCB"
             ]
@@ -17706,7 +17714,7 @@
         ],
         "second_reading": [
           {
-            "citation": "1 Cor 10:31—11:1",
+            "citation": "1 Cor 10:31\u201411:1",
             "sources": [
               "USCCB"
             ]
@@ -17843,7 +17851,7 @@
         ],
         "second_reading": [
           {
-            "citation": "2 Cor 5:20—6:2",
+            "citation": "2 Cor 5:20\u20146:2",
             "sources": [
               "USCCB"
             ]
@@ -19424,7 +19432,7 @@
       "date": "2024-03-24",
       "url": "https://bible.usccb.org/bible/readings/032424.cfm",
       "lectionary_number": 37,
-      "feast": "Palm Sunday of the Lord’s Passion",
+      "feast": "Palm Sunday of the Lord\u2019s Passion",
       "mass": "default",
       "readings": {
         "gospel": [
@@ -19435,7 +19443,7 @@
             ]
           },
           {
-            "citation": "Mk 14:1—15:47",
+            "citation": "Mk 14:1\u201415:47",
             "sources": [
               "USCCB"
             ]
@@ -19596,12 +19604,12 @@
       "date": "2024-03-29",
       "url": "https://bible.usccb.org/bible/readings/032924.cfm",
       "lectionary_number": 40,
-      "feast": "Good Friday of the Lord’s Passion",
+      "feast": "Good Friday of the Lord\u2019s Passion",
       "mass": "default",
       "readings": {
         "first_reading": [
           {
-            "citation": "Is 52:13—53:12",
+            "citation": "Is 52:13\u201453:12",
             "sources": [
               "USCCB"
             ]
@@ -19633,7 +19641,7 @@
         ],
         "gospel": [
           {
-            "citation": "Jn 18:1—19:42",
+            "citation": "Jn 18:1\u201419:42",
             "sources": [
               "USCCB"
             ]
@@ -19652,7 +19660,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Gn 1:1—2:2",
+            "citation": "Gn 1:1\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -19702,7 +19710,7 @@
         ],
         "third_reading": [
           {
-            "citation": "Ex 14:15—15:1",
+            "citation": "Ex 14:15\u201415:1",
             "sources": [
               "USCCB"
             ]
@@ -20541,7 +20549,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 7:51—8:1a",
+            "citation": "Acts 7:51\u20148:1a",
             "sources": [
               "USCCB"
             ]
@@ -20850,7 +20858,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 12:24—13:5a",
+            "citation": "Acts 12:24\u201413:5a",
             "sources": [
               "USCCB"
             ]
@@ -21406,7 +21414,7 @@
         ],
         "gospel": [
           {
-            "citation": "Jn 15:26—16:4a",
+            "citation": "Jn 15:26\u201416:4a",
             "sources": [
               "USCCB"
             ]
@@ -21468,7 +21476,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 17:15, 22—18:1",
+            "citation": "Acts 17:15, 22\u201418:1",
             "sources": [
               "USCCB"
             ]
@@ -22422,6 +22430,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "Jude 17, 20b-25",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -22769,7 +22785,7 @@
         ],
         "second_reading": [
           {
-            "citation": "2 Cor 4:13—5:1",
+            "citation": "2 Cor 4:13\u20145:1",
             "sources": [
               "USCCB"
             ]
@@ -25513,7 +25529,7 @@
         ],
         "second_reading": [
           {
-            "citation": "Eph 4:30—5:2",
+            "citation": "Eph 4:30\u20145:2",
             "sources": [
               "USCCB"
             ]
@@ -25591,7 +25607,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Ez 2:8—3:4",
+            "citation": "Ez 2:8\u20143:4",
             "sources": [
               "USCCB"
             ]
@@ -27233,7 +27249,7 @@
       "date": "2024-09-20",
       "url": "https://bible.usccb.org/bible/readings/092024.cfm",
       "lectionary_number": 447,
-      "feast": "Memorial of Saints Andrew Kim Tae-gŏn, Priest, and Paul Chŏng Ha-sang, and Companions, Martyrs",
+      "feast": "Memorial of Saints Andrew Kim Tae-g\u014fn, Priest, and Paul Ch\u014fng Ha-sang, and Companions, Martyrs",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -27332,7 +27348,7 @@
         ],
         "second_reading": [
           {
-            "citation": "Jas 3:16—4:3",
+            "citation": "Jas 3:16\u20144:3",
             "sources": [
               "USCCB"
             ]
@@ -27582,7 +27598,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "ECCL 11:9—12:8",
+            "citation": "ECCL 11:9\u201412:8",
             "sources": [
               "USCCB"
             ]
@@ -27714,7 +27730,7 @@
       "date": "2024-10-01",
       "url": "https://bible.usccb.org/bible/readings/100124.cfm",
       "lectionary_number": 456,
-      "feast": "Memorial of Saint Thérèse of the Child Jesus, virgin and doctor of the Church",
+      "feast": "Memorial of Saint Th\u00e9r\u00e8se of the Child Jesus, virgin and doctor of the Church",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -28294,7 +28310,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "GAL 4:22-24, 26-27, 31—5:1",
+            "citation": "GAL 4:22-24, 26-27, 31\u20145:1",
             "sources": [
               "USCCB"
             ]
@@ -28504,7 +28520,7 @@
       "date": "2024-10-19",
       "url": "https://bible.usccb.org/bible/readings/101924.cfm",
       "lectionary_number": 472,
-      "feast": "Memorial of Saints John de Brébeuf and Isaac Jogues, Priests, and Companions, Martyrs",
+      "feast": "Memorial of Saints John de Br\u00e9beuf and Isaac Jogues, Priests, and Companions, Martyrs",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -29401,7 +29417,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "PHIL 3:17—4:1",
+            "citation": "PHIL 3:17\u20144:1",
             "sources": [
               "USCCB"
             ]
@@ -29696,6 +29712,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "Philemon 7-20",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -29731,6 +29755,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "2 John 4-9",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -29762,6 +29794,14 @@
         "gospel": [
           {
             "citation": "LK 18:1-8",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "first_reading": [
+          {
+            "citation": "3 John 5-8",
             "sources": [
               "USCCB"
             ]
@@ -30279,7 +30319,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "RV 20:1-4, 11—21:2",
+            "citation": "RV 20:1-4, 11\u201421:2",
             "sources": [
               "USCCB"
             ]
@@ -30381,7 +30421,7 @@
         ],
         "second_reading": [
           {
-            "citation": "1 Thes 3:12—4:2",
+            "citation": "1 Thes 3:12\u20144:2",
             "sources": [
               "USCCB"
             ]
@@ -30631,7 +30671,7 @@
         ],
         "gospel": [
           {
-            "citation": "Mt 9:35—10:1, 5a, 6-8",
+            "citation": "Mt 9:35\u201410:1, 5a, 6-8",
             "sources": [
               "USCCB"
             ]
@@ -31443,7 +31483,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 Jn 1:5—2:2",
+            "citation": "1 Jn 1:5\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -31701,7 +31741,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 2:29—3:6",
+            "citation": "1 John 2:29\u20143:6",
             "sources": [
               "USCCB"
             ]
@@ -31838,7 +31878,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 3:22—4:6",
+            "citation": "1 John 3:22\u20144:6",
             "sources": [
               "USCCB"
             ]
@@ -31967,7 +32007,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 4:19—5:4",
+            "citation": "1 John 4:19\u20145:4",
             "sources": [
               "USCCB"
             ]
@@ -32585,7 +32625,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Hebrews 7:25—8:6",
+            "citation": "Hebrews 7:25\u20148:6",
             "sources": [
               "USCCB"
             ]
@@ -33430,7 +33470,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Genesis 1:20—2:4a",
+            "citation": "Genesis 1:20\u20142:4a",
             "sources": [
               "USCCB"
             ]
@@ -33892,7 +33932,7 @@
         ],
         "gospel": [
           {
-            "citation": "Mark 8:34—9:1",
+            "citation": "Mark 8:34\u20149:1",
             "sources": [
               "USCCB"
             ]
@@ -34416,7 +34456,7 @@
         ],
         "second_reading": [
           {
-            "citation": "2 Corinthians 5:20—6:2",
+            "citation": "2 Corinthians 5:20\u20146:2",
             "sources": [
               "USCCB"
             ]
@@ -34781,6 +34821,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "Deuteronomy 30:15-20",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -34897,7 +34945,7 @@
         ],
         "second_reading": [
           {
-            "citation": "Philippians 3:17—4:1",
+            "citation": "Philippians 3:17\u20144:1",
             "sources": [
               "USCCB"
             ]
@@ -36038,7 +36086,7 @@
             ]
           },
           {
-            "citation": "Luke 22:14—23:56",
+            "citation": "Luke 22:14\u201423:56",
             "sources": [
               "USCCB"
             ]
@@ -36201,7 +36249,7 @@
     },
     {
       "lectionary_number": 39,
-      "feast": "Holy Thursday -Evening Mass of the Lord’s Supper",
+      "feast": "Holy Thursday -Evening Mass of the Lord\u2019s Supper",
       "readings": {},
       "url": "https://bible.usccb.org/bible/readings/041725-Supper.cfm",
       "date": "2025-04-17",
@@ -36213,12 +36261,12 @@
       "date": "2025-04-18",
       "url": "https://bible.usccb.org/bible/readings/041825.cfm",
       "lectionary_number": 40,
-      "feast": "Good Friday of the Lord’s Passion",
+      "feast": "Good Friday of the Lord\u2019s Passion",
       "mass": "default",
       "readings": {
         "first_reading": [
           {
-            "citation": "Isaiah 52:13—53:12",
+            "citation": "Isaiah 52:13\u201453:12",
             "sources": [
               "USCCB"
             ]
@@ -36250,7 +36298,7 @@
         ],
         "gospel": [
           {
-            "citation": "John 18:1—19:42",
+            "citation": "John 18:1\u201419:42",
             "sources": [
               "USCCB"
             ]
@@ -36269,7 +36317,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Genesis 1:1—2:2",
+            "citation": "Genesis 1:1\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -36319,7 +36367,7 @@
         ],
         "third_reading": [
           {
-            "citation": "Exodus 14:15—15:1",
+            "citation": "Exodus 14:15\u201415:1",
             "sources": [
               "USCCB"
             ]
@@ -37162,7 +37210,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 7:51—8:1a",
+            "citation": "Acts 7:51\u20148:1a",
             "sources": [
               "USCCB"
             ]
@@ -38070,7 +38118,7 @@
         ],
         "gospel": [
           {
-            "citation": "John 15:26—16:4a",
+            "citation": "John 15:26\u201416:4a",
             "sources": [
               "USCCB"
             ]
@@ -38132,7 +38180,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 17:15, 22—18:1",
+            "citation": "Acts 17:15, 22\u201418:1",
             "sources": [
               "USCCB"
             ]
@@ -40108,7 +40156,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 10:34—11:1",
+            "citation": "Matthew 10:34\u201411:1",
             "sources": [
               "USCCB"
             ]
@@ -40256,7 +40304,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Exodus 11:10—12:14",
+            "citation": "Exodus 11:10\u201412:14",
             "sources": [
               "USCCB"
             ]
@@ -41481,7 +41529,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 18:21—19:1",
+            "citation": "Matthew 18:21\u201419:1",
             "sources": [
               "USCCB"
             ]
@@ -43044,7 +43092,7 @@
       "date": "2025-09-20",
       "url": "https://bible.usccb.org/bible/readings/092025.cfm",
       "lectionary_number": 448,
-      "feast": "Memorial of Saint Andrew Kim Tae-gŏn, Priest, and Paul Chŏng Ha-sang, and Companions, Martyrs",
+      "feast": "Memorial of Saint Andrew Kim Tae-g\u014fn, Priest, and Paul Ch\u014fng Ha-sang, and Companions, Martyrs",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -43545,7 +43593,7 @@
       "date": "2025-10-01",
       "url": "https://bible.usccb.org/bible/readings/100125.cfm",
       "lectionary_number": 457,
-      "feast": "Memorial of Saint Thérèse of the Child Jesus, Virgin and Doctor of the Church",
+      "feast": "Memorial of Saint Th\u00e9r\u00e8se of the Child Jesus, Virgin and Doctor of the Church",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -43773,7 +43821,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Jonah 1:1—2:1-2, 11",
+            "citation": "Jonah 1:1\u20142:1-2, 11",
             "sources": [
               "USCCB"
             ]
@@ -45367,7 +45415,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Wisdom 2:23—3:9",
+            "citation": "Wisdom 2:23\u20143:9",
             "sources": [
               "USCCB"
             ]
@@ -45453,7 +45501,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Wisdom 7:22b—8:1",
+            "citation": "Wisdom 7:22b\u20148:1",
             "sources": [
               "USCCB"
             ]
@@ -45937,7 +45985,7 @@
       "date": "2025-11-24",
       "url": "https://bible.usccb.org/bible/readings/112425.cfm",
       "lectionary_number": 503,
-      "feast": "Memorial of Saint Andrew Dŭng-Lạc, Priest, and Companions, Martyrs",
+      "feast": "Memorial of Saint Andrew D\u016dng-L\u1ea1c, Priest, and Companions, Martyrs",
       "mass": "default",
       "readings": {
         "first_reading": [
@@ -46441,7 +46489,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 9:35—10:1, 5a, 6-8",
+            "citation": "Matthew 9:35\u201410:1, 5a, 6-8",
             "sources": [
               "USCCB"
             ]
@@ -47556,7 +47604,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 2:29—3:6",
+            "citation": "1 John 2:29\u20143:6",
             "sources": [
               "USCCB"
             ]
@@ -47650,7 +47698,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 3:22—4:6",
+            "citation": "1 John 3:22\u20144:6",
             "sources": [
               "USCCB"
             ]
@@ -47779,7 +47827,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 4:19—5:4",
+            "citation": "1 John 4:19\u20145:4",
             "sources": [
               "USCCB"
             ]
@@ -48526,7 +48574,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Isaiah 8:23—9:3",
+            "citation": "Isaiah 8:23\u20149:3",
             "sources": [
               "USCCB"
             ]
@@ -48935,7 +48983,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "2 Samuel 18:9-10, 14b, 24-25a, 30—19:3",
+            "citation": "2 Samuel 18:9-10, 14b, 24-25a, 30\u201419:3",
             "sources": [
               "USCCB"
             ]
@@ -49618,7 +49666,7 @@
         ],
         "second_reading": [
           {
-            "citation": "2 Corinthians 5:20—6:2",
+            "citation": "2 Corinthians 5:20\u20146:2",
             "sources": [
               "USCCB"
             ]
@@ -49979,6 +50027,14 @@
         "gospel": [
           {
             "citation": "Matthew 7:7-12",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "first_reading": [
+          {
+            "citation": "Deuteronomy 30:15-20",
             "sources": [
               "USCCB"
             ]
@@ -51331,7 +51387,7 @@
             ]
           },
           {
-            "citation": "Matthew 26:14—27:66",
+            "citation": "Matthew 26:14\u201427:66",
             "sources": [
               "USCCB"
             ]
@@ -51599,7 +51655,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Isaiah 52:13—53:12",
+            "citation": "Isaiah 52:13\u201453:12",
             "sources": [
               "USCCB"
             ]
@@ -51631,7 +51687,7 @@
         ],
         "gospel": [
           {
-            "citation": "John 18:1—19:42",
+            "citation": "John 18:1\u201419:42",
             "sources": [
               "USCCB"
             ]
@@ -51650,7 +51706,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Genesis 1:1—2:2",
+            "citation": "Genesis 1:1\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -51704,7 +51760,7 @@
         ],
         "third_reading": [
           {
-            "citation": "Exodus 14:15—15:1",
+            "citation": "Exodus 14:15\u201415:1",
             "sources": [
               "USCCB",
               "CatholicGallery"
@@ -52583,7 +52639,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 7:51—8:1a",
+            "citation": "Acts 7:51\u20148:1a",
             "sources": [
               "USCCB"
             ]
@@ -52935,7 +52991,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 12:24—13:5a",
+            "citation": "Acts 12:24\u201413:5a",
             "sources": [
               "USCCB"
             ]
@@ -53491,7 +53547,7 @@
         ],
         "gospel": [
           {
-            "citation": "John 15:26—16:4a",
+            "citation": "John 15:26\u201416:4a",
             "sources": [
               "USCCB"
             ]
@@ -53553,7 +53609,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 17:15, 22—18:1",
+            "citation": "Acts 17:15, 22\u201418:1",
             "sources": [
               "USCCB"
             ]
@@ -54492,6 +54548,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "Jude 17, 20b-25",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -55164,7 +55228,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 9:36—10:8",
+            "citation": "Matthew 9:36\u201410:8",
             "sources": [
               "USCCB"
             ]
@@ -57683,7 +57747,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Habakkuk 1:12—2:4",
+            "citation": "Habakkuk 1:12\u20142:4",
             "sources": [
               "USCCB"
             ]
@@ -57930,7 +57994,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 18:21—19:1",
+            "citation": "Matthew 18:21\u201419:1",
             "sources": [
               "USCCB"
             ]
@@ -59256,7 +59320,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Sirach 27:30—28:7",
+            "citation": "Sirach 27:30\u201428:7",
             "sources": [
               "USCCB"
             ]
@@ -59815,7 +59879,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Ecclesiastes 11:9—12:8",
+            "citation": "Ecclesiastes 11:9\u201412:8",
             "sources": [
               "USCCB"
             ]
@@ -60545,7 +60609,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Galatians 4:22-24, 26-27, 31—5:1",
+            "citation": "Galatians 4:22-24, 26-27, 31\u20145:1",
             "sources": [
               "USCCB"
             ]
@@ -61163,7 +61227,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Ephesians 4:32—5:8",
+            "citation": "Ephesians 4:32\u20145:8",
             "sources": [
               "USCCB"
             ]
@@ -61650,7 +61714,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Philippians 3:17—4:1",
+            "citation": "Philippians 3:17\u20144:1",
             "sources": [
               "USCCB"
             ]
@@ -61951,6 +62015,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "Philemon 7-20",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -61986,6 +62058,14 @@
               "USCCB"
             ]
           }
+        ],
+        "first_reading": [
+          {
+            "citation": "2 John 4-9",
+            "sources": [
+              "USCCB"
+            ]
+          }
         ]
       }
     }
@@ -62017,6 +62097,14 @@
         "gospel": [
           {
             "citation": "Luke 18:1-8",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "first_reading": [
+          {
+            "citation": "3 John 5-8",
             "sources": [
               "USCCB"
             ]
@@ -62527,7 +62615,48 @@
       "lectionary_number": 506,
       "feast": "",
       "mass": "Ord",
-      "readings": {}
+      "readings": {
+        "first_reading": [
+          {
+            "citation": "Sirach 50:22-24",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "responsorial_psalm": [
+          {
+            "citation": "Psalm 145:2-3, 4-5, 6-7, 8-9, 10-11",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "second_reading": [
+          {
+            "citation": "1 Corinthians 1:3-9",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "alleluia": [
+          {
+            "citation": "1 Thessalonians 5:18",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "gospel": [
+          {
+            "citation": "Luke 17:11-19",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ]
+      }
     },
     {
       "date": "2026-11-26",
@@ -62548,7 +62677,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Revelation 20:1-4, 11—21:2",
+            "citation": "Revelation 20:1-4, 11\u201421:2",
             "sources": [
               "USCCB"
             ]
@@ -62900,7 +63029,7 @@
         ],
         "gospel": [
           {
-            "citation": "Matthew 9:35—10:1, 5a, 6-8",
+            "citation": "Matthew 9:35\u201410:1, 5a, 6-8",
             "sources": [
               "USCCB"
             ]
@@ -63806,7 +63935,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 1:5—2:2",
+            "citation": "1 John 1:5\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -64107,7 +64236,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 3:22—4:6",
+            "citation": "1 John 3:22\u20144:6",
             "sources": [
               "USCCB"
             ]
@@ -64236,7 +64365,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "1 John 4:19—5:4",
+            "citation": "1 John 4:19\u20145:4",
             "sources": [
               "USCCB"
             ]
@@ -64854,7 +64983,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Hebrews 7:25—8:6",
+            "citation": "Hebrews 7:25\u20148:6",
             "sources": [
               "USCCB"
             ]
@@ -65695,7 +65824,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Genesis 1:20—2:4a",
+            "citation": "Genesis 1:20\u20142:4a",
             "sources": [
               "USCCB"
             ]
@@ -65754,7 +65883,7 @@
         ],
         "second_reading": [
           {
-            "citation": "2 Corinthians 5:20—6:2",
+            "citation": "2 Corinthians 5:20\u20146:2",
             "sources": [
               "USCCB"
             ]
@@ -66115,6 +66244,14 @@
         "gospel": [
           {
             "citation": "Matthew 7:7-12",
+            "sources": [
+              "USCCB"
+            ]
+          }
+        ],
+        "first_reading": [
+          {
+            "citation": "Deuteronomy 30:15-20",
             "sources": [
               "USCCB"
             ]
@@ -67808,12 +67945,12 @@
       "date": "2027-03-26",
       "url": "https://bible.usccb.org/bible/readings/032627.cfm",
       "lectionary_number": 40,
-      "feast": "Good Friday of the Lord’s Passion",
+      "feast": "Good Friday of the Lord\u2019s Passion",
       "mass": "default",
       "readings": {
         "first_reading": [
           {
-            "citation": "Isaiah 52:13—53:12",
+            "citation": "Isaiah 52:13\u201453:12",
             "sources": [
               "USCCB"
             ]
@@ -67845,7 +67982,7 @@
         ],
         "gospel": [
           {
-            "citation": "John 18:1—19:42",
+            "citation": "John 18:1\u201419:42",
             "sources": [
               "USCCB"
             ]
@@ -67864,7 +68001,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Genesis 1:1—2:2",
+            "citation": "Genesis 1:1\u20142:2",
             "sources": [
               "USCCB"
             ]
@@ -67914,7 +68051,7 @@
         ],
         "third_reading": [
           {
-            "citation": "Exodus 14:15—15:1",
+            "citation": "Exodus 14:15\u201415:1",
             "sources": [
               "USCCB"
             ]
@@ -68771,7 +68908,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 7:51—8:1a",
+            "citation": "Acts 7:51\u20148:1a",
             "sources": [
               "USCCB"
             ]
@@ -69123,7 +69260,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 12:24—13:5a",
+            "citation": "Acts 12:24\u201413:5a",
             "sources": [
               "USCCB"
             ]
@@ -69741,7 +69878,7 @@
       "readings": {
         "first_reading": [
           {
-            "citation": "Acts 17:15, 22—18:1",
+            "citation": "Acts 17:15, 22\u201418:1",
             "sources": [
               "USCCB"
             ]
@@ -71988,7 +72125,7 @@
       "date": "2027-09-20",
       "url": "https://bible.usccb.org/bible/readings/092027.cfm",
       "lectionary_number": 449,
-      "feast": "Memorial of Saints Andrew Kim Tae-gŏn, Priest, and Paul Chŏng Ha-sang, and Companions, Martyrs",
+      "feast": "Memorial of Saints Andrew Kim Tae-g\u014fn, Priest, and Paul Ch\u014fng Ha-sang, and Companions, Martyrs",
       "mass": "default",
       "readings": {}
     }
@@ -72098,7 +72235,7 @@
       "date": "2027-10-01",
       "url": "https://bible.usccb.org/bible/readings/100127.cfm",
       "lectionary_number": 459,
-      "feast": "Memorial of Saint Thérèse of the Child Jesus, Virgin and Doctor of the Church",
+      "feast": "Memorial of Saint Th\u00e9r\u00e8se of the Child Jesus, Virgin and Doctor of the Church",
       "mass": "default",
       "readings": {}
     }
@@ -72278,7 +72415,7 @@
       "date": "2027-10-19",
       "url": "https://bible.usccb.org/bible/readings/101927.cfm",
       "lectionary_number": 474,
-      "feast": "Memorial of Saints John de Brébeuf and Isaac Jogues, Priests, and Companions, Martyrs",
+      "feast": "Memorial of Saints John de Br\u00e9beuf and Isaac Jogues, Priests, and Companions, Martyrs",
       "mass": "default",
       "readings": {}
     }

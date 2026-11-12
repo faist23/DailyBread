@@ -91,9 +91,8 @@ public final class TodayViewModel {
         }
         
         do {
-            // Brief smooth transition for UI animation
-            try await Task.sleep(nanoseconds: 150_000_000)
-            
+            if Task.isCancelled { return }
+
             // 1. Compute liturgical day from the real engine
             let day = liturgicalCalendar.liturgicalDay(for: date)
             self.liturgicalDay = day
@@ -104,6 +103,7 @@ public final class TodayViewModel {
             
             if let repository = readingsRepository {
                 let readings = await repository.getReadings(for: date, preferredTranslation: targetTranslation)
+                if Task.isCancelled { return }
                 self.dailyReadings = readings
                 if targetTranslation == "NAB" {
                     repository.triggerBackgroundPrefetchIfNeeded()
@@ -112,13 +112,18 @@ public final class TodayViewModel {
                 // Fallback: create a minimal ReadingsRepository without SwiftData cache
                 let fallbackRepo = ReadingsRepository()
                 let readings = await fallbackRepo.getReadings(for: date, preferredTranslation: targetTranslation)
+                if Task.isCancelled { return }
                 self.dailyReadings = readings
             }
             
             // 3. Look up the Saint of the Day or Solemnity/Feast blurb
             self.saint = saintsDatabase.saint(for: date, liturgicalDay: self.liturgicalDay)
             
+        } catch is CancellationError {
+            // Silently ignore task cancellation caused by view lifecycle or tab switching
+            return
         } catch {
+            guard !Task.isCancelled else { return }
             self.error = "Unable to load readings: \(error.localizedDescription)"
         }
     }

@@ -61,7 +61,7 @@ public struct VoiceOption: Identifiable, Hashable, Sendable {
 /// - Seamless sequential advancement across all Mass readings with contemplative delays.
 @MainActor
 @Observable
-public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
+public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthesizerDelegate {
     
     public static let shared = AudioReadingPlayer()
     
@@ -102,8 +102,20 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         "jester", "superstar"
     ]
     
-    /// Filtered list of natural English voices available on the user's device.
+    @ObservationIgnored
+    private var _cachedAvailableVoices: [VoiceOption]?
+    
+    /// Filtered list of natural English voices available on the user's device (computed once and cached).
     public var availableVoices: [VoiceOption] {
+        if let cached = _cachedAvailableVoices {
+            return cached
+        }
+        let voices = Self.loadAvailableVoices()
+        _cachedAvailableVoices = voices
+        return voices
+    }
+
+    public static func loadAvailableVoices() -> [VoiceOption] {
         let all = AVSpeechSynthesisVoice.speechVoices()
         let english = all.filter { v in
             v.language.starts(with: "en") &&
@@ -213,6 +225,8 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     private var isInterrupted: Bool = false
     private var isAuditioning: Bool = false
     private var remoteCommandsConfigured: Bool = false
+    private var currentReadingUtterance: AVSpeechUtterance?
+    private var currentAuditionUtterance: AVSpeechUtterance?
     
     // MARK: - Initialization
     
@@ -247,7 +261,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
     
-    private func activateAudioSession() {
+    public func activateAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
@@ -255,7 +269,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
     
-    private func deactivateAudioSession() {
+    public func deactivateAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         } catch {
@@ -348,25 +362,45 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            guard let self,
-                  let userInfo = notification.userInfo,
-                  let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-                  let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
-            
-            switch type {
-            case .began:
-                self.isInterrupted = true
-                self.pause()
-            case .ended:
-                self.isInterrupted = false
-                if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
-                    let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-                    if options.contains(.shouldResume) {
-                        self.resume()
+            let typeValue = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt
+            let optionValue = notification.userInfo?[AVAudioSessionInterruptionOptionKey] as? UInt
+            Task { @MainActor [weak self] in
+                guard let self,
+                      let typeValue,
+                      let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+                
+                switch type {
+                case .began:
+                    self.isInterrupted = true
+                    self.pause()
+                case .ended:
+                    self.isInterrupted = false
+                    if let optionValue {
+                        let options = AVAudioSession.InterruptionOptions(rawValue: optionValue)
+                        if options.contains(.shouldResume) {
+                            self.resume()
+                        }
                     }
+                @unknown default:
+                    break
                 }
-            @unknown default:
-                break
+            }
+        }
+        
+        NotificationCenter.default.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            let reasonValue = notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt
+            Task { @MainActor [weak self] in
+                guard let self,
+                      let reasonValue,
+                      let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else { return }
+                
+                if reason == .oldDeviceUnavailable {
+                    self.pause()
+                }
             }
         }
     }
@@ -382,7 +416,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     ) {
         guard !readings.isEmpty else { return }
         
-        stop()
+        stop(deactivateSession: false)
         
         self.activeReadings = readings
         self.liturgicalTitle = liturgicalTitle
@@ -428,6 +462,7 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     /// Resumes speech playback.
     public func resume() {
         guard isPaused else { return }
+        activateAudioSession()
         synthesizer.continueSpeaking()
         isPlaying = true
         isPaused = false
@@ -435,15 +470,19 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     }
     
     /// Stops speech playback completely and resets.
-    public func stop() {
+    public func stop(deactivateSession: Bool = true) {
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
+        currentReadingUtterance = nil
+        currentAuditionUtterance = nil
         isPlaying = false
         isPaused = false
         currentReading = nil
         updateNowPlayingInfo()
-        deactivateAudioSession()
+        if deactivateSession {
+            deactivateAudioSession()
+        }
     }
     
     /// Skips to the next reading in the liturgy.
@@ -504,6 +543,9 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         utterance.postUtteranceDelay = 1.2
         utterance.voice = selectNaturalVoice()
         
+        self.currentReadingUtterance = utterance
+        self.currentAuditionUtterance = nil
+        
         updateNowPlayingInfo()
         synthesizer.speak(utterance)
     }
@@ -551,6 +593,9 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
         utterance.pitchMultiplier = 1.0
         utterance.volume = 1.0
         utterance.voice = voice
+        
+        self.currentAuditionUtterance = utterance
+        self.currentReadingUtterance = nil
         
         synthesizer.speak(utterance)
     }
@@ -655,70 +700,55 @@ public final class AudioReadingPlayer: NSObject, AVSpeechSynthesizerDelegate {
     
     // MARK: - AVSpeechSynthesizerDelegate
     
-    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            guard !self.isAuditioning else { return }
-            self.isPlaying = true
-            self.isPaused = false
-            self.updateNowPlayingInfo()
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        guard utterance === self.currentReadingUtterance else { return }
+        self.isPlaying = true
+        self.isPaused = false
+        self.updateNowPlayingInfo()
+    }
+    
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        if utterance === self.currentAuditionUtterance {
+            self.currentAuditionUtterance = nil
+            self.isAuditioning = false
+            return
+        }
+        guard utterance === self.currentReadingUtterance else { return }
+        self.currentReadingUtterance = nil
+        
+        if self.currentReadingIndex + 1 < self.activeReadings.count {
+            self.currentReadingIndex += 1
+            self.speakCurrentReading()
+        } else {
+            self.stop()
         }
     }
     
-    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            if self.isAuditioning {
-                self.isAuditioning = false
-                return
-            }
-            if self.currentReadingIndex + 1 < self.activeReadings.count {
-                var bgTask: UIBackgroundTaskIdentifier = .invalid
-                bgTask = UIApplication.shared.beginBackgroundTask(withName: "AdvanceLiturgicalReading") {
-                    if bgTask != .invalid {
-                        UIApplication.shared.endBackgroundTask(bgTask)
-                        bgTask = .invalid
-                    }
-                }
-                
-                self.currentReadingIndex += 1
-                self.speakCurrentReading()
-                
-                if bgTask != .invalid {
-                    UIApplication.shared.endBackgroundTask(bgTask)
-                    bgTask = .invalid
-                }
-            } else {
-                self.stop()
-            }
-        }
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didPause utterance: AVSpeechUtterance) {
+        guard utterance === self.currentReadingUtterance else { return }
+        self.isPlaying = false
+        self.isPaused = true
+        self.updateNowPlayingInfo()
     }
     
-    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didPause utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            guard !self.isAuditioning else { return }
-            self.isPlaying = false
-            self.isPaused = true
-            self.updateNowPlayingInfo()
-        }
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didContinue utterance: AVSpeechUtterance) {
+        guard utterance === self.currentReadingUtterance else { return }
+        self.isPlaying = true
+        self.isPaused = false
+        self.updateNowPlayingInfo()
     }
     
-    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didContinue utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            guard !self.isAuditioning else { return }
-            self.isPlaying = true
-            self.isPaused = false
-            self.updateNowPlayingInfo()
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        if utterance === self.currentAuditionUtterance {
+            self.currentAuditionUtterance = nil
+            self.isAuditioning = false
+            return
         }
-    }
-    
-    public nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            if self.isAuditioning {
-                self.isAuditioning = false
-                return
-            }
-            self.isPlaying = false
-            self.isPaused = false
+        if utterance === self.currentReadingUtterance {
+            self.currentReadingUtterance = nil
         }
+        self.isPlaying = false
+        self.isPaused = false
     }
 }
 

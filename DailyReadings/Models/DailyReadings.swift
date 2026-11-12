@@ -20,6 +20,8 @@ public struct DailyReadings: Identifiable, Codable, Hashable, Sendable {
     public let readings: [Reading]
     /// Translation identifier (e.g. "DRB" or "NAB").
     public let translation: String
+    /// Optional publisher/CCD copyright notice.
+    public let copyright: String?
     
     /// Designated initializer.
     public init(
@@ -27,13 +29,15 @@ public struct DailyReadings: Identifiable, Codable, Hashable, Sendable {
         date: Date,
         liturgicalTitle: String,
         readings: [Reading],
-        translation: String = "NAB"
+        translation: String = "NAB",
+        copyright: String? = nil
     ) {
         self.id = id
         self.date = date
         self.liturgicalTitle = liturgicalTitle
         self.readings = readings
         self.translation = translation
+        self.copyright = copyright
     }
 
     /// Convenience initializer accepting a LiturgicalDay instance.
@@ -42,13 +46,15 @@ public struct DailyReadings: Identifiable, Codable, Hashable, Sendable {
         date: Date,
         liturgicalDay: LiturgicalDay?,
         readings: [Reading],
-        translation: String = "NAB"
+        translation: String = "NAB",
+        copyright: String? = nil
     ) {
         self.id = id
         self.date = date
         self.liturgicalTitle = liturgicalDay?.title ?? ""
         self.readings = readings
         self.translation = translation
+        self.copyright = copyright
     }
     
     // MARK: - Liturgical Convenience Accessors
@@ -96,7 +102,7 @@ public struct DailyReadings: Identifiable, Codable, Hashable, Sendable {
     // MARK: - Codable Implementation
     
     private enum CodingKeys: String, CodingKey {
-        case id, date, liturgicalTitle, readings, translation
+        case id, date, liturgicalTitle, readings, translation, copyright
     }
     
     public init(from decoder: Decoder) throws {
@@ -106,6 +112,7 @@ public struct DailyReadings: Identifiable, Codable, Hashable, Sendable {
         self.liturgicalTitle = try container.decode(String.self, forKey: .liturgicalTitle)
         self.readings = try container.decode([Reading].self, forKey: .readings)
         self.translation = try container.decode(String.self, forKey: .translation)
+        self.copyright = try container.decodeIfPresent(String.self, forKey: .copyright)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -115,5 +122,6 @@ public struct DailyReadings: Identifiable, Codable, Hashable, Sendable {
         try container.encode(liturgicalTitle, forKey: .liturgicalTitle)
         try container.encode(readings, forKey: .readings)
         try container.encode(translation, forKey: .translation)
+        try container.encodeIfPresent(copyright, forKey: .copyright)
     }
 }

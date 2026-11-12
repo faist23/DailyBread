@@ -16,7 +16,8 @@ import Observation
 /// 2. Secondary: Online Evangelizo API client (`EvangelizioService`)
 /// 3. Guaranteed Fallback: Local Douay-Rheims Bible (`BibleDatabase` + `PericoreIndex` + `LiturgicalCalendar`)
 @Observable
-public final class ReadingsRepository: @unchecked Sendable {
+@MainActor
+public final class ReadingsRepository {
     /// Shared singleton instance accessible across the app.
     public static let shared = ReadingsRepository()
 
@@ -99,16 +100,12 @@ public final class ReadingsRepository: @unchecked Sendable {
         // 1. If user prefers NAB, attempt Cache -> Online -> Offline DRB
         if preferredTranslation.uppercased() == "NAB" {
             // Step 1A: Check SwiftData cache
-            if !forceRefresh, let cached = fetchFromCache(dateKey: dateKey, translation: "NAB") {
-                if !cached.isExpired, let readings = try? cached.decodeReadings() {
-                    // Check if cached readings have valid citations
-                    let hasMissingCitations = readings.readings.contains { $0.citation.book.trimmingCharacters(in: .whitespaces).isEmpty }
-                    if !hasMissingCitations {
-                        self.currentReadings = readings
-                        self.activeTranslation = "NAB"
-                        return readings
-                    }
-                    // If citations were missing from a previous cache, fall through to re-fetch/repair
+            if !forceRefresh, let readings = fetchFromCache(dateKey: dateKey, translation: "NAB") {
+                let hasMissingCitations = readings.readings.contains { $0.citation.book.trimmingCharacters(in: .whitespaces).isEmpty }
+                if !hasMissingCitations {
+                    self.currentReadings = readings
+                    self.activeTranslation = "NAB"
+                    return readings
                 }
             }
 
@@ -181,23 +178,16 @@ public final class ReadingsRepository: @unchecked Sendable {
         let context = ModelContext(container)
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
+        guard let endDate = calendar.date(byAdding: .day, value: daysAhead, to: today) else { return 0 }
+
+        let startKey = CachedReading.makeDateKey(from: today)
+        let endKey = CachedReading.makeDateKey(from: endDate)
+        let cutoff = Date().addingTimeInterval(-90 * 86400)
 
         let descriptor = FetchDescriptor<CachedReading>(
-            predicate: #Predicate { $0.translation == "NAB" }
+            predicate: #Predicate { $0.translation == "NAB" && $0.dateKey >= startKey && $0.dateKey <= endKey && $0.fetchedAt >= cutoff }
         )
-        guard let allCached = try? context.fetch(descriptor) else { return 0 }
-
-        let validKeys = Set(allCached.filter { !$0.isExpired }.map { $0.dateKey })
-
-        var count = 0
-        for offset in 0..<daysAhead {
-            guard let targetDate = calendar.date(byAdding: .day, value: offset, to: today) else { continue }
-            let key = CachedReading.makeDateKey(from: targetDate)
-            if validKeys.contains(key) {
-                count += 1
-            }
-        }
-        return count
+        return (try? context.fetchCount(descriptor)) ?? 0
     }
 
     /// Pre-fetches and caches the next `daysAhead` days of NAB Mass readings into local SwiftData storage.
@@ -227,8 +217,10 @@ public final class ReadingsRepository: @unchecked Sendable {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         var newlyFetched = 0
+        var failedCount = 0
 
         for offset in 0..<daysAhead {
+            if Task.isCancelled { break }
             guard let targetDate = calendar.date(byAdding: .day, value: offset, to: today) else { continue }
             let key = CachedReading.makeDateKey(from: targetDate)
 
@@ -236,12 +228,10 @@ public final class ReadingsRepository: @unchecked Sendable {
             prefetchProgress = Double(offset + 1) / Double(daysAhead)
 
             // If already cached and valid, skip network fetch
-            if let cached = fetchFromCache(dateKey: key, translation: "NAB"), !cached.isExpired {
-                if let decoded = try? cached.decodeReadings() {
-                    let hasMissing = decoded.readings.contains { $0.citation.book.trimmingCharacters(in: .whitespaces).isEmpty }
-                    if !hasMissing {
-                        continue
-                    }
+            if let cachedReadings = fetchFromCache(dateKey: key, translation: "NAB") {
+                let hasMissing = cachedReadings.readings.contains { $0.citation.book.trimmingCharacters(in: .whitespaces).isEmpty }
+                if !hasMissing {
+                    continue
                 }
             }
 
@@ -251,16 +241,24 @@ public final class ReadingsRepository: @unchecked Sendable {
             do {
                 _ = try await fetchAndVerifyOnlineReadings(for: targetDate)
                 newlyFetched += 1
-                self.cachedNABDaysCount = countCachedNABDays(daysAhead: daysAhead)
+                self.cachedNABDaysCount += 1
                 // Polite delay between API calls to avoid server rate limits
                 try? await Task.sleep(nanoseconds: 120_000_000)
             } catch {
-                // If a day fails, continue so the rest of the batch completes
+                failedCount += 1
                 continue
             }
         }
 
-        prefetchStatus = newlyFetched > 0 ? "Downloaded \(newlyFetched) days of readings." : "All 30 days are up to date."
+        if Task.isCancelled {
+            prefetchStatus = "Download cancelled."
+        } else if newlyFetched > 0 {
+            prefetchStatus = "Downloaded \(newlyFetched) days of readings."
+        } else if failedCount > 0 {
+            prefetchStatus = "Network unavailable. Could not download readings."
+        } else {
+            prefetchStatus = "All \(daysAhead) days are up to date."
+        }
         return newlyFetched
     }
 
@@ -319,7 +317,7 @@ public final class ReadingsRepository: @unchecked Sendable {
 
     // MARK: - SwiftData Persistence Helpers
 
-    private func fetchFromCache(dateKey: String, translation: String) -> CachedReading? {
+    private func fetchFromCache(dateKey: String, translation: String) -> DailyReadings? {
         guard let container = modelContainer else { return nil }
         let context = ModelContext(container)
 
@@ -330,7 +328,8 @@ public final class ReadingsRepository: @unchecked Sendable {
 
         do {
             let results = try context.fetch(descriptor)
-            return results.first
+            guard let cached = results.first, !cached.isExpired else { return nil }
+            return try cached.decodeReadings()
         } catch {
             return nil
         }
@@ -367,14 +366,17 @@ public final class ReadingsRepository: @unchecked Sendable {
     public func purgeExpiredCache() {
         guard let container = modelContainer else { return }
         let context = ModelContext(container)
+        let cutoff = Date().addingTimeInterval(-90 * 86400)
 
-        let descriptor = FetchDescriptor<CachedReading>()
-        guard let allCached = try? context.fetch(descriptor) else { return }
-
-        for item in allCached where item.isExpired {
-            context.delete(item)
+        let descriptor = FetchDescriptor<CachedReading>(
+            predicate: #Predicate { $0.fetchedAt < cutoff }
+        )
+        if let expired = try? context.fetch(descriptor) {
+            for item in expired {
+                context.delete(item)
+            }
+            try? context.save()
         }
-        try? context.save()
     }
 }
 

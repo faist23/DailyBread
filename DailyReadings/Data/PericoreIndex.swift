@@ -165,7 +165,7 @@ public final class PericoreIndex: Sendable {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = Calendar.current.timeZone
+        formatter.timeZone = TimeZone(secondsFromGMT: 0) ?? Calendar.current.timeZone
         let dateKey = formatter.string(from: day.date)
         if let directDateMatches = dateIndex[dateKey], !directDateMatches.isEmpty {
             return directDateMatches

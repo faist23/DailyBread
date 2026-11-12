@@ -19,6 +19,7 @@ public struct TodayView: View {
     @Bindable public var viewModel: TodayViewModel
     @State private var readingToPresent: Reading?
     @State private var audioPlayer = AudioReadingPlayer.shared
+    @Environment(\.scenePhase) private var scenePhase
     
     // MARK: - Initialization
     
@@ -108,6 +109,24 @@ public struct TodayView: View {
                 await viewModel.loadReadings()
             }
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                let calendar = Calendar.current
+                if !calendar.isDate(viewModel.currentDate, inSameDayAs: Date()) {
+                    Task {
+                        await viewModel.loadReadings(for: Date())
+                    }
+                }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
+            let calendar = Calendar.current
+            if !calendar.isDate(viewModel.currentDate, inSameDayAs: Date()) {
+                Task {
+                    await viewModel.loadReadings(for: Date())
+                }
+            }
+        }
     }
     
     // MARK: - Main Scroll Content
@@ -139,6 +158,16 @@ public struct TodayView: View {
                 // Mass Readings Section
                 if let readings = viewModel.dailyReadings?.readings, !readings.isEmpty {
                     readingsList(readings: readings)
+                    
+                    if let copyright = viewModel.dailyReadings?.copyright, !copyright.isEmpty {
+                        Text(copyright)
+                            .font(.caption2)
+                            .foregroundStyle(Color.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, AppTheme.Spacing.small)
+                            .padding(.top, 4)
+                            .frame(maxWidth: .infinity)
+                    }
                 } else if !viewModel.isLoading {
                     emptyStateView
                 }

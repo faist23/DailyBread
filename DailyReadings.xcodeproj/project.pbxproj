@@ -22,6 +22,7 @@
 		2C259772BA1401A93AFDA1B3 /* HowToPrayRosaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15AD845BDE1DFB69604ED59 /* HowToPrayRosaryView.swift */; };
 		2ECC754753E9A3647FF3BD50 /* PrayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7254389B987013DB50F2993 /* PrayersView.swift */; };
 		319995F6E17EE18E1C08B57C /* CalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52AF38D16515D7E368426DD7 /* CalendarDayCell.swift */; };
+		336068B3643BDD34523EC159 /* ScriptureEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AD823DE0E7B0549135CF79 /* ScriptureEngineTests.swift */; };
 		33B97AA76FEFCAC6F214FFB0 /* ReadingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA71552D1478FB0AFEDD6FFF /* ReadingDetailView.swift */; };
 		3A5675833BCF7A60817FBEE6 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEAFC1CE448C8D99A61F3C1 /* Typography.swift */; };
 		3C3CA0780C79F1F19E31493F /* FixedSolemnities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5609D2D598FDE978C6ABD4 /* FixedSolemnities.swift */; };
@@ -90,6 +91,7 @@
 		23F5D4C28B757B6634378F37 /* LiturgicalCalendar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCalendar.swift; sourceTree = "<group>"; };
 		25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioReadingPlayer.swift; sourceTree = "<group>"; };
+		27AD823DE0E7B0549135CF79 /* ScriptureEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptureEngineTests.swift; sourceTree = "<group>"; };
 		2D16BEEC6276787C11517E1D /* VerseOfTheDayProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerseOfTheDayProvider.swift; sourceTree = "<group>"; };
 		31A8A8CDEA597D8331E2C744 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		43E57F1BA3F7832AA0ED4771 /* LiturgicalCelebrationBlurbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCelebrationBlurbs.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				78083BBE2A3517830D180EDE /* LiturgicalCalendarTests.swift */,
+				27AD823DE0E7B0549135CF79 /* ScriptureEngineTests.swift */,
 			);
 			path = DailyReadingsTests;
 			sourceTree = "<group>";
@@ -491,6 +494,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				21003790292CEAC44779B578 /* LiturgicalCalendarTests.swift in Sources */,
+				336068B3643BDD34523EC159 /* ScriptureEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,7 +599,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = DT58WA8N32;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -687,7 +691,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 14;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = DT58WA8N32;
 				ENABLE_NS_ASSERTIONS = NO;

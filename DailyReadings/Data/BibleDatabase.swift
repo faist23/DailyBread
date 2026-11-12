@@ -469,28 +469,275 @@ public actor BibleDatabase {
 
     // MARK: - Query Methods
 
+    /// Represents a single slice of a Bible query targeting a specific book, chapter, and set of verses.
+    public struct BibleQuerySlice: Sendable, Hashable {
+        public let bookId: Int
+        public let chapter: Int
+        public let verseNumbers: [Int]
+
+        public init(bookId: Int, chapter: Int, verseNumbers: [Int] = []) {
+            self.bookId = bookId
+            self.chapter = chapter
+            self.verseNumbers = verseNumbers
+        }
+    }
+
+    /// Represents a parsed span of a scripture citation for chapter-by-chapter retrieval.
+    public struct CitationSpan: Sendable {
+        public let chapter: Int
+        public let minVerse: Int?
+        public let maxVerse: Int?
+        public let verseNumbers: [Int]?
+        public let all: Bool
+
+        public init(chapter: Int, minVerse: Int? = nil, maxVerse: Int? = nil, verseNumbers: [Int]? = nil, all: Bool = false) {
+            self.chapter = chapter
+            self.minVerse = minVerse
+            self.maxVerse = maxVerse
+            self.verseNumbers = verseNumbers
+            self.all = all
+        }
+    }
+
+    /// Parses multi-chapter citations (semicolons, e.g. "63:16b-17; 64:2-7") and cross-chapter spans
+    /// (dashes, e.g. "7:25—8:6", "12:31-13:13") into structured, chapter-delimited spans.
+    public static func parseCitationSpans(baseChapter: Int?, rawVerses: String) -> [CitationSpan] {
+        let initialChapter = baseChapter ?? 1
+        let trimmed = rawVerses.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            return [CitationSpan(chapter: initialChapter, all: true)]
+        }
+
+        let chunks = trimmed.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        var currentChapter = initialChapter
+        var spans: [CitationSpan] = []
+
+        for chunk in chunks {
+            if let dashRange = chunk.range(of: #"[—–\-]\s*\d+\s*:"#, options: .regularExpression) {
+                let beforeDash = String(chunk[..<dashRange.lowerBound]).trimmingCharacters(in: .whitespaces)
+                let afterDash = String(chunk[dashRange.upperBound...]).trimmingCharacters(in: .whitespaces)
+
+                let matchedPattern = String(chunk[dashRange])
+                let endChapterDigits = matchedPattern.filter { $0.isNumber }
+                let endChapter = Int(endChapterDigits) ?? (currentChapter + 1)
+
+                let startVerseStr = extractLeadingDigits(from: beforeDash)
+                let startVerse = Int(startVerseStr) ?? 1
+                spans.append(CitationSpan(chapter: currentChapter, minVerse: startVerse))
+
+                if endChapter > currentChapter + 1 {
+                    for midChapter in (currentChapter + 1)..<endChapter {
+                        spans.append(CitationSpan(chapter: midChapter, all: true))
+                    }
+                }
+
+                let endVerseStr = extractLeadingDigits(from: afterDash)
+                let endVerse = Int(endVerseStr) ?? 1
+
+                var endChapterVerseString = "1-\(endVerse)"
+                if let commaIndex = afterDash.firstIndex(of: ",") {
+                    let trailing = afterDash[commaIndex...]
+                    endChapterVerseString.append(String(trailing))
+                }
+                let endVerses = parseVerseNumbers(from: endChapterVerseString)
+                spans.append(CitationSpan(chapter: endChapter, verseNumbers: endVerses))
+                currentChapter = endChapter
+            } else if let colonIdx = chunk.firstIndex(of: ":") {
+                let chapterPart = String(chunk[..<colonIdx]).trimmingCharacters(in: .whitespaces)
+                let versesPart = String(chunk[chunk.index(after: colonIdx)...]).trimmingCharacters(in: .whitespaces)
+                let chapterNumStr = extractLeadingDigits(from: chapterPart)
+                if let newChapter = Int(chapterNumStr) {
+                    currentChapter = newChapter
+                }
+                let verses = parseVerseNumbers(from: versesPart)
+                spans.append(CitationSpan(chapter: currentChapter, verseNumbers: verses))
+            } else {
+                let verses = parseVerseNumbers(from: chunk)
+                spans.append(CitationSpan(chapter: currentChapter, verseNumbers: verses))
+            }
+        }
+
+        return spans.isEmpty ? [CitationSpan(chapter: initialChapter, all: true)] : spans
+    }
+
+    /// Maps Hebrew/Lectionary chapter and verses to Vulgate (Douay-Rheims) chapter and verses.
+    /// Accurately handles Psalm numbering differences (Psalms 9–147), Joel chapter splits,
+    /// and Malachi chapter splits.
+    public static func mapHebrewToVulgate(book: BibleBook, chapter: Int, verseNumbers: [Int]) -> [BibleQuerySlice] {
+        switch book {
+        case .psalms:
+            return mapHebrewPsalmToVulgate(chapter: chapter, verseNumbers: verseNumbers)
+        case .joel:
+            return mapHebrewJoelToVulgate(chapter: chapter, verseNumbers: verseNumbers)
+        case .malachi:
+            return mapHebrewMalachiToVulgate(chapter: chapter, verseNumbers: verseNumbers)
+        default:
+            return [BibleQuerySlice(bookId: book.rawValue, chapter: chapter, verseNumbers: verseNumbers)]
+        }
+    }
+
+    private static func mapHebrewPsalmToVulgate(chapter: Int, verseNumbers: [Int]) -> [BibleQuerySlice] {
+        let bookId = BibleBook.psalms.rawValue
+
+        switch chapter {
+        case 1...8:
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)]
+
+        case 9:
+            // Hebrew Psalm 9 = Vulgate Psalm 9:1-21
+            return [BibleQuerySlice(bookId: bookId, chapter: 9, verseNumbers: verseNumbers)]
+
+        case 10:
+            // Hebrew Psalm 10 = Vulgate Psalm 9:22-39 (+21)
+            let mapped = verseNumbers.isEmpty ? [] : verseNumbers.map { $0 + 21 }
+            return [BibleQuerySlice(bookId: bookId, chapter: 9, verseNumbers: mapped)]
+
+        case 11...113:
+            // Vulgate = Hebrew - 1
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter - 1, verseNumbers: verseNumbers)]
+
+        case 114:
+            // Hebrew Psalm 114 = Vulgate Psalm 113:1-8
+            return [BibleQuerySlice(bookId: bookId, chapter: 113, verseNumbers: verseNumbers)]
+
+        case 115:
+            // Hebrew Psalm 115 = Vulgate Psalm 113:9-26 (+8)
+            let mapped = verseNumbers.isEmpty ? [] : verseNumbers.map { $0 + 8 }
+            return [BibleQuerySlice(bookId: bookId, chapter: 113, verseNumbers: mapped)]
+
+        case 116:
+            // Hebrew 116:1-9 -> Vulgate 114:1-9
+            // Hebrew 116:10-19 -> Vulgate 115:1-10 (-9)
+            if verseNumbers.isEmpty {
+                return [
+                    BibleQuerySlice(bookId: bookId, chapter: 114, verseNumbers: []),
+                    BibleQuerySlice(bookId: bookId, chapter: 115, verseNumbers: [])
+                ]
+            }
+            var slices: [BibleQuerySlice] = []
+            let lowVerses = verseNumbers.filter { $0 <= 9 }
+            let highVerses = verseNumbers.filter { $0 >= 10 }.map { $0 - 9 }
+            if !lowVerses.isEmpty {
+                slices.append(BibleQuerySlice(bookId: bookId, chapter: 114, verseNumbers: lowVerses))
+            }
+            if !highVerses.isEmpty {
+                slices.append(BibleQuerySlice(bookId: bookId, chapter: 115, verseNumbers: highVerses))
+            }
+            return slices
+
+        case 117...146:
+            // Vulgate = Hebrew - 1
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter - 1, verseNumbers: verseNumbers)]
+
+        case 147:
+            // Hebrew 147:1-11 -> Vulgate 146:1-11
+            // Hebrew 147:12-20 -> Vulgate 147:1-9 (-11)
+            if verseNumbers.isEmpty {
+                return [
+                    BibleQuerySlice(bookId: bookId, chapter: 146, verseNumbers: []),
+                    BibleQuerySlice(bookId: bookId, chapter: 147, verseNumbers: [])
+                ]
+            }
+            var slices: [BibleQuerySlice] = []
+            let lowVerses = verseNumbers.filter { $0 <= 11 }
+            let highVerses = verseNumbers.filter { $0 >= 12 }.map { $0 - 11 }
+            if !lowVerses.isEmpty {
+                slices.append(BibleQuerySlice(bookId: bookId, chapter: 146, verseNumbers: lowVerses))
+            }
+            if !highVerses.isEmpty {
+                slices.append(BibleQuerySlice(bookId: bookId, chapter: 147, verseNumbers: highVerses))
+            }
+            return slices
+
+        case 148...150:
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)]
+
+        default:
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)]
+        }
+    }
+
+    private static func mapHebrewJoelToVulgate(chapter: Int, verseNumbers: [Int]) -> [BibleQuerySlice] {
+        let bookId = BibleBook.joel.rawValue
+        switch chapter {
+        case 3:
+            // Hebrew Joel 3:1-5 = Vulgate Joel 2:28-32 (+27)
+            let mapped = verseNumbers.isEmpty ? Array(28...32) : verseNumbers.map { $0 + 27 }
+            return [BibleQuerySlice(bookId: bookId, chapter: 2, verseNumbers: mapped)]
+        case 4:
+            // Hebrew Joel 4:1-21 = Vulgate Joel 3:1-21
+            return [BibleQuerySlice(bookId: bookId, chapter: 3, verseNumbers: verseNumbers)]
+        default:
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)]
+        }
+    }
+
+    private static func mapHebrewMalachiToVulgate(chapter: Int, verseNumbers: [Int]) -> [BibleQuerySlice] {
+        let bookId = BibleBook.malachi.rawValue
+        guard chapter == 3 else {
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)]
+        }
+        if verseNumbers.isEmpty {
+            return [
+                BibleQuerySlice(bookId: bookId, chapter: 3, verseNumbers: []),
+                BibleQuerySlice(bookId: bookId, chapter: 4, verseNumbers: [])
+            ]
+        }
+        var slices: [BibleQuerySlice] = []
+        let lowVerses = verseNumbers.filter { $0 <= 18 }
+        let highVerses = verseNumbers.filter { $0 > 18 }.map { $0 - 18 }
+        if !lowVerses.isEmpty {
+            slices.append(BibleQuerySlice(bookId: bookId, chapter: 3, verseNumbers: lowVerses))
+        }
+        if !highVerses.isEmpty {
+            slices.append(BibleQuerySlice(bookId: bookId, chapter: 4, verseNumbers: highVerses))
+        }
+        return slices
+    }
+
     /// Queries the Bible database using a `ReadingCitation`.
+    /// Fully supports multi-chapter citations, cross-chapter spans, and Hebrew-to-Vulgate mappings.
     public func queryVerses(citation: ReadingCitation) -> [BibleVerse] {
         guard let book = BibleBook.find(named: citation.book) else {
             return []
         }
-        let chapter = citation.chapter ?? 1
-        return queryVerses(bookId: book.rawValue, chapter: chapter, verseString: citation.verses)
+        let spans = Self.parseCitationSpans(baseChapter: citation.chapter, rawVerses: citation.verses)
+        var allVerses: [BibleVerse] = []
+
+        for span in spans {
+            let verseNumbers: [Int]
+            if let specific = span.verseNumbers {
+                verseNumbers = specific
+            } else if let min = span.minVerse {
+                let chapterVerses = queryChapter(bookId: book.rawValue, chapter: span.chapter)
+                verseNumbers = chapterVerses.map(\.verse).filter { $0 >= min }
+            } else if span.all {
+                verseNumbers = []
+            } else {
+                verseNumbers = []
+            }
+
+            let slices = Self.mapHebrewToVulgate(book: book, chapter: span.chapter, verseNumbers: verseNumbers)
+            for slice in slices {
+                let verses = queryVerses(bookId: slice.bookId, chapter: slice.chapter, verseNumbers: slice.verseNumbers)
+                allVerses.append(contentsOf: verses)
+            }
+        }
+
+        return allVerses
     }
 
     /// Queries the Bible database by book name, chapter, and verse range.
     public func queryVerses(bookName: String, chapter: Int?, verses: String) -> [BibleVerse] {
-        guard let book = BibleBook.find(named: bookName) else {
-            return []
-        }
-        let ch = chapter ?? 1
-        return queryVerses(bookId: book.rawValue, chapter: ch, verseString: verses)
+        let citation = ReadingCitation(book: bookName, chapter: chapter, verses: verses)
+        return queryVerses(citation: citation)
     }
 
     /// Queries verses by book ID, chapter, and verse range string.
     public func queryVerses(bookId: Int, chapter: Int, verseString: String) -> [BibleVerse] {
-        let requestedVerseNumbers = Self.parseVerseNumbers(from: verseString)
-        return queryVerses(bookId: bookId, chapter: chapter, verseNumbers: requestedVerseNumbers)
+        guard let book = BibleBook(rawValue: bookId) else { return [] }
+        let citation = ReadingCitation(book: book.canonicalName, chapter: chapter, verses: verseString)
+        return queryVerses(citation: citation)
     }
 
     /// Queries specific verse numbers within a book and chapter.

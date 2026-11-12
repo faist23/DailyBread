@@ -245,6 +245,8 @@ public struct PrayerDetailView: View {
     
     private func startSpeech() {
         stopSpeech()
+        AudioReadingPlayer.shared.stop()
+        AudioReadingPlayer.shared.activateAudioSession()
         
         let cleaned = activePrayerText
             .replacingOccurrences(of: "℣.", with: "")

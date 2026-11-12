@@ -97,8 +97,8 @@ final class LiturgicalCalendarTests: XCTestCase {
         let day = LiturgicalCalendar.day(for: stJosephDate, calendar: calendar)
         
         XCTAssertTrue(day.title.contains("Saint Joseph"), "March 19 must be Saint Joseph")
-        XCTAssertTrue(day.isSolemnity, "Saint Joseph is a solemnity")
-        XCTAssertFalse(day.isDayOfAbstinence, "Canon 1251: Friday abstinence is waived on a solemnity!")
+        XCTAssertTrue(day.rank.isSolemnity, "Saint Joseph is a solemnity")
+        XCTAssertFalse(day.isAbstinence, "Canon 1251: Friday abstinence is waived on a solemnity!")
     }
     
     func testOrdinaryLentenFridayRequiresAbstinence() {
@@ -107,7 +107,7 @@ final class LiturgicalCalendarTests: XCTestCase {
         let day = LiturgicalCalendar.day(for: normalLentenFriday, calendar: calendar)
         
         XCTAssertEqual(day.season, .lent)
-        XCTAssertTrue(day.isDayOfAbstinence, "Ordinary Friday of Lent requires abstinence from meat")
+        XCTAssertTrue(day.isAbstinence, "Ordinary Friday of Lent requires abstinence from meat")
     }
     
     // MARK: - 4. Post-Pentecost Ordinary Time Week Continuity

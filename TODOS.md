@@ -1,10 +1,10 @@
 # DailyReadings — Project Status & TODOS
 
 **Last Updated:** 2026-11-12  
-**Current Version:** 1.0.0 (Build 13)  
+**Current Version:** 1.0.0 (Build 14)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
-**Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
+**Target Platform:** iOS 17.0+ | Swift 6.0 (`SWIFT_STRICT_CONCURRENCY = complete`) | SwiftUI | SwiftData  
 **GitHub Repository:** [https://github.com/faist23/DailyReadings](https://github.com/faist23/DailyReadings) (`main` branch)
 
 ---
@@ -15,6 +15,42 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Aesthetic:** Missal-inspired typography, New York serif, subtle gold liturgical accents, warm scripture paper backgrounds, and distraction-free layout.
 - **Offline Reliability:** Guaranteed offline liturgical Computus calendar algorithm and bundled Douay-Rheims Bible SQLite database, with seamless online New American Bible (NAB) lectionary fetching and SwiftData caching.
 - **Audio Experience:** Reverent, contemplative audio recitation designed for personal prayer, morning commutes, and hands-free devotion.
+
+---
+
+## Recent Accomplishments (Completed in Builds 13 & 14)
+
+### 1. Canonical Liturgical Engine & Full Test Harness (Build 13)
+- **Unit Test Target Added**: Integrated `DailyReadingsTests` with `LiturgicalCalendarTests` covering 20 edge-case assertions.
+- **Advent Month Bound Fix**: In [`LiturgicalCalendar.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Engine/LiturgicalCalendar.swift), dropped invalid `month == 12` check, bounding Advent cleanly with `date >= adventStart && date < christmasDay`. November 29, 2026 and November 28, 2027 compute correctly as the First Sunday of Advent (Violet, Year B & C).
+- **Epiphany Duplicate Bug Eliminated**: Omitted `epiphanyUniversal` (Jan 6) for US calendar when Epiphany is transferred to Sunday.
+- **Canon 1251 Lenten Friday Solemnity Exemption**: Meat abstinence is canonically waived on Friday solemnities (St. Joseph on March 19, 2027 and Annunciation).
+- **Post-Pentecost Psalter Continuity**: Re-anchored Ordinary Time weeks backwards from Christ the King so Mary Mother of the Church matches Tuesday's week (Week 8 in 2026).
+- **Sacred Heart Collision Resolution (June 24, 2033)**: Sacred Heart takes precedence on Friday June 24, with Nativity of Saint John the Baptist anticipated on June 23 (UNLY §59 / Prot. N. 168/22).
+
+### 2. Scripture & Translation Engine Overhaul (Build 14)
+- **Hebrew ↔ Vulgate Psalm Numbering (DRB Offline)**: Added canonical mapping in [`BibleDatabase.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/BibleDatabase.swift). Lectionary Psalm 23 queries Vulgate Psalm 22 (*"The Lord ruleth me"*); Psalm 116 splits between Vulgate 114 and 115; Psalm 147 splits between Vulgate 146 and 147.
+- **Joel & Malachi Chapter Alignments**: Mapped Hebrew Joel 3:1-5 to Vulgate Joel 2:28-32, Joel 4 to Vulgate Joel 3, and Malachi 3:19-24 to Malachi 4:1-6.
+- **Multi-Chapter & Cross-Chapter Citations**: Rewrote citation parser in [`BibleDatabase.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/BibleDatabase.swift) to parse semicolons (e.g. `Is 63:16b-17, 19b; 64:2-7`) and cross-chapter spans (e.g. `Heb 7:25—8:6`), querying chapters in sequence.
+- **Evangelizo API Parser Fixes**: In [`EvangelizioService.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/EvangelizioService.swift), classified `index == 2` on 4-reading days as `.secondReading`, parsed `liturgic_title`, and extracted `chorus` as the psalm response refrain.
+- **CCD Copyright Display**: Added `copyright` attribute to `DailyReadings` model and rendered official publisher attribution at the bottom of Mass readings.
+- **12 Missing First Readings Patched**: Resolved omitted single-chapter and proper readings in `lectionary_dates.json` (Deut 30:15-20, Jude 17, 20b-25, Phlm 7-20, 2 Jn 4-9, 3 Jn 5-8, Thanksgiving 2026).
+- **UTC Date Key Alignment**: In `PericoreIndex.swift`, forced UTC timezone formatting for date lookup keys, eliminating midnight rollover bugs in UTC+12.
+
+### 3. Audio Engine Consolidation & Swift 6 Concurrency (Build 14)
+- **Voice Preview Queue Advance Bug Fixed**: Tracked `currentReadingUtterance` vs `currentAuditionUtterance` in [`AudioReadingPlayer.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/AudioReadingPlayer.swift) so audition cancellation and completion never trigger advancing the scripture readings queue.
+- **Reactivate Audio Session on Resume**: Added `activateAudioSession()` inside `resume()` to restore playback after system interruptions.
+- **Headphone Disconnection Handling**: Added observer for `AVAudioSession.routeChangeNotification` (`.oldDeviceUnavailable` pauses playback).
+- **Synthesizer Consolidation**: Routed speech start in `PrayerDetailView` and `GuidedRosaryView` through `AudioReadingPlayer.shared.stop()` and `activateAudioSession()`, and synchronized with user-selected voice.
+- **Eliminated Voice List Churn**: Cached `availableVoices` property on `AudioReadingPlayer` using `@ObservationIgnored` storage.
+- **Swift 6 Isolation Clean**: Conformed to `@preconcurrency AVSpeechSynthesizerDelegate` and marked delegate callbacks `@MainActor`, eliminating all region isolation data race errors.
+
+### 4. App Lifecycle & SwiftData Cache Optimization (Build 14)
+- **Overnight Stale Prevention**: In [`TodayView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Today/TodayView.swift), observed `scenePhase == .active` and `significantTimeChangeNotification` to automatically reload readings across midnight.
+- **Cancellation Error Suppression**: Handled `CancellationError` silently in `TodayViewModel.swift` without displaying spurious error banners.
+- **Safe SwiftData Cache Retrieval**: In `ReadingsRepository.swift`, decoded `DailyReadings` inside `fetchFromCache`, preventing detached `@Model` scope faults.
+- **Optimized Cache Counting & Purging**: Used `fetchCount` with key-range predicates instead of full table scans, and batched expired row deletions.
+- **22 Unit Tests Passing**: Standalone test suite (`LiturgicalCalendarTests` + `ScriptureEngineTests`) executed with 0 failures (`** TEST SUCCEEDED **`).
 
 ---
 
