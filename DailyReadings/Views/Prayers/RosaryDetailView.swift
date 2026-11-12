@@ -85,7 +85,7 @@ public struct RosaryDetailView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.scaled(size: 13, weight: .semibold))
                             .foregroundStyle(Color.secondary)
                             .padding(8)
                             .background(Color.secondary.opacity(0.1))
@@ -109,26 +109,26 @@ public struct RosaryDetailView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 6) {
                 Image(systemName: "circle.grid.cross.fill")
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.scaled(size: 13, weight: .bold))
                 Text("THE HOLY ROSARY")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.scaled(size: 11, weight: .bold))
                     .tracking(1.4)
             }
             .foregroundStyle(liturgicalColor.uiAccentColor)
             
             Text(selectedMode == .mysteries ? selectedMystery.rawValue : "How to Pray the Rosary")
-                .font(.system(size: 26, weight: .bold, design: .serif))
+                .font(.scaled(size: 26, weight: .bold, design: .serif))
                 .foregroundStyle(Color.primary)
             
             if selectedMode == .mysteries {
                 HStack(spacing: 8) {
                     Text(selectedMystery.traditionalDays)
-                        .font(.system(size: 13, weight: .medium, design: .serif))
+                        .font(.scaled(size: 13, weight: .medium, design: .serif))
                         .foregroundStyle(Color.secondary)
                     
                     if selectedMystery == todayMystery {
                         Text("TODAY")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.scaled(size: 10, weight: .bold))
                             .foregroundStyle(liturgicalColor.uiAccentColor)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
@@ -138,7 +138,7 @@ public struct RosaryDetailView: View {
                 }
             } else {
                 Text("Step-by-step tutorial, bead anatomy & spiritual advice")
-                    .font(.system(size: 13, weight: .medium, design: .serif))
+                    .font(.scaled(size: 13, weight: .medium, design: .serif))
                     .foregroundStyle(Color.secondary)
             }
         }
@@ -155,20 +155,20 @@ public struct RosaryDetailView: View {
             } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "play.circle.fill")
-                        .font(.system(size: 20, weight: .semibold))
+                        .font(.scaled(size: 20, weight: .semibold))
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Start Bead-by-Bead Rosary")
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.scaled(size: 15, weight: .bold))
                         Text("Interactive guided prayer with full texts & haptics")
-                            .font(.system(size: 11, weight: .regular))
+                            .font(.scaled(size: 11, weight: .regular))
                             .opacity(0.9)
                     }
                     
                     Spacer()
                     
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 13, weight: .bold))
+                        .font(.scaled(size: 13, weight: .bold))
                 }
                 .foregroundStyle(liturgicalColor.primaryButtonForeground)
                 .padding(.horizontal, AppTheme.Spacing.medium)
@@ -195,7 +195,7 @@ public struct RosaryDetailView: View {
                                         .frame(width: 6, height: 6)
                                 }
                                 Text(mystery.rawValue.replacingOccurrences(of: " Mysteries", with: ""))
-                                    .font(.system(size: 13, weight: selectedMystery == mystery ? .semibold : .regular))
+                                    .font(.scaled(size: 13, weight: selectedMystery == mystery ? .semibold : .regular))
                             }
                             .foregroundStyle(selectedMystery == mystery ? Color.primary : Color.secondary)
                             .padding(.horizontal, 12)
@@ -244,33 +244,33 @@ public struct RosaryDetailView: View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             HStack(alignment: .center) {
                 Text(decade.number.uppercased())
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.scaled(size: 10, weight: .bold))
                     .tracking(1.2)
                     .foregroundStyle(liturgicalColor.uiAccentColor)
                 
                 Spacer()
                 
                 Text(decade.scriptureRef)
-                    .font(.system(size: 11, weight: .semibold, design: .serif))
+                    .font(.scaled(size: 11, weight: .semibold, design: .serif))
                     .foregroundStyle(Color.secondary)
             }
             
             Text(decade.title)
-                .font(.system(size: 18, weight: .bold, design: .serif))
+                .font(.scaled(size: 18, weight: .bold, design: .serif))
                 .foregroundStyle(Color.primary)
             
             HStack(spacing: 4) {
                 Text("FRUIT OF THE MYSTERY:")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.scaled(size: 10, weight: .bold))
                     .foregroundStyle(AppTheme.Colors.missalRed)
                 Text(decade.fruitOfMystery)
-                    .font(.system(size: 12, weight: .medium, design: .serif).italic())
+                    .font(.scaled(size: 12, weight: .medium, design: .serif).italic())
                     .foregroundStyle(Color.primary)
             }
             .padding(.vertical, 2)
             
             Text(decade.meditation)
-                .font(.system(size: 15, weight: .regular, design: .serif))
+                .font(.scaled(size: 15, weight: .regular, design: .serif))
                 .foregroundStyle(Color.primary)
                 .lineSpacing(5)
                 .padding(.top, 2)
@@ -296,12 +296,12 @@ public struct RosaryDetailView: View {
     private var rosaryClosingSection: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             Text("THE FATIMA PRAYER")
-                .font(.system(size: 11, weight: .bold))
+                .font(.scaled(size: 11, weight: .bold))
                 .tracking(1.2)
                 .foregroundStyle(liturgicalColor.uiAccentColor)
             
             Text("O my Jesus, forgive us our sins, save us from the fires of hell, lead all souls to Heaven, especially those most in need of Thy mercy.")
-                .font(.system(size: 14, weight: .regular, design: .serif).italic())
+                .font(.scaled(size: 14, weight: .regular, design: .serif).italic())
                 .foregroundStyle(Color.secondary)
                 .lineSpacing(4)
             
@@ -309,12 +309,12 @@ public struct RosaryDetailView: View {
                 .padding(.vertical, 4)
             
             Text("CONCLUDING PRAYER")
-                .font(.system(size: 11, weight: .bold))
+                .font(.scaled(size: 11, weight: .bold))
                 .tracking(1.2)
                 .foregroundStyle(liturgicalColor.uiAccentColor)
             
             Text("O God, whose only begotten Son, by His life, death, and resurrection, has purchased for us the rewards of eternal life, grant, we beseech Thee, that meditating upon these mysteries of the Most Holy Rosary of the Blessed Virgin Mary, we may imitate what they contain and obtain what they promise, through the same Christ our Lord. Amen.")
-                .font(.system(size: 14, weight: .regular, design: .serif))
+                .font(.scaled(size: 14, weight: .regular, design: .serif))
                 .foregroundStyle(Color.primary)
                 .lineSpacing(4)
         }

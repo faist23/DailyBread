@@ -103,6 +103,9 @@ public struct ReadingCitation: Codable, Hashable, Sendable {
             }
         }
         
+        // Tolerate a book name glued to its chapter ("Psalm103:1-2").
+        trimmed = trimmed.replacingOccurrences(of: "^([A-Za-z]{2,})(\\d+:)", with: "$1 $2", options: .regularExpression)
+
         // Match "Book Chapter:Verses"
         if let colonIndex = trimmed.firstIndex(of: ":") {
             let beforeColon = trimmed[..<colonIndex].trimmingCharacters(in: .whitespaces)
@@ -114,6 +117,11 @@ public struct ReadingCitation: Codable, Hashable, Sendable {
                 let chapterPart = String(beforeColon[beforeColon.index(after: lastSpace)...]).trimmingCharacters(in: .whitespaces)
                 if let chapterNum = Int(chapterPart) {
                     return ReadingCitation(book: bookPart, chapter: chapterNum, verses: verses)
+                }
+                // The Lectionary letters the Greek additions to Esther ("Esther C:12, 14-16").
+                // There is no chapter number, so the letter stays with the verses.
+                if chapterPart.count == 1, let letter = chapterPart.first, ("A"..."F").contains(letter) {
+                    return ReadingCitation(book: bookPart, chapter: nil, verses: "\(chapterPart):\(verses)")
                 }
             } else if let chapterNum = Int(beforeColon) {
                 // If beforeColon is purely a number, it refers to a Psalm number (e.g., "103:1-2")

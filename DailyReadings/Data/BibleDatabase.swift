@@ -257,10 +257,13 @@ public enum BibleBook: Int, CaseIterable, Codable, Sendable {
             .replacingOccurrences(of: "first", with: "1")
             .replacingOccurrences(of: "second", with: "2")
             .replacingOccurrences(of: "third", with: "3")
-            .replacingOccurrences(of: "i ", with: "1 ")
-            .replacingOccurrences(of: "ii ", with: "2 ")
-            .replacingOccurrences(of: "iii ", with: "3 ")
             .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Roman-numeral prefixes ("II Corinthians"). Longest first, and only at the start of the name.
+        for (roman, digit) in [("iii ", "3 "), ("ii ", "2 "), ("i ", "1 ")] where clean.hasPrefix(roman) {
+            clean = digit + clean.dropFirst(roman.count)
+            break
+        }
 
         if clean.hasPrefix("see ") {
             clean = String(clean.dropFirst(4)).trimmingCharacters(in: .whitespaces)
@@ -368,6 +371,79 @@ public enum BibleBook: Int, CaseIterable, Codable, Sendable {
     }
 }
 
+// MARK: - Versification Map
+
+/// Translates Lectionary (Hebrew) verse numbering into the numbering a bundled Bible uses.
+///
+/// Built by `Scripts/build_versification.py` from the Copenhagen Alliance standard mappings and
+/// stored in `versification.json`. Verses with no entry keep their number.
+public struct VersificationMap: Sendable {
+    public struct Target: Sendable, Hashable {
+        public let chapter: Int
+        public let verse: Int
+    }
+
+    private let targets: [Int: [Target]]
+    private let lectionaryMaxVerses: [Int: [Int]]
+    /// Psalm titles this Bible prints at the start of verse 1, keyed by its own psalm number.
+    private let psalmTitles: [Int: String]
+
+    private static func key(_ book: Int, _ chapter: Int, _ verse: Int) -> Int {
+        (book << 20) | (chapter << 10) | verse
+    }
+
+    /// Loads the table named `name` ("webc" or "drb") from `versification.json`.
+    public init?(named name: String, url: URL? = nil) {
+        guard let url = url ?? Bundle.main.url(forResource: "versification", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let table = root[name] as? [String: [[Int]]] else {
+            return nil
+        }
+        var targets: [Int: [Target]] = [:]
+        for (bookKey, rows) in table {
+            guard let book = Int(bookKey) else { continue }
+            for row in rows where row.count == 4 {
+                targets[Self.key(book, row[0], row[1]), default: []].append(Target(chapter: row[2], verse: row[3]))
+            }
+        }
+        self.targets = targets
+
+        var maxVerses: [Int: [Int]] = [:]
+        for (bookKey, counts) in (root["lectionaryMaxVerses"] as? [String: [Int]]) ?? [:] {
+            if let book = Int(bookKey) { maxVerses[book] = counts }
+        }
+        self.lectionaryMaxVerses = maxVerses
+
+        var titles: [Int: String] = [:]
+        for (psalm, title) in (root["\(name)PsalmTitles"] as? [String: String]) ?? [:] {
+            if let number = Int(psalm) { titles[number] = title }
+        }
+        self.psalmTitles = titles
+    }
+
+    /// Verse 1 of a psalm without its title line. A responsorial psalm never includes the title.
+    public func psalmTextWithoutTitle(psalm: Int, verseOneText: String) -> String {
+        guard let title = psalmTitles[psalm], verseOneText.hasPrefix(title) else { return verseOneText }
+        return String(verseOneText.dropFirst(title.count)).trimmingCharacters(in: .whitespaces)
+    }
+
+    /// Where a Lectionary verse lives in this Bible. An empty result means the verse is a psalm
+    /// title that has no verse of its own here.
+    public func resolve(book: Int, chapter: Int, verse: Int) -> [Target] {
+        guard let mapped = targets[Self.key(book, chapter, verse)] else {
+            return [Target(chapter: chapter, verse: verse)]
+        }
+        return mapped.filter { $0.verse > 0 }
+    }
+
+    /// Number of verses the chapter has in Lectionary numbering, when known.
+    public func lectionaryVerseCount(book: Int, chapter: Int) -> Int? {
+        guard let counts = lectionaryMaxVerses[book], chapter >= 1, chapter <= counts.count else { return nil }
+        return counts[chapter - 1]
+    }
+}
+
 // MARK: - BibleDatabase Actor
 
 /// Thread-safe SQLite query layer for the bundled Douay-Rheims Bible.
@@ -376,21 +452,29 @@ public actor BibleDatabase {
     private nonisolated(unsafe) var dbPointer: OpaquePointer?
     private let databaseURL: URL?
     public let isVulgateNumbering: Bool
+    /// Lectionary-to-Bible verse numbering for this translation. Nil means "same numbering".
+    public let versification: VersificationMap?
     
     /// Default shared actor instance using the bundled World English Bible (Catholic edition).
     public static let shared = BibleDatabase.webc
 
-    /// Dedicated actor instance for World English Bible (Catholic edition) with modern English and Hebrew Psalm numbering.
-    public static let webc = BibleDatabase(resourceName: "bible_webc", isVulgateNumbering: false)
+    /// Dedicated actor instance for World English Bible (Catholic edition), which uses English verse numbering.
+    public static let webc = BibleDatabase(resourceName: "bible_webc", isVulgateNumbering: false, versification: VersificationMap(named: "webc"))
 
     /// Dedicated actor instance for Douay-Rheims Bible with Latin Vulgate numbering.
-    public static let drb = BibleDatabase(resourceName: "bible_drb", isVulgateNumbering: true)
+    public static let drb = BibleDatabase(resourceName: "bible_drb", isVulgateNumbering: true, versification: VersificationMap(named: "drb"))
 
     /// Initializes the database connection with an optional custom file URL or resource name.
-    public init(databaseURL: URL? = nil, resourceName: String = "bible_webc", isVulgateNumbering: Bool = false) {
+    public init(
+        databaseURL: URL? = nil,
+        resourceName: String = "bible_webc",
+        isVulgateNumbering: Bool = false,
+        versification: VersificationMap? = nil
+    ) {
         let url = databaseURL ?? Bundle.main.url(forResource: resourceName, withExtension: "sqlite")
         self.databaseURL = url
         self.isVulgateNumbering = isVulgateNumbering
+        self.versification = versification
         
         guard let targetURL = url else {
             self.dbPointer = nil
@@ -510,7 +594,11 @@ public actor BibleDatabase {
     /// (dashes, e.g. "7:25—8:6", "12:31-13:13") into structured, chapter-delimited spans.
     public static func parseCitationSpans(baseChapter: Int?, rawVerses: String) -> [CitationSpan] {
         let initialChapter = baseChapter ?? 1
-        let trimmed = rawVerses.trimmingCharacters(in: .whitespacesAndNewlines)
+        var trimmed = rawVerses.trimmingCharacters(in: .whitespacesAndNewlines)
+        // "4:12-23 or 4:12-17" offers a long and a short form. Read the long form, which comes first.
+        if let alternative = trimmed.range(of: " or ", options: .caseInsensitive) {
+            trimmed = String(trimmed[..<alternative.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
         guard !trimmed.isEmpty else {
             return [CitationSpan(chapter: initialChapter, all: true)]
         }
@@ -702,40 +790,107 @@ public actor BibleDatabase {
         return slices
     }
 
-    /// Queries the Bible database using a `ReadingCitation`.
-    /// Fully supports multi-chapter citations, cross-chapter spans, and Hebrew-to-Vulgate mappings.
+    /// Locates Lectionary "Esther C" (the prayers of Mordecai and Esther) in a bundled Bible.
+    ///
+    /// The Lectionary letters the Greek additions to Esther; neither bundled Bible does.
+    /// Douay-Rheims prints addition C as 13:8-18 and 14:1-19; WEB-C prints it as 4:18-47.
+    /// Only addition C is read at Mass, so the other letters are not mapped.
+    static func estherAdditionSlice(verses: String, isVulgateNumbering: Bool) -> BibleQuerySlice? {
+        let trimmed = verses.trimmingCharacters(in: .whitespaces)
+        guard trimmed.hasPrefix("C:") else { return nil }
+        let cited = parseVerseNumbers(from: String(trimmed.dropFirst(2))).filter { (1...30).contains($0) }
+        guard !cited.isEmpty else { return nil }
+        let bookId = BibleBook.esther.rawValue
+
+        guard isVulgateNumbering else {
+            return BibleQuerySlice(bookId: bookId, chapter: 4, verseNumbers: cited.map { $0 + 17 })
+        }
+        // A citation never spans both prayers, so one chapter is enough.
+        if cited.allSatisfy({ $0 <= 11 }) {
+            return BibleQuerySlice(bookId: bookId, chapter: 13, verseNumbers: cited.map { $0 + 7 })
+        }
+        return BibleQuerySlice(bookId: bookId, chapter: 14, verseNumbers: cited.filter { $0 >= 12 }.map { $0 - 11 })
+    }
+
+    /// Queries the Bible database using a `ReadingCitation` written in Lectionary numbering.
+    ///
+    /// Each cited verse is first listed in Lectionary numbering, then translated to this Bible's
+    /// numbering (`versification`, plus the hand-written Vulgate rules for Psalms, Joel and Malachi),
+    /// and only then read from SQLite.
     public func queryVerses(citation: ReadingCitation) -> [BibleVerse] {
         guard let book = BibleBook.find(named: citation.book) else {
             return []
         }
+        var slices: [BibleQuerySlice] = []
+
+        if book == .esther, let addition = Self.estherAdditionSlice(verses: citation.verses, isVulgateNumbering: isVulgateNumbering) {
+            return queryVerses(bookId: addition.bookId, chapter: addition.chapter, verseNumbers: addition.verseNumbers)
+        }
+
         let spans = Self.parseCitationSpans(baseChapter: citation.chapter, rawVerses: citation.verses)
-        var allVerses: [BibleVerse] = []
 
         for span in spans {
-            let verseNumbers: [Int]
+            let knownLength = versification?.lectionaryVerseCount(book: book.rawValue, chapter: span.chapter)
+
+            // 1. The cited verses, in Lectionary numbering. Nil means "the whole chapter, length unknown".
+            let cited: [Int]?
             if let specific = span.verseNumbers {
-                verseNumbers = specific
+                cited = specific
             } else if let min = span.minVerse {
-                let chapterVerses = queryChapter(bookId: book.rawValue, chapter: span.chapter)
-                verseNumbers = chapterVerses.map(\.verse).filter { $0 >= min }
-            } else if span.all {
-                verseNumbers = []
+                if let knownLength {
+                    cited = min <= knownLength ? Array(min...knownLength) : []
+                } else {
+                    cited = queryChapter(bookId: book.rawValue, chapter: span.chapter).map(\.verse).filter { $0 >= min }
+                }
+            } else if let knownLength {
+                cited = Array(1...max(1, knownLength))
             } else {
-                verseNumbers = []
+                cited = nil
             }
 
-            let slices: [BibleQuerySlice]
-            if isVulgateNumbering {
-                slices = Self.mapHebrewToVulgate(book: book, chapter: span.chapter, verseNumbers: verseNumbers)
+            // An open-ended range that starts past the end of the chapter cites nothing here.
+            // It must not fall through to "whole chapter".
+            if let cited, cited.isEmpty { continue }
+
+            // 2. Translate to this Bible's numbering.
+            if isVulgateNumbering, book == .psalms || book == .joel || book == .malachi {
+                slices.append(contentsOf: Self.mapHebrewToVulgate(book: book, chapter: span.chapter, verseNumbers: cited ?? []))
+            } else if let cited, let versification {
+                var current: (chapter: Int, verses: [Int])?
+                for verse in cited {
+                    for target in versification.resolve(book: book.rawValue, chapter: span.chapter, verse: verse) {
+                        if current?.chapter == target.chapter {
+                            if current?.verses.last != target.verse { current?.verses.append(target.verse) }
+                        } else {
+                            if let done = current {
+                                slices.append(BibleQuerySlice(bookId: book.rawValue, chapter: done.chapter, verseNumbers: done.verses))
+                            }
+                            current = (target.chapter, [target.verse])
+                        }
+                    }
+                }
+                if let done = current {
+                    slices.append(BibleQuerySlice(bookId: book.rawValue, chapter: done.chapter, verseNumbers: done.verses))
+                }
             } else {
-                slices = [BibleQuerySlice(bookId: book.rawValue, chapter: span.chapter, verseNumbers: verseNumbers)]
-            }
-            for slice in slices {
-                let verses = queryVerses(bookId: slice.bookId, chapter: slice.chapter, verseNumbers: slice.verseNumbers)
-                allVerses.append(contentsOf: verses)
+                slices.append(BibleQuerySlice(bookId: book.rawValue, chapter: span.chapter, verseNumbers: cited ?? []))
             }
         }
 
+        // 3. Read from SQLite, skipping a verse already returned by the previous slice.
+        var allVerses: [BibleVerse] = []
+        for slice in slices {
+            for verse in queryVerses(bookId: slice.bookId, chapter: slice.chapter, verseNumbers: slice.verseNumbers) {
+                if let last = allVerses.last, last.chapter == verse.chapter, last.verse == verse.verse { continue }
+                if book == .psalms, verse.verse == 1, let versification {
+                    let text = versification.psalmTextWithoutTitle(psalm: verse.chapter, verseOneText: verse.text)
+                    if text.isEmpty { continue }
+                    allVerses.append(BibleVerse(id: verse.id, bookId: verse.bookId, bookName: verse.bookName, chapter: verse.chapter, verse: verse.verse, text: text))
+                    continue
+                }
+                allVerses.append(verse)
+            }
+        }
         return allVerses
     }
 

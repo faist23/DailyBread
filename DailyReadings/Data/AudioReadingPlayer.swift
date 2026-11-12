@@ -87,7 +87,7 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
             UserDefaults.standard.set(selectedVoiceIdentifier, forKey: "selectedAudioVoiceId")
             if isPlaying && !isAuditioning {
                 synthesizer.stopSpeaking(at: .immediate)
-                speakCurrentReading()
+                speakCurrentChunk()
             }
         }
     }
@@ -227,6 +227,16 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     private var remoteCommandsConfigured: Bool = false
     private var currentReadingUtterance: AVSpeechUtterance?
     private var currentAuditionUtterance: AVSpeechUtterance?
+    private var currentStandaloneUtterance: AVSpeechUtterance?
+
+    /// The current reading split into short passages, each spoken as its own utterance, so a change
+    /// of speed or voice resumes from the passage being read instead of the top of the reading.
+    private var currentChunks: [String] = []
+    private var currentChunkIndex: Int = 0
+
+    /// Identifier of the prayer or Rosary bead now being recited outside the Mass readings, if any.
+    /// Views compare it with the identifier `speakStandalone` gave them to know whether they are speaking.
+    public private(set) var standaloneSpeechID: UUID?
     
     // MARK: - Initialization
     
@@ -476,6 +486,9 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         }
         currentReadingUtterance = nil
         currentAuditionUtterance = nil
+        currentStandaloneUtterance = nil
+        standaloneSpeechID = nil
+        isAuditioning = false
         isPlaying = false
         isPaused = false
         currentReading = nil
@@ -517,7 +530,7 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         speed = speed.next
         if isPlaying {
             synthesizer.stopSpeaking(at: .immediate)
-            speakCurrentReading()
+            speakCurrentChunk()
         }
     }
     
@@ -534,20 +547,84 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         self.isPlaying = true
         self.isPaused = false
         
-        let speechText = prepareLiturgicalSpeechText(for: reading)
-        let utterance = AVSpeechUtterance(string: speechText)
-        
+        currentChunks = liturgicalSpeechParts(for: reading).flatMap(Self.speechChunks)
+        currentChunkIndex = 0
+        speakCurrentChunk()
+    }
+
+    /// Speaks the current passage of the current reading.
+    private func speakCurrentChunk() {
+        guard currentChunkIndex < currentChunks.count else {
+            stop()
+            return
+        }
+        let isLastChunk = currentChunkIndex == currentChunks.count - 1
+        let utterance = AVSpeechUtterance(string: currentChunks[currentChunkIndex])
+
         utterance.rate = speed.rawValue
         utterance.pitchMultiplier = 1.0
         utterance.volume = 1.0
-        utterance.postUtteranceDelay = 1.2
+        // A short breath between passages; a contemplative pause after the reading.
+        utterance.postUtteranceDelay = isLastChunk ? 1.2 : 0.15
         utterance.voice = selectNaturalVoice()
-        
+
+        self.isPlaying = true
+        self.isPaused = false
         self.currentReadingUtterance = utterance
         self.currentAuditionUtterance = nil
-        
+
         updateNowPlayingInfo()
         synthesizer.speak(utterance)
+    }
+
+    /// Splits text into passages of a few sentences each.
+    static func speechChunks(_ text: String) -> [String] {
+        let limit = 320
+        guard text.count > limit else { return text.isEmpty ? [] : [text] }
+        var chunks: [String] = []
+        var current = ""
+        text.enumerateSubstrings(in: text.startIndex..., options: .bySentences) { sentence, _, _, _ in
+            guard let sentence else { return }
+            if !current.isEmpty, current.count + sentence.count > limit {
+                chunks.append(current.trimmingCharacters(in: .whitespacesAndNewlines))
+                current = ""
+            }
+            current += sentence
+        }
+        if !current.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            chunks.append(current.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        return chunks
+    }
+
+    // MARK: - Standalone Recitation (prayers, Rosary beads)
+
+    /// Recites a prayer through the shared synthesizer and audio session, stopping any Mass reading
+    /// in progress. The session is released when the prayer ends.
+    ///
+    /// - Returns: An identifier to compare with `standaloneSpeechID` and to pass to `stopStandalone`.
+    @discardableResult
+    public func speakStandalone(_ text: String, rate: Float, voice: AVSpeechSynthesisVoice? = nil) -> UUID {
+        stop(deactivateSession: false)
+        activateAudioSession()
+
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.rate = rate
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 1.0
+        utterance.voice = voice ?? selectNaturalVoice()
+
+        let id = UUID()
+        currentStandaloneUtterance = utterance
+        standaloneSpeechID = id
+        synthesizer.speak(utterance)
+        return id
+    }
+
+    /// Stops the standalone recitation with this identifier. Does nothing if something else is speaking.
+    public func stopStandalone(_ id: UUID?) {
+        guard let id, id == standaloneSpeechID else { return }
+        stop()
     }
     
     /// Selects the chosen or highest quality natural English voice available on the user's device.
@@ -573,14 +650,12 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     
     /// Auditions a specific voice by introducing itself and reciting a liturgical acclamation.
     public func audition(voiceId: String) {
+        // A preview ends whatever is being read; the listener restarts the reading with the new voice.
+        stop(deactivateSession: false)
+        isAuditioning = true
+
         if !voiceId.isEmpty {
             self.selectedVoiceIdentifier = voiceId
-            UserDefaults.standard.set(voiceId, forKey: "selectedAudioVoiceId")
-        }
-        
-        isAuditioning = true
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
         }
         activateAudioSession()
         
@@ -600,8 +675,8 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         synthesizer.speak(utterance)
     }
     
-    /// Formats scripture text with liturgical introductory announcements and acclamations.
-    private func prepareLiturgicalSpeechText(for reading: Reading) -> String {
+    /// The reading as it is proclaimed: announcement, text, acclamation. One element per part.
+    private func liturgicalSpeechParts(for reading: Reading) -> [String] {
         var parts: [String] = []
         
         switch reading.type {
@@ -655,7 +730,7 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
             parts.append(cleanScriptureForSpeech(reading.text))
         }
         
-        return parts.joined(separator: "\n\n")
+        return parts.filter { !$0.isEmpty }
     }
     
     /// Phonetic pronunciations for biblical proper nouns that speech synthesizers often mispronounce.
@@ -711,12 +786,22 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         if utterance === self.currentAuditionUtterance {
             self.currentAuditionUtterance = nil
             self.isAuditioning = false
+            self.deactivateAudioSession()
+            return
+        }
+        if utterance === self.currentStandaloneUtterance {
+            self.currentStandaloneUtterance = nil
+            self.standaloneSpeechID = nil
+            self.deactivateAudioSession()
             return
         }
         guard utterance === self.currentReadingUtterance else { return }
         self.currentReadingUtterance = nil
-        
-        if self.currentReadingIndex + 1 < self.activeReadings.count {
+
+        if self.currentChunkIndex + 1 < self.currentChunks.count {
+            self.currentChunkIndex += 1
+            self.speakCurrentChunk()
+        } else if self.currentReadingIndex + 1 < self.activeReadings.count {
             self.currentReadingIndex += 1
             self.speakCurrentReading()
         } else {
@@ -744,9 +829,15 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
             self.isAuditioning = false
             return
         }
-        if utterance === self.currentReadingUtterance {
-            self.currentReadingUtterance = nil
+        if utterance === self.currentStandaloneUtterance {
+            self.currentStandaloneUtterance = nil
+            self.standaloneSpeechID = nil
+            return
         }
+        // An utterance replaced by a newer one (skip, speed or voice change) reports its cancel
+        // after the new one has started. Only the current utterance may change playback state.
+        guard utterance === self.currentReadingUtterance else { return }
+        self.currentReadingUtterance = nil
         self.isPlaying = false
         self.isPaused = false
     }

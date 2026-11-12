@@ -17,6 +17,9 @@ public struct MainTabView: View {
     // MARK: - State & View Models
     
     @State private var selectedTab: Tab = .today
+    /// Read so the tab content is rebuilt when the user changes their text size; `Font.scaled`
+    /// computes its size when a view body runs.
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var todayViewModel: TodayViewModel
     @State private var calendarViewModel = CalendarViewModel()
     
@@ -83,6 +86,7 @@ public struct MainTabView: View {
             }
             .tag(Tab.settings)
         }
+        .id(dynamicTypeSize)
         .tint(tabBarTintColor)
         .task {
             if todayViewModel.liturgicalDay == nil {

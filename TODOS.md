@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
 **Last Updated:** 2026-11-12  
-**Current Version:** 1.0.0 (Build 14)  
+**Current Version:** 1.0.0 (Build 16)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 (`SWIFT_STRICT_CONCURRENCY = complete`) | SwiftUI | SwiftData  
@@ -15,6 +15,42 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Aesthetic:** Missal-inspired typography, New York serif, subtle gold liturgical accents, warm scripture paper backgrounds, and distraction-free layout.
 - **Offline Reliability:** Guaranteed offline liturgical Computus calendar algorithm and bundled Douay-Rheims Bible SQLite database, with seamless online New American Bible (NAB) lectionary fetching and SwiftData caching.
 - **Audio Experience:** Reverent, contemplative audio recitation designed for personal prayer, morning commutes, and hands-free devotion.
+
+---
+
+## Build 16 (12 November 2026)
+
+Second audit round. There was no Build 15.
+
+### Scripture numbering
+- **Lectionary numbering is now mapped by table, for both Bibles.** `Resources/versification.json` (built by `Scripts/build_versification.py` from the Copenhagen Alliance standard mappings) translates the Lectionary's Hebrew numbering to WEB-C (English numbering) and Douay-Rheims (Vulgate numbering). Fixes WEB-C psalms with a title verse (Psalm 51:3 now starts "Have mercy on me"), Joel, Malachi, Zechariah 2, Isaiah 8:23/9 and 63:19/64, and the Romans doxology.
+- **Psalm titles are no longer read** at the start of a WEB-C responsorial psalm.
+- **Esther addition C** ("Esther C:12, 14-16, 23-25") resolves in both Bibles.
+- **Citation parser:** long-or-short forms ("4:12-23 or 4:12-17") read the long form in the right chapter; an open-ended range past the chapter end no longer returns the whole chapter; "II Corinthians" and "Psalm103:1-2" parse.
+- **Known gap (see Active TODOS):** Douay-Rheims Sirach still follows Vulgate verse numbers (Sirach 50:22-24 returns different verses from the Lectionary's). No standard table covers it.
+
+### Lectionary data
+- **`lectionary.json` is now a real cycle index** (about 950 keys), derived from `lectionary_dates.json` by `Scripts/BuildLectionaryIndex`. Days outside the dated range resolve by what they are: `ot_23_tuesday_I`, `lent_sun_3_A`, `advent_dec_18`, `fixed_08_15`, `proper_10_02`.
+- **The invented fallback readings are gone.** A day with no data shows the empty state.
+- **Coverage, 12 Nov 2026 through 2031:** 1,845 of 1,876 days complete; 20 have a Gospel but lack another reading; 1 has no Gospel; 10 have nothing. The gaps are mostly Ordinary Time Sundays that a feast displaced in every year the data covers (for example the Fourth Sunday, Year C).
+- **Hand-entered readings** in `Scripts/lectionary_seeds.json` cover days the dated data only has as placeholders or with a different Mass: Holy Thursday (Lord's Supper), Ascension, Pentecost, Nativity of John the Baptist, Saints Peter and Paul, Thursday of the Sixth Week of Easter. **Check these against USCCB before release.**
+- **Accuracy check:** building the index from 2023–2025 only and predicting 2026–2027 gave 465 of 512 days fully right, 29 right but incomplete, 6 empty, 12 with a differing reading (mostly permitted alternatives and the placeholder days now seeded).
+
+### Audio
+- Readings are spoken as short passages, so a speed or voice change resumes from the current passage. **Listen for the gap between passages on a device.**
+- Prayers and Rosary beads recite through `AudioReadingPlayer.speakStandalone`; the Stop button resets when speech ends and the audio session is released.
+- A voice preview now ends the current reading and releases the session afterwards.
+- A cancelled utterance can no longer flip the play state of the one that replaced it.
+
+### Other
+- Dynamic Type: all fixed `Font.system(size:)` calls in views now use `Font.scaled(size:)`, capped at 1.5x. **Needs a visual pass at large text sizes.**
+- The lectionary is parsed off the main thread on first use, not at launch.
+- Settings no longer reads "31 of 30 days stored".
+- The copyright footer also appears on the Calendar's date view.
+- **Rosary mysteries by weekday fixed.** `RosaryMysteryType.forDate` had Wednesday and Thursday swapped (Wednesday showed Luminous, Thursday Glorious). The tutorial text was already right.
+- 40 unit tests, including `LectionaryCoverageTests`, which walks every citation through 2028 in both Bibles and checks the Rosary's weekly schedule.
+- The NAB tier is unchanged by request (see `NAB_COPYRIGHT.md`).
+- Open: confirm the December 9 Immaculate Conception obligation rule before 2030.
 
 ---
 
@@ -195,8 +231,40 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 
 ## Active & Upcoming TODOS
 
+### P0 — Before any release (TestFlight or App Store)
+- [ ] **NAB licensing.** The NAB tier is kept as-is for personal testing by decision (12 Nov 2026). It fetches, caches and reads aloud text with no license, and `EvangelizioService` attaches a "used by permission" notice that is not true. Remove or gate the tier and correct the notice before release. Details in `NAB_COPYRIGHT.md`.
+- [ ] **Check hand-entered readings against USCCB** (`Scripts/lectionary_seeds.json`): Holy Thursday (Lord's Supper), Ascension with its Year A/B/C Gospels, Pentecost (Day), Nativity of John the Baptist, Saints Peter and Paul, Thursday of the Sixth Week of Easter. Also the older `fixed_*` seeds: Jan 1, Mar 19, Mar 25, Aug 15, Nov 1, Nov 2, Dec 25.
+- [ ] **Check the bundled psalm refrains** (`PsalmResponseProvider`) for Lectionary copyright.
+
+### P0 — Needs a device
+- [ ] **Listen to a full day's readings**: gaps between passages, lock-screen playback, speed and voice changes mid-reading, a phone-call interruption.
+- [ ] **Listen to a prayer and a Rosary decade**: the Stop button should reset when speech ends, and music from another app should resume.
+- [ ] **View every screen at the largest text sizes** (fonts now scale to 1.5x): calendar grid, category pills, mini player, Rosary bead row.
+- [ ] **Confirm speech delegate callbacks arrive on the main thread** on iOS (the delegate methods now trap otherwise).
+
+### P1 — Lectionary data gaps
+- [ ] **31 days through 2031 are incomplete.** Add real citations to `lectionary_seeds.json` (or more dated data), rebuild `lectionary.json`, re-run tests.
+  - No readings: 2027-12-16 (Thursday, Third Week of Advent); Ordinary Time Sundays 2028-01-30 (4th, C), 2028-06-25 (12th, C), 2028-07-02 (13th, C), 2028-09-17 (24th, C), 2028-11-05 (31st, C), 2028-11-12 (32nd, C), 2029-06-10 (10th, A), 2030-03-03 (8th, B), 2031-06-22 (12th, C).
+  - No Gospel: 2030-02-24 (7th Sunday, B).
+  - Missing one reading: 20 days, mostly Ordinary Time weekdays in a year the data never saw.
+- [ ] **Lent Sundays 3 to 5 use the Year A readings in every year.** Year A is permitted in any year, but Years B and C have readings of their own; seed them if wanted.
+- [ ] **Douay-Rheims Sirach** verse numbers differ from the Lectionary's (Sirach 50:22-24).
+- [ ] **Esther additions** other than C are not mapped.
+- [ ] **Link the empty state** to the USCCB page for the date.
+
+### P2 — Rosary guide
+The order of prayers, the prayer texts and the mysteries were reviewed and are accurate. Optional refinements:
+- [ ] **Fatima Prayer after the opening Glory Be**: the guide says it before the first decade. The usual practice says it only after each decade. Decide whether to keep it.
+- [ ] **Seasonal Sunday mysteries** as a setting: Joyful on the Sundays of Advent and Christmas, Sorrowful on the Sundays of Lent. The app always gives Glorious on Sunday.
+- [ ] **Read the Fourth and Fifth Glorious Mysteries entries** (Assumption, Coronation); they were not part of the review.
+
+### P1 — Calendar
+- [ ] **Confirm the December 9 obligation rule** (Immaculate Conception transferred to Monday) before 2030.
+- [ ] **Memorials list is partial** in `FixedSolemnities`.
+- [ ] **Ascension Thursday provinces** are not supported.
+
 ### P1 — App Store Submission & TestFlight Monitoring
-- [x] **Bump build version to 1.0.0 (Build 12)** in Xcode and upload to TestFlight.
+- [x] **Bump build version to 1.0.0 (Build 16)**.
 - [ ] **App Store Connect Store Listing**:
   - App Name: `DailyReadings App` (or chosen brand name).
   - Subtitle: *Catholic Daily Mass Readings*.

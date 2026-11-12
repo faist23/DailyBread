@@ -48,7 +48,9 @@ public final class ReadingsRepository {
     // Dependencies
     private var modelContainer: ModelContainer?
     private let bibleDatabase: BibleDatabase
-    private let pericoreIndex: PericoreIndex
+    /// Injected lectionary index for tests. In the app this stays nil and `PericoreIndex.shared`
+    /// is used, so the bundled lectionary is not parsed while the app is launching.
+    private let injectedPericoreIndex: PericoreIndex?
     private let evangelizioService: EvangelizioService
     private let liturgicalCalendar: LiturgicalCalendar
 
@@ -56,13 +58,13 @@ public final class ReadingsRepository {
     public init(
         modelContainer: ModelContainer? = nil,
         bibleDatabase: BibleDatabase = .shared,
-        pericoreIndex: PericoreIndex = .shared,
+        pericoreIndex: PericoreIndex? = nil,
         evangelizioService: EvangelizioService = .shared,
         liturgicalCalendar: LiturgicalCalendar = .shared
     ) {
         self.modelContainer = modelContainer
         self.bibleDatabase = bibleDatabase
-        self.pericoreIndex = pericoreIndex
+        self.injectedPericoreIndex = pericoreIndex
         self.evangelizioService = evangelizioService
         self.liturgicalCalendar = liturgicalCalendar
     }
@@ -142,7 +144,7 @@ public final class ReadingsRepository {
         let onlineReadings = try await evangelizioService.fetchReadings(for: date)
         
         let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
-        let lectionaryEntries = pericoreIndex.entries(for: liturgicalDay)
+        let lectionaryEntries = await lectionaryEntries(for: liturgicalDay)
         
         let verifiedReadings = onlineReadings.readings.map { reading -> Reading in
             let match = lectionaryEntries.first(where: { $0.type == reading.type })
@@ -192,7 +194,7 @@ public final class ReadingsRepository {
         let cutoff = Date().addingTimeInterval(-90 * 86400)
 
         let descriptor = FetchDescriptor<CachedReading>(
-            predicate: #Predicate { $0.translation == "NAB" && $0.dateKey >= startKey && $0.dateKey <= endKey && $0.fetchedAt >= cutoff }
+            predicate: #Predicate { $0.translation == "NAB" && $0.dateKey >= startKey && $0.dateKey < endKey && $0.fetchedAt >= cutoff }
         )
         return (try? context.fetchCount(descriptor)) ?? 0
     }
@@ -248,7 +250,7 @@ public final class ReadingsRepository {
             do {
                 _ = try await fetchAndVerifyOnlineReadings(for: targetDate)
                 newlyFetched += 1
-                self.cachedNABDaysCount += 1
+                self.cachedNABDaysCount = countCachedNABDays(daysAhead: daysAhead)
                 // Polite delay between API calls to avoid server rate limits
                 try? await Task.sleep(nanoseconds: 120_000_000)
             } catch {
@@ -290,9 +292,18 @@ public final class ReadingsRepository {
 
     // MARK: - Offline Generation Pipeline
 
+    /// Looks up the day's lectionary entries off the main actor. The first call parses the
+    /// bundled lectionary files, which is too slow to do on the main thread.
+    private func lectionaryEntries(for day: LiturgicalDay) async -> [LectionaryEntry] {
+        let injected = injectedPericoreIndex
+        return await Task.detached(priority: .userInitiated) {
+            (injected ?? PericoreIndex.shared).entries(for: day)
+        }.value
+    }
+
     private func generateOfflineReadings(for date: Date, translation: String = "WEBC") async -> DailyReadings {
         let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
-        let entries = pericoreIndex.entries(for: liturgicalDay)
+        let entries = await lectionaryEntries(for: liturgicalDay)
         let isDRB = translation.uppercased() == "DRB"
         let db = isDRB ? BibleDatabase.drb : BibleDatabase.webc
         let translationCode = isDRB ? "DRB" : "WEBC"

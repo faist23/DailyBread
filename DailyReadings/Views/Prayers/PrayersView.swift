@@ -39,11 +39,11 @@ public struct PrayersView: View {
                 // Header Title
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Treasury of Prayers")
-                        .font(.system(size: 28, weight: .bold, design: .serif))
+                        .font(.scaled(size: 28, weight: .bold, design: .serif))
                         .foregroundStyle(Color.primary)
                     
                     Text("Traditional Roman Catholic devotions, daily prayers, and the Holy Rosary.")
-                        .font(.system(size: 14, weight: .regular, design: .serif))
+                        .font(.scaled(size: 14, weight: .regular, design: .serif))
                         .foregroundStyle(Color.secondary)
                 }
                 .padding(.horizontal, AppTheme.Spacing.medium)
@@ -105,35 +105,35 @@ public struct PrayersView: View {
                         .frame(width: 44, height: 44)
                     
                     Image(systemName: "circle.grid.cross.fill")
-                        .font(.system(size: 20))
+                        .font(.scaled(size: 20))
                         .foregroundStyle(liturgicalColor.uiAccentColor)
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     HStack(spacing: 6) {
                         Text("TODAY'S ROSARY")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.scaled(size: 10, weight: .bold))
                             .tracking(1.2)
                             .foregroundStyle(liturgicalColor.uiAccentColor)
                         
                         Text("•")
-                            .font(.system(size: 10))
+                            .font(.scaled(size: 10))
                             .foregroundStyle(Color.secondary)
                         
                         Text(todayMystery.traditionalDays)
-                            .font(.system(size: 11, weight: .regular))
+                            .font(.scaled(size: 11, weight: .regular))
                             .foregroundStyle(Color.secondary)
                     }
                     
                     Text(todayMystery.rawValue)
-                        .font(.system(size: 16, weight: .bold, design: .serif))
+                        .font(.scaled(size: 16, weight: .bold, design: .serif))
                         .foregroundStyle(Color.primary)
                 }
                 
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.scaled(size: 13, weight: .semibold))
                     .foregroundStyle(Color.secondary.opacity(0.6))
             }
             .padding(AppTheme.Spacing.medium)
@@ -167,9 +167,9 @@ public struct PrayersView: View {
                     } label: {
                         HStack(spacing: 5) {
                             Image(systemName: category.icon)
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(.scaled(size: 11, weight: .semibold))
                             Text(category.rawValue)
-                                .font(.system(size: 13, weight: selectedCategory == category ? .semibold : .regular))
+                                .font(.scaled(size: 13, weight: selectedCategory == category ? .semibold : .regular))
                         }
                         .foregroundStyle(selectedCategory == category ? Color.primary : Color.secondary)
                         .padding(.horizontal, 12)
@@ -208,12 +208,12 @@ public struct PrayersView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(spacing: 6) {
                         Text(prayer.title)
-                            .font(.system(size: 16, weight: .bold, design: .serif))
+                            .font(.scaled(size: 16, weight: .bold, design: .serif))
                             .foregroundStyle(Color.primary)
                         
                         if prayer.hasLatin {
                             Text("LATIN")
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.scaled(size: 9, weight: .bold))
                                 .foregroundStyle(liturgicalColor.uiAccentColor)
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 1)
@@ -224,12 +224,12 @@ public struct PrayersView: View {
                     
                     if let latin = prayer.latinTitle, !latin.isEmpty {
                         Text(latin)
-                            .font(.system(size: 13, weight: .medium, design: .serif).italic())
+                            .font(.scaled(size: 13, weight: .medium, design: .serif).italic())
                             .foregroundStyle(Color.secondary)
                     }
                     
                     Text(cleanFirstLine(prayer.textEnglish))
-                        .font(.system(size: 13, weight: .regular, design: .serif))
+                        .font(.scaled(size: 13, weight: .regular, design: .serif))
                         .foregroundStyle(Color.secondary.opacity(0.85))
                         .lineLimit(1)
                         .padding(.top, 2)
@@ -238,7 +238,7 @@ public struct PrayersView: View {
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.scaled(size: 13, weight: .semibold))
                     .foregroundStyle(Color.secondary.opacity(0.5))
             }
             .padding(AppTheme.Spacing.medium)
@@ -269,15 +269,15 @@ public struct PrayersView: View {
             Spacer()
                 .frame(height: 40)
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 32))
+                .font(.scaled(size: 32))
                 .foregroundStyle(Color.secondary.opacity(0.5))
             Text("No prayers found matching \"\(searchQuery)\"")
-                .font(.system(size: 15, weight: .medium, design: .serif))
+                .font(.scaled(size: 15, weight: .medium, design: .serif))
                 .foregroundStyle(Color.secondary)
             Button("Clear Search") {
                 searchQuery = ""
             }
-            .font(.system(size: 14, weight: .semibold))
+            .font(.scaled(size: 14, weight: .semibold))
             .foregroundStyle(liturgicalColor.uiAccentColor)
         }
         .frame(maxWidth: .infinity)

@@ -31,19 +31,19 @@ public struct HowToPrayRosaryView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 6) {
                     Image(systemName: "book.pages.fill")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.scaled(size: 12, weight: .bold))
                     Text("BEGINNER'S GUIDE")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.scaled(size: 11, weight: .bold))
                         .tracking(1.4)
                 }
                 .foregroundStyle(liturgicalColor.uiAccentColor)
                 
                 Text("How to Pray the Rosary")
-                    .font(.system(size: 24, weight: .bold, design: .serif))
+                    .font(.scaled(size: 24, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 Text("The Holy Rosary is a contemplative journey through the Gospel. As our lips repeat the gentle prayers of the angelic salutation, our hearts meditate on the mysteries of the life, death, and resurrection of Jesus Christ.")
-                    .font(.system(size: 14, weight: .regular, design: .serif))
+                    .font(.scaled(size: 14, weight: .regular, design: .serif))
                     .foregroundStyle(Color.secondary)
                     .lineSpacing(4)
                 
@@ -51,9 +51,9 @@ public struct HowToPrayRosaryView: View {
                     Button(action: onStartGuidedPrayer) {
                         HStack(spacing: 8) {
                             Image(systemName: "play.circle.fill")
-                                .font(.system(size: 15, weight: .semibold))
+                                .font(.scaled(size: 15, weight: .semibold))
                             Text("Start Guided Bead-by-Bead Rosary")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.scaled(size: 14, weight: .semibold))
                         }
                         .foregroundStyle(liturgicalColor.primaryButtonForeground)
                         .padding(.horizontal, 16)
@@ -78,7 +78,7 @@ public struct HowToPrayRosaryView: View {
             // Section 1: The 6 Steps
             VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                 Text("The 6 Steps of the Rosary")
-                    .font(.system(size: 18, weight: .bold, design: .serif))
+                    .font(.scaled(size: 18, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 stepCard(
@@ -127,7 +127,7 @@ public struct HowToPrayRosaryView: View {
             // Section 2: Weekly Mystery Schedule
             VStack(alignment: .leading, spacing: AppTheme.Spacing.medium) {
                 Text("Weekly Mystery Schedule")
-                    .font(.system(size: 18, weight: .bold, design: .serif))
+                    .font(.scaled(size: 18, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 VStack(spacing: AppTheme.Spacing.small) {
@@ -141,7 +141,7 @@ public struct HowToPrayRosaryView: View {
             // Section 3: Practical Beginner Advice
             VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
                 Text("Spiritual Advice for Beginners")
-                    .font(.system(size: 18, weight: .bold, design: .serif))
+                    .font(.scaled(size: 18, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 adviceBullet(
@@ -174,22 +174,22 @@ public struct HowToPrayRosaryView: View {
                     .fill(liturgicalColor.swiftUIColor.opacity(0.15))
                     .frame(width: 30, height: 30)
                 Text(number)
-                    .font(.system(size: 14, weight: .bold, design: .serif))
+                    .font(.scaled(size: 14, weight: .bold, design: .serif))
                     .foregroundStyle(liturgicalColor.uiAccentColor)
             }
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(title.uppercased())
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.scaled(size: 11, weight: .bold))
                     .tracking(1.1)
                     .foregroundStyle(liturgicalColor.uiAccentColor)
                 
                 Text(prayer)
-                    .font(.system(size: 16, weight: .bold, design: .serif))
+                    .font(.scaled(size: 16, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 Text(explanation)
-                    .font(.system(size: 14, weight: .regular, design: .serif))
+                    .font(.scaled(size: 14, weight: .regular, design: .serif))
                     .foregroundStyle(Color.secondary)
                     .lineSpacing(4)
                     .padding(.top, 2)
@@ -209,15 +209,15 @@ public struct HowToPrayRosaryView: View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
                 Text(day)
-                    .font(.system(size: 12, weight: .bold))
+                    .font(.scaled(size: 12, weight: .bold))
                     .foregroundStyle(liturgicalColor.uiAccentColor)
                 Spacer()
                 Text(mystery)
-                    .font(.system(size: 14, weight: .bold, design: .serif))
+                    .font(.scaled(size: 14, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
             }
             Text(focus)
-                .font(.system(size: 12, weight: .regular, design: .serif).italic())
+                .font(.scaled(size: 12, weight: .regular, design: .serif).italic())
                 .foregroundStyle(Color.secondary)
         }
         .padding(AppTheme.Spacing.small)
@@ -228,10 +228,10 @@ public struct HowToPrayRosaryView: View {
     private func adviceBullet(title: String, text: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 14, weight: .bold, design: .serif))
+                .font(.scaled(size: 14, weight: .bold, design: .serif))
                 .foregroundStyle(Color.primary)
             Text(text)
-                .font(.system(size: 13, weight: .regular, design: .serif))
+                .font(.scaled(size: 13, weight: .regular, design: .serif))
                 .foregroundStyle(Color.secondary)
                 .lineSpacing(3)
         }

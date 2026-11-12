@@ -50,8 +50,9 @@ public struct LectionaryEntry: Codable, Hashable, Sendable {
 }
 
 /// Maps Catholic liturgical days to Bible passage citations and lectionary readings.
-/// Loads definitions from the bundled `lectionary.json` and builds exact lookup keys
-/// according to Roman Catholic Lectionary rules.
+/// `lectionary_dates.json` holds readings by calendar date for the years it covers.
+/// `lectionary.json` holds the same readings by liturgical cycle (built by `Scripts/BuildLectionaryIndex`),
+/// so days outside the dated range still resolve.
 public final class PericoreIndex: Sendable {
     /// Shared singleton instance.
     public static let shared = PericoreIndex()
@@ -61,15 +62,14 @@ public final class PericoreIndex: Sendable {
     /// Date-indexed lectionary entries ("YYYY-MM-DD") loaded from lectionary_dates.json
     private let dateIndex: [String: [LectionaryEntry]]
 
-    /// Designated initializer. Loads index from `lectionary.json` and `lectionary_dates.json` or falls back to embedded seeds.
+    /// Designated initializer. Loads the cycle index from `lectionary.json` and the dated index from `lectionary_dates.json`.
     public init(customURL: URL? = nil, customDatesURL: URL? = nil) {
         let url = customURL ?? Bundle.main.url(forResource: "lectionary", withExtension: "json")
         if let url, let data = try? Data(contentsOf: url),
            let decoded = try? JSONDecoder().decode([String: [LectionaryEntry]].self, from: data) {
             self.index = decoded
         } else {
-            // Built-in foundational seeds guaranteed to cover key liturgical days
-            self.index = Self.seedLectionary
+            self.index = [:]
         }
 
         var loadedDates: [String: [LectionaryEntry]] = [:]
@@ -77,8 +77,10 @@ public final class PericoreIndex: Sendable {
         if let datesURL, let data = try? Data(contentsOf: datesURL),
            let rawDateDict = try? JSONSerialization.jsonObject(with: data) as? [String: [[String: Any]]] {
             for (dateKey, entriesArray) in rawDateDict {
-                guard let firstEntry = entriesArray.first,
-                      let readingsDict = firstEntry["readings"] as? [String: [[String: Any]]] else { continue }
+                // A day with several Masses lists them all; some are placeholders with no readings.
+                guard let readingsDict = entriesArray
+                    .compactMap({ $0["readings"] as? [String: [[String: Any]]] })
+                    .first(where: { !$0.isEmpty }) else { continue }
                 
                 var entries: [LectionaryEntry] = []
                 
@@ -160,297 +162,176 @@ public final class PericoreIndex: Sendable {
     }
 
     /// Returns full `LectionaryEntry` records (including reading type and Psalm refrain) for the day.
+    ///
+    /// Looks up the exact calendar date first, then the liturgical-cycle keys for the day.
+    /// Returns an empty array when the lectionary has nothing for the day. It never invents readings.
     public func entries(for day: LiturgicalDay) -> [LectionaryEntry] {
-        // 1. Check dateIndex for exact calendar date (YYYY-MM-DD)
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0) ?? Calendar.current.timeZone
-        let dateKey = formatter.string(from: day.date)
-        if let directDateMatches = dateIndex[dateKey], !directDateMatches.isEmpty {
-            return directDateMatches
+        let dated = dateIndex[Self.dateKey(for: day.date)] ?? []
+        if dated.isEmpty || Self.cycleOnlyBases.contains(Self.baseKeys(for: day).last ?? "") {
+            let cycle = cycleEntries(for: day)
+            if !cycle.isEmpty { return cycle }
         }
-
-        // 2. Check standard liturgical cycle lookup key
-        let lookupKey = key(for: day)
-        if let directMatches = index[lookupKey], !directMatches.isEmpty {
-            return directMatches
-        }
-
-        // 3. Check if a fixed feast exists for this calendar date
-        let month = Calendar.current.component(.month, from: day.date)
-        let dayOfMonth = Calendar.current.component(.day, from: day.date)
-        let fixedKey = String(format: "fixed_%02d_%02d", month, dayOfMonth)
-        if let fixedMatches = index[fixedKey], !fixedMatches.isEmpty {
-            return fixedMatches
-        }
-
-        // 4. Fallback default weekday or Sunday template if exact key isn't in lectionary file
-        return fallbackEntries(for: day)
+        return dated
     }
 
-    // MARK: - Key Generation Logic
+    /// Days where the dated data carries a different Mass from the one this app's calendar keeps
+    /// (the Seventh Sunday of Easter instead of the Ascension, the Pentecost Vigil, the Chrism Mass).
+    /// The cycle index is authoritative for these.
+    public static let cycleOnlyBases: Set<String> = ["ascension", "pentecost", "triduum_thursday"]
 
-    /// Builds the standard lectionary lookup key according to liturgical rules:
-    /// - Sundays: "sunday_{cycle}_{season}_{week}" e.g. "sunday_A_advent_1"
-    /// - Weekdays: "weekday_{cycle}_{season}_{week}_{dayOfWeek}" e.g. "weekday_I_ordinary_1_monday"
-    /// - Fixed feasts: "fixed_{month}_{day}" e.g. "fixed_12_25" for Christmas
-    /// - Proper seasons with single-year cycle: "weekday_{season}_{week}_{dayOfWeek}" (no cycle needed)
-    public func key(for day: LiturgicalDay) -> String {
-        // 1. Check if there are fixed feast readings for this date
-        let cal = Calendar(identifier: .gregorian)
-        let month = cal.component(.month, from: day.date)
-        let dayOfMonth = cal.component(.day, from: day.date)
-        let fixedKey = String(format: "fixed_%02d_%02d", month, dayOfMonth)
-        if index[fixedKey] != nil {
-            return fixedKey
+    /// Readings for the day from the liturgical-cycle index only, ignoring the dated index.
+    ///
+    /// A base key holds the readings every cycle shares; the key with a cycle suffix holds the
+    /// readings particular to that cycle (for example an Ordinary Time weekday shares its Gospel
+    /// across Years I and II but not its First Reading). A `proper_MM_DD` key then replaces the
+    /// readings a memorial has of its own. A cycle the index has never seen yields only the shared
+    /// readings; a solemnity or feast with no data yields nothing rather than the weekday's readings.
+    public func cycleEntries(for day: LiturgicalDay) -> [LectionaryEntry] {
+        let suffix = Self.cycleSuffix(for: day)
+        let bases = Self.baseKeys(for: day)
+        let fixed = bases.first { $0.hasPrefix("fixed_") }
+        let primary = fixed ?? bases.last ?? ""
+
+        var byType: [ReadingType: [LectionaryEntry]] = Dictionary(grouping: index[primary] ?? [], by: \.type)
+        for (type, entries) in Dictionary(grouping: index["\(primary)_\(suffix)"] ?? [], by: \.type) {
+            byType[type] = entries
         }
-
-        let seasonStr: String
-        switch day.season {
-        case .ordinaryTime:
-            seasonStr = "ordinary"
-        case .paschalTriduum:
-            seasonStr = "triduum"
-        default:
-            seasonStr = day.season.rawValue.lowercased()
-        }
-
-        let week = day.seasonWeek
-        let dayOfWeekNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
-        let dayOfWeek = (0...6).contains(day.dayOfWeekInSeason) ? dayOfWeekNames[day.dayOfWeekInSeason] : "sunday"
-
-        // 2. Sundays
-        if day.isSunday {
-            let cycle: String
-            switch day.sundayCycle {
-            case .yearA: cycle = "A"
-            case .yearB: cycle = "B"
-            case .yearC: cycle = "C"
+        if fixed == nil, let proper = bases.first(where: { $0.hasPrefix("proper_") }), !byType.isEmpty {
+            for (type, entries) in Dictionary(grouping: index[proper] ?? [], by: \.type) {
+                byType[type] = entries
             }
-            return "sunday_\(cycle)_\(seasonStr)_\(week)"
         }
-
-        // 3. Proper Seasons (Advent, Lent, Triduum, Easter) have a single-year cycle
-        if day.season == .advent || day.season == .lent || day.season == .easter || day.season == .paschalTriduum {
-            return "weekday_\(seasonStr)_\(week)_\(dayOfWeek)"
-        }
-
-        // 4. Ordinary Time Weekdays (2-year cycle: Year I and Year II)
-        let cycle: String
-        switch day.weekdayCycle {
-        case .yearI: cycle = "I"
-        case .yearII: cycle = "II"
-        }
-        return "weekday_\(cycle)_\(seasonStr)_\(week)_\(dayOfWeek)"
+        return ReadingType.allCases
+            .sorted { $0.liturgicalOrder < $1.liturgicalOrder }
+            .flatMap { byType[$0] ?? [] }
     }
 
-    // MARK: - Fallback Template Generator
+    /// Every dated entry, keyed "yyyy-MM-dd". Used by `Scripts/BuildLectionaryIndex` to derive the cycle index.
+    public var datedEntries: [String: [LectionaryEntry]] { dateIndex }
 
-    private func fallbackEntries(for day: LiturgicalDay) -> [LectionaryEntry] {
-        let isSunday = day.isSunday
-        if isSunday {
-            return [
-                LectionaryEntry(
-                    type: .firstReading,
-                    citation: ReadingCitation(book: "Isaiah", chapter: 2, verses: "1-5")
-                ),
-                LectionaryEntry(
-                    type: .responsorialPsalm,
-                    citation: ReadingCitation(book: "Psalms", chapter: 122, verses: "1-2, 3-4, 8-9"),
-                    response: "Let us go rejoicing to the house of the Lord."
-                ),
-                LectionaryEntry(
-                    type: .secondReading,
-                    citation: ReadingCitation(book: "Romans", chapter: 13, verses: "11-14")
-                ),
-                LectionaryEntry(
-                    type: .gospelAcclamation,
-                    citation: ReadingCitation(book: "Psalms", chapter: 85, verses: "8"),
-                    response: "Show us, Lord, your love, and grant us your salvation."
-                ),
-                LectionaryEntry(
-                    type: .gospel,
-                    citation: ReadingCitation(book: "Matthew", chapter: 24, verses: "37-44")
-                )
-            ]
-        } else {
-            return [
-                LectionaryEntry(
-                    type: .firstReading,
-                    citation: ReadingCitation(book: "Philippians", chapter: 2, verses: "1-4")
-                ),
-                LectionaryEntry(
-                    type: .responsorialPsalm,
-                    citation: ReadingCitation(book: "Psalms", chapter: 131, verses: "1, 2, 3"),
-                    response: "In you, O Lord, I have found my peace."
-                ),
-                LectionaryEntry(
-                    type: .gospelAcclamation,
-                    citation: ReadingCitation(book: "John", chapter: 8, verses: "31-32"),
-                    response: "If you remain in my word, you will truly be my disciples."
-                ),
-                LectionaryEntry(
-                    type: .gospel,
-                    citation: ReadingCitation(book: "Luke", chapter: 14, verses: "12-14")
-                )
-            ]
-        }
+    /// The first lookup key for the day (most specific).
+    public func key(for day: LiturgicalDay) -> String {
+        Self.lookupKeys(for: day).first ?? ""
     }
 
-    // MARK: - Embedded Seed Lectionary Data
+    static func dateKey(for date: Date) -> String {
+        let parts = utcCalendar.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
+    }
 
-    private static let seedLectionary: [String: [LectionaryEntry]] = [
-        // All Souls (November 2)
-        "fixed_11_02": [
-            LectionaryEntry(
-                type: .firstReading,
-                citation: ReadingCitation(book: "Wisdom", chapter: 3, verses: "1-9")
-            ),
-            LectionaryEntry(
-                type: .responsorialPsalm,
-                citation: ReadingCitation(book: "Psalms", chapter: 23, verses: "1-3a, 3b-4, 5, 6"),
-                response: "The Lord is my shepherd; there is nothing I shall want."
-            ),
-            LectionaryEntry(
-                type: .secondReading,
-                citation: ReadingCitation(book: "Romans", chapter: 5, verses: "5-11")
-            ),
-            LectionaryEntry(
-                type: .gospelAcclamation,
-                citation: ReadingCitation(book: "Matthew", chapter: 25, verses: "34"),
-                response: "Come, you who are blessed by my Father; inherit the kingdom prepared for you."
-            ),
-            LectionaryEntry(
-                type: .gospel,
-                citation: ReadingCitation(book: "John", chapter: 6, verses: "37-40")
-            )
-        ],
+    private static let utcCalendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .current
+        return calendar
+    }()
 
-        // All Saints (November 1)
-        "fixed_11_01": [
-            LectionaryEntry(
-                type: .firstReading,
-                citation: ReadingCitation(book: "Revelation", chapter: 7, verses: "2-4, 9-14")
-            ),
-            LectionaryEntry(
-                type: .responsorialPsalm,
-                citation: ReadingCitation(book: "Psalms", chapter: 24, verses: "1-2, 3-4ab, 5-6"),
-                response: "Lord, this is the people that longs to see your face."
-            ),
-            LectionaryEntry(
-                type: .secondReading,
-                citation: ReadingCitation(book: "1 John", chapter: 3, verses: "1-3")
-            ),
-            LectionaryEntry(
-                type: .gospelAcclamation,
-                citation: ReadingCitation(book: "Matthew", chapter: 11, verses: "28"),
-                response: "Come to me, all you who labor and are burdened, and I will give you rest."
-            ),
-            LectionaryEntry(
-                type: .gospel,
-                citation: ReadingCitation(book: "Matthew", chapter: 5, verses: "1-12a")
-            )
-        ],
+    // MARK: - Liturgical-Cycle Keys
 
-        // Christmas Day (December 25)
-        "fixed_12_25": [
-            LectionaryEntry(
-                type: .firstReading,
-                citation: ReadingCitation(book: "Isaiah", chapter: 52, verses: "7-10")
-            ),
-            LectionaryEntry(
-                type: .responsorialPsalm,
-                citation: ReadingCitation(book: "Psalms", chapter: 98, verses: "1, 2-3, 3-4, 5-6"),
-                response: "All the ends of the earth have seen the saving power of God."
-            ),
-            LectionaryEntry(
-                type: .secondReading,
-                citation: ReadingCitation(book: "Hebrews", chapter: 1, verses: "1-6")
-            ),
-            LectionaryEntry(
-                type: .gospelAcclamation,
-                citation: ReadingCitation(book: "Luke", chapter: 2, verses: "14"),
-                response: "A holy day has dawned upon us. Come, you nations, and adore the Lord."
-            ),
-            LectionaryEntry(
-                type: .gospel,
-                citation: ReadingCitation(book: "John", chapter: 1, verses: "1-18")
-            )
-        ],
+    /// Lookup keys for a liturgical day, most specific first.
+    ///
+    /// The Lectionary repeats on cycles, so a day is identified by what it is, not by its date:
+    /// - a fixed-date solemnity or feast: `fixed_MM_DD`
+    /// - a memorial with its own readings: `proper_MM_DD`
+    /// - anything else: its place in the season, e.g. `ot_23_tuesday`, `lent_sun_3`, `advent_dec_18`
+    ///
+    /// Each base key appears with the day's cycle attached and on its own. Sundays, solemnities
+    /// and feasts of the Lord follow the Sunday cycle (A/B/C); every other day follows the weekday cycle (I/II).
+    public static func lookupKeys(for day: LiturgicalDay) -> [String] {
+        let suffix = cycleSuffix(for: day)
+        return baseKeys(for: day).flatMap { ["\($0)_\(suffix)", $0] }
+    }
 
-        // First Sunday of Advent Year A
-        "sunday_A_advent_1": [
-            LectionaryEntry(
-                type: .firstReading,
-                citation: ReadingCitation(book: "Isaiah", chapter: 2, verses: "1-5")
-            ),
-            LectionaryEntry(
-                type: .responsorialPsalm,
-                citation: ReadingCitation(book: "Psalms", chapter: 122, verses: "1-2, 3-4, 8-9"),
-                response: "Let us go rejoicing to the house of the Lord."
-            ),
-            LectionaryEntry(
-                type: .secondReading,
-                citation: ReadingCitation(book: "Romans", chapter: 13, verses: "11-14")
-            ),
-            LectionaryEntry(
-                type: .gospelAcclamation,
-                citation: ReadingCitation(book: "Psalms", chapter: 85, verses: "8"),
-                response: "Show us, Lord, your love, and grant us your salvation."
-            ),
-            LectionaryEntry(
-                type: .gospel,
-                citation: ReadingCitation(book: "Matthew", chapter: 24, verses: "37-44")
-            )
-        ],
+    /// "A", "B" or "C" for days that follow the Sunday cycle; "I" or "II" for the rest.
+    public static func cycleSuffix(for day: LiturgicalDay) -> String {
+        if day.isSunday || day.rank.rawValue <= LiturgicalRank.feastOfLord.rawValue {
+            switch day.sundayCycle {
+            case .yearA: return "A"
+            case .yearB: return "B"
+            case .yearC: return "C"
+            }
+        }
+        return day.weekdayCycle == .yearI ? "I" : "II"
+    }
 
-        // 31st Sunday in Ordinary Time Year B
-        "sunday_B_ordinary_31": [
-            LectionaryEntry(
-                type: .firstReading,
-                citation: ReadingCitation(book: "Deuteronomy", chapter: 6, verses: "2-6")
-            ),
-            LectionaryEntry(
-                type: .responsorialPsalm,
-                citation: ReadingCitation(book: "Psalms", chapter: 18, verses: "2-3, 3-4, 47, 51"),
-                response: "I love you, Lord, my strength."
-            ),
-            LectionaryEntry(
-                type: .secondReading,
-                citation: ReadingCitation(book: "Hebrews", chapter: 7, verses: "23-28")
-            ),
-            LectionaryEntry(
-                type: .gospelAcclamation,
-                citation: ReadingCitation(book: "John", chapter: 14, verses: "23"),
-                response: "Whoever loves me will keep my word, says the Lord."
-            ),
-            LectionaryEntry(
-                type: .gospel,
-                citation: ReadingCitation(book: "Mark", chapter: 12, verses: "28b-34")
-            )
-        ],
+    /// Base keys for a day without cycle suffixes: fixed feast, then proper memorial, then season.
+    public static func baseKeys(for day: LiturgicalDay) -> [String] {
+        var keys: [String] = []
+        let date = utcCalendar.dateComponents([.year, .month, .day], from: day.date)
+        let month = date.month ?? 1
+        let dayOfMonth = date.day ?? 1
 
-        // Ordinary Time Week 31 Monday Year II
-        "weekday_II_ordinary_31_monday": [
-            LectionaryEntry(
-                type: .firstReading,
-                citation: ReadingCitation(book: "Philippians", chapter: 2, verses: "1-4")
-            ),
-            LectionaryEntry(
-                type: .responsorialPsalm,
-                citation: ReadingCitation(book: "Psalms", chapter: 131, verses: "1, 2, 3"),
-                response: "In you, O Lord, I have found my peace."
-            ),
-            LectionaryEntry(
-                type: .gospelAcclamation,
-                citation: ReadingCitation(book: "John", chapter: 8, verses: "31-32"),
-                response: "If you remain in my word, you will truly be my disciples."
-            ),
-            LectionaryEntry(
-                type: .gospel,
-                citation: ReadingCitation(book: "Luke", chapter: 14, verses: "12-14")
-            )
-        ]
-    ]
+        // 1. A fixed-date solemnity or feast being celebrated today (on its own date or transferred).
+        let origin = day.transferredFromDate.map { utcCalendar.dateComponents([.month, .day], from: $0) }
+        let fixedMonth = origin?.month ?? month
+        let fixedDay = origin?.day ?? dayOfMonth
+        let celebrations = FixedSolemnities.celebrationsByMonthAndDay[FixedSolemnities.CelebrationKey(month: fixedMonth, day: fixedDay)] ?? []
+        if celebrations.contains(where: { $0.title == day.title && $0.rank.rawValue <= LiturgicalRank.properFeast.rawValue }) {
+            keys.append(String(format: "fixed_%02d_%02d", fixedMonth, fixedDay))
+        }
+
+        // 2. A memorial (or a weekday the calendar does not list a memorial for) with readings of its own.
+        if day.rank.rawValue >= LiturgicalRank.obligatoryMemorial.rawValue {
+            keys.append(String(format: "proper_%02d_%02d", month, dayOfMonth))
+        }
+
+        // 3. The day's place in the season.
+        keys.append(seasonKey(for: day, year: date.year ?? 2026, month: month, dayOfMonth: dayOfMonth))
+        return keys
+    }
+
+    private static func seasonKey(for day: LiturgicalDay, year: Int, month: Int, dayOfMonth: Int) -> String {
+        let names = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+        let dow = (0...6).contains(day.dayOfWeekInSeason) ? names[day.dayOfWeekInSeason] : "sunday"
+        let week = day.seasonWeek
+        let title = day.title
+
+        switch day.season {
+        case .advent:
+            if day.isSunday { return "advent_sun_\(week)" }
+            if month == 12 && dayOfMonth >= 17 { return "advent_dec_\(dayOfMonth)" }
+            return "advent_\(week)_\(dow)"
+
+        case .christmas:
+            if month == 12 {
+                if dayOfMonth == 25 { return "christmas_day" }
+                if title.contains("Holy Family") { return "holy_family" }
+                return "christmas_dec_\(dayOfMonth)"
+            }
+            if dayOfMonth == 1 { return "mary_mother_of_god" }
+            if title.contains("Epiphany of the Lord") { return "epiphany" }
+            if title.contains("Baptism of the Lord") { return "baptism_of_the_lord" }
+            // Before Epiphany the Lectionary goes by date; after it, by day of the week.
+            let epiphany = LiturgicalCalendar.epiphanyDate(year: year)
+            return day.date < epiphany ? "christmas_jan_\(dayOfMonth)" : "christmas_after_epiphany_\(dow)"
+
+        case .lent:
+            if title == "Ash Wednesday" { return "ash_wednesday" }
+            if day.isSunday { return "lent_sun_\(week)" }
+            // The calendar numbers both "Thursday after Ash Wednesday" and "Thursday of the First
+            // Week of Lent" as week 1, so tell them apart by distance from Ash Wednesday.
+            let ashWednesday = Computus.ashWednesday(year: year)
+            let daysIn = utcCalendar.dateComponents([.day], from: ashWednesday, to: day.date).day ?? 0
+            if (1...3).contains(daysIn) { return "lent_after_ash_\(dow)" }
+            return "lent_\(week)_\(dow)"
+
+        case .paschalTriduum:
+            return "triduum_\(dow)"
+
+        case .easter:
+            if title.contains("Ascension") { return "ascension" }
+            if title.contains("Pentecost") { return "pentecost" }
+            if day.isSunday { return "easter_sun_\(week)" }
+            return "easter_\(week)_\(dow)"
+
+        case .ordinaryTime:
+            if title.contains("Most Holy Trinity") { return "trinity" }
+            if title.contains("Body and Blood of Christ") { return "corpus_christi" }
+            if title.contains("Sacred Heart of Jesus") { return "sacred_heart" }
+            if title.contains("Immaculate Heart") { return "immaculate_heart" }
+            if title.contains("Mother of the Church") { return "mary_mother_of_the_church" }
+            if title.contains("King of the Universe") { return "christ_the_king" }
+            if day.isSunday { return "ot_sun_\(week)" }
+            return "ot_\(week)_\(dow)"
+        }
+    }
 }

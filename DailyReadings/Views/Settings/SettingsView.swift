@@ -420,7 +420,7 @@ public struct SettingsView: View {
                     readingLineSpacing = 7.0
                 }
             }
-            .font(.system(size: 14))
+            .font(.scaled(size: 14))
             .foregroundStyle(Color.red)
         } header: {
             Text("Typography & Readability")
@@ -455,7 +455,7 @@ public struct SettingsView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 12) {
                     Image(systemName: "book.closed.fill")
-                        .font(.system(size: 28))
+                        .font(.scaled(size: 28))
                         .foregroundStyle(LiturgicalColors.green)
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -488,7 +488,7 @@ public struct SettingsView: View {
                         .foregroundStyle(Color.primary)
                     Spacer()
                     Image(systemName: "arrow.up.right")
-                        .font(.system(size: 12))
+                        .font(.scaled(size: 12))
                         .foregroundStyle(Color.secondary)
                 }
             }
@@ -499,16 +499,16 @@ public struct SettingsView: View {
                         .foregroundStyle(Color.primary)
                     Spacer()
                     Image(systemName: "arrow.up.right")
-                        .font(.system(size: 12))
+                        .font(.scaled(size: 12))
                         .foregroundStyle(Color.secondary)
                 }
             }
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Scripture Attributions")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.scaled(size: 13, weight: .semibold))
                 Text("Douay-Rheims Bible (Public Domain). Lectionary citations referenced in accord with the General Roman Calendar and Universal Norms on the Liturgical Year.")
-                    .font(.system(size: 12))
+                    .font(.scaled(size: 12))
                     .foregroundStyle(Color.secondary)
             }
             .padding(.vertical, 4)
@@ -588,7 +588,7 @@ public struct BookmarksView: View {
     private var emptyBookmarksView: some View {
         VStack(spacing: 16) {
             Image(systemName: "bookmark")
-                .font(.system(size: 48))
+                .font(.scaled(size: 48))
                 .foregroundStyle(Color.secondary.opacity(0.4))
 
             Text("No Saved Readings Yet")

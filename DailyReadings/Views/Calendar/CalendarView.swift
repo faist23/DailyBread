@@ -86,7 +86,7 @@ public struct CalendarView: View {
                 viewModel.previousMonth()
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.scaled(size: 16, weight: .semibold))
                     .foregroundStyle(Color.primary)
                     .frame(width: 36, height: 36)
                     .background(Color.secondary.opacity(0.1))
@@ -107,7 +107,7 @@ public struct CalendarView: View {
                 viewModel.nextMonth()
             } label: {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.scaled(size: 16, weight: .semibold))
                     .foregroundStyle(Color.primary)
                     .frame(width: 36, height: 36)
                     .background(Color.secondary.opacity(0.1))
@@ -127,7 +127,7 @@ public struct CalendarView: View {
             LazyVGrid(columns: columns, spacing: 6) {
                 ForEach(viewModel.weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.scaled(size: 12, weight: .bold))
                         .foregroundStyle(Color.secondary.opacity(0.8))
                         .frame(maxWidth: .infinity)
                 }
@@ -178,12 +178,12 @@ public struct CalendarView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(formattedSelectedDate(date))
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.scaled(size: 12, weight: .semibold))
                         .foregroundStyle(Color.secondary)
                         .textCase(.uppercase)
                     
                     Text(day?.title ?? "Feria")
-                        .font(.system(size: 16, weight: .bold, design: .serif))
+                        .font(.scaled(size: 16, weight: .bold, design: .serif))
                         .foregroundStyle(Color.primary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -205,7 +205,7 @@ public struct CalendarView: View {
             HStack {
                 if let day {
                     Text("\(day.rank.displayName) • \(day.color.displayName)")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.scaled(size: 13, weight: .semibold))
                         .foregroundStyle(accentColor)
                 }
                 
@@ -216,9 +216,9 @@ public struct CalendarView: View {
                 } label: {
                     HStack(spacing: 5) {
                         Text("View Readings")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.scaled(size: 14, weight: .semibold))
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.scaled(size: 11, weight: .bold))
                     }
                     .foregroundStyle(Color.white)
                     .padding(.horizontal, 14)
@@ -244,7 +244,7 @@ public struct CalendarView: View {
     private var liturgicalLegendCard: some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.small) {
             Text("LITURGICAL COLORS")
-                .font(.system(size: 11, weight: .bold))
+                .font(.scaled(size: 11, weight: .bold))
                 .foregroundStyle(Color.secondary.opacity(0.8))
                 .tracking(1.0)
             
@@ -309,10 +309,10 @@ public struct CalendarView: View {
             dot
             VStack(alignment: .leading, spacing: 1) {
                 Text(name)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.scaled(size: 12, weight: .semibold))
                     .foregroundStyle(Color.primary)
                 Text(description)
-                    .font(.system(size: 10, weight: .regular))
+                    .font(.scaled(size: 10, weight: .regular))
                     .foregroundStyle(Color.secondary)
             }
             Spacer(minLength: 0)

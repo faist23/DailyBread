@@ -81,11 +81,11 @@ public struct CalendarDayCell: View {
     
     private var dayFont: Font {
         if isToday || isSelected {
-            return .system(size: 16, weight: .bold, design: .default)
+            return .scaled(size: 16, weight: .bold, design: .default)
         } else if isMajorFeast {
-            return .system(size: 15, weight: .semibold, design: .default)
+            return .scaled(size: 15, weight: .semibold, design: .default)
         } else {
-            return .system(size: 15, weight: .regular, design: .default)
+            return .scaled(size: 15, weight: .regular, design: .default)
         }
     }
     

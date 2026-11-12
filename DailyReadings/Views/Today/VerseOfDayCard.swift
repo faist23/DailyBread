@@ -37,18 +37,18 @@ public struct VerseOfDayCard: View {
             // Header Bar
             HStack(alignment: .center, spacing: 6) {
                 Image(systemName: "sparkles")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.scaled(size: 11, weight: .bold))
                     .foregroundStyle(liturgicalColor.uiAccentColor)
                 
                 Text("VERSE OF THE DAY")
-                    .font(.system(size: 11, weight: .bold, design: .serif))
+                    .font(.scaled(size: 11, weight: .bold, design: .serif))
                     .tracking(1.4)
                     .foregroundStyle(liturgicalColor.uiAccentColor)
                 
                 Spacer()
                 
                 Text(verse.sourceNote.uppercased())
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.scaled(size: 10, weight: .semibold))
                     .foregroundStyle(Color.secondary.opacity(0.85))
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
@@ -58,7 +58,7 @@ public struct VerseOfDayCard: View {
             
             // Scripture Quotation in New York Serif
             Text("“\(verse.text)”")
-                .font(.system(size: 17, weight: .regular, design: .serif).italic())
+                .font(.scaled(size: 17, weight: .regular, design: .serif).italic())
                 .foregroundStyle(Color.primary)
                 .lineSpacing(5)
                 .padding(.vertical, 4)
@@ -67,15 +67,15 @@ public struct VerseOfDayCard: View {
             // Footer: Citation and Action Buttons
             HStack(alignment: .center) {
                 Text(verse.citation)
-                    .font(.system(size: 13, weight: .semibold, design: .serif))
+                    .font(.scaled(size: 13, weight: .semibold, design: .serif))
                     .foregroundStyle(liturgicalColor.swiftUIColor)
                 
                 if let theme = verse.theme, !theme.isEmpty {
                     Text("•")
-                        .font(.system(size: 10))
+                        .font(.scaled(size: 10))
                         .foregroundStyle(Color.secondary.opacity(0.6))
                     Text(theme)
-                        .font(.system(size: 12, weight: .regular))
+                        .font(.scaled(size: 12, weight: .regular))
                         .foregroundStyle(Color.secondary)
                 }
                 
@@ -98,10 +98,10 @@ public struct VerseOfDayCard: View {
                 } label: {
                     HStack(spacing: 3) {
                         Image(systemName: hasCopied ? "checkmark" : "doc.on.doc")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(.scaled(size: 11, weight: .semibold))
                         if hasCopied {
                             Text("Copied")
-                                .font(.system(size: 11, weight: .medium))
+                                .font(.scaled(size: 11, weight: .medium))
                         }
                     }
                     .foregroundStyle(hasCopied ? LiturgicalColors.goldAccent : Color.secondary)
@@ -120,7 +120,7 @@ public struct VerseOfDayCard: View {
                     message: Text("“\(verse.text)” — \(verse.citation)")
                 ) {
                     Image(systemName: "square.and.arrow.up")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.scaled(size: 12, weight: .semibold))
                         .foregroundStyle(Color.secondary)
                         .padding(6)
                         .background(Color.secondary.opacity(0.08))

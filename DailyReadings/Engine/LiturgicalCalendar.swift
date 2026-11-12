@@ -886,8 +886,11 @@ public struct LiturgicalCalendar: Sendable {
             return true
         }
 
-        // 3. Immaculate Conception: Patroness of the United States
-        // Always an obligation in the US, even when transferred to Monday Dec 9
+        // 3. Immaculate Conception: Patroness of the United States.
+        // Treated as an obligation even when transferred to Monday, December 9, following the
+        // Dicastery for Legislative Texts' September 2024 reply to the USCCB. Reports of a later
+        // letter from the Dicastery for Divine Worship (January 2025) conflict on whether that
+        // still holds. Confirm against the USCCB calendar before the next occurrence (2030).
         if title.contains("Immaculate Conception") {
             return true
         }

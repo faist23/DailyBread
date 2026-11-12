@@ -22,8 +22,12 @@ public struct PrayerDetailView: View {
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @State private var selectedLanguage: Language = .english
     @State private var hasCopied: Bool = false
-    @State private var isSpeaking: Bool = false
-    @State private var synthesizer = AVSpeechSynthesizer()
+    /// Identifier of this view's recitation in the shared audio player, while it is speaking.
+    @State private var speechID: UUID?
+
+    private var isSpeaking: Bool {
+        speechID != nil && AudioReadingPlayer.shared.standaloneSpeechID == speechID
+    }
     
     private enum Language: String, CaseIterable, Identifiable {
         case english = "English"
@@ -55,20 +59,20 @@ public struct PrayerDetailView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 6) {
                             Image(systemName: prayer.category.icon)
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(.scaled(size: 12, weight: .semibold))
                             Text(prayer.category.rawValue.uppercased())
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.scaled(size: 11, weight: .bold))
                                 .tracking(1.2)
                         }
                         .foregroundStyle(liturgicalColor.uiAccentColor)
                         
                         Text(prayer.title)
-                            .font(.system(size: 26, weight: .bold, design: .serif))
+                            .font(.scaled(size: 26, weight: .bold, design: .serif))
                             .foregroundStyle(Color.primary)
                         
                         if let latinTitle = prayer.latinTitle, !latinTitle.isEmpty {
                             Text(latinTitle)
-                                .font(.system(size: 16, weight: .medium, design: .serif).italic())
+                                .font(.scaled(size: 16, weight: .medium, design: .serif).italic())
                                 .foregroundStyle(Color.secondary)
                         }
                     }
@@ -93,9 +97,9 @@ public struct PrayerDetailView: View {
                         } label: {
                             HStack(spacing: 6) {
                                 Image(systemName: isSpeaking ? "stop.circle.fill" : "play.circle.fill")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .font(.scaled(size: 14, weight: .semibold))
                                 Text(isSpeaking ? "Stop" : "Listen")
-                                    .font(.system(size: 13, weight: .medium))
+                                    .font(.scaled(size: 13, weight: .medium))
                             }
                             .foregroundStyle(liturgicalColor.uiAccentColor)
                             .padding(.horizontal, 12)
@@ -125,10 +129,10 @@ public struct PrayerDetailView: View {
                         } label: {
                             HStack(spacing: 4) {
                                 Image(systemName: hasCopied ? "checkmark" : "doc.on.doc")
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(.scaled(size: 12, weight: .medium))
                                 if hasCopied {
                                     Text("Copied")
-                                        .font(.system(size: 12, weight: .medium))
+                                        .font(.scaled(size: 12, weight: .medium))
                                 }
                             }
                             .foregroundStyle(hasCopied ? LiturgicalColors.goldAccent : Color.secondary)
@@ -146,7 +150,7 @@ public struct PrayerDetailView: View {
                             message: Text(activePrayerText)
                         ) {
                             Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(.scaled(size: 12, weight: .medium))
                                 .foregroundStyle(Color.secondary)
                                 .padding(8)
                                 .background(Color.secondary.opacity(0.1))
@@ -161,7 +165,7 @@ public struct PrayerDetailView: View {
                     
                     // Prayer Body Text in Missal Typography
                     Text(activePrayerText)
-                        .font(.system(size: CGFloat(scriptureFontSize), weight: .regular, design: .serif))
+                        .font(.scaled(size: CGFloat(scriptureFontSize), weight: .regular, design: .serif))
                         .foregroundStyle(Color.primary)
                         .lineSpacing(8)
                         .textSelection(.enabled)
@@ -173,10 +177,10 @@ public struct PrayerDetailView: View {
                             if let source = prayer.source {
                                 HStack(spacing: 4) {
                                     Text("SOURCE:")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.scaled(size: 10, weight: .bold))
                                         .foregroundStyle(liturgicalColor.uiAccentColor)
                                     Text(source)
-                                        .font(.system(size: 12, weight: .medium, design: .serif))
+                                        .font(.scaled(size: 12, weight: .medium, design: .serif))
                                         .foregroundStyle(Color.secondary)
                                 }
                             }
@@ -184,10 +188,10 @@ public struct PrayerDetailView: View {
                             if let rubric = prayer.rubricNote {
                                 HStack(alignment: .top, spacing: 6) {
                                     Text("℟.")
-                                        .font(.system(size: 12, weight: .bold, design: .serif))
+                                        .font(.scaled(size: 12, weight: .bold, design: .serif))
                                         .foregroundStyle(AppTheme.Colors.missalRed)
                                     Text(rubric)
-                                        .font(.system(size: 12, weight: .regular, design: .serif).italic())
+                                        .font(.scaled(size: 12, weight: .regular, design: .serif).italic())
                                         .foregroundStyle(Color.secondary)
                                 }
                             }
@@ -218,7 +222,7 @@ public struct PrayerDetailView: View {
                         dismiss()
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.scaled(size: 13, weight: .semibold))
                             .foregroundStyle(Color.secondary)
                             .padding(8)
                             .background(Color.secondary.opacity(0.1))
@@ -244,33 +248,24 @@ public struct PrayerDetailView: View {
     }
     
     private func startSpeech() {
-        stopSpeech()
-        AudioReadingPlayer.shared.stop()
-        AudioReadingPlayer.shared.activateAudioSession()
-        
         let cleaned = activePrayerText
             .replacingOccurrences(of: "℣.", with: "")
             .replacingOccurrences(of: "℟.", with: "")
-        
-        let utterance = AVSpeechUtterance(string: "\(prayer.title). \(cleaned)")
-        utterance.rate = selectedLanguage == .latin ? 0.42 : 0.46
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
-        
-        if selectedLanguage == .latin {
-            utterance.voice = AVSpeechSynthesisVoice(language: "la") ?? AVSpeechSynthesisVoice(language: "it-IT")
-        } else {
-            utterance.voice = AudioReadingPlayer.shared.selectNaturalVoice()
-        }
-        
-        isSpeaking = true
-        synthesizer.speak(utterance)
+
+        // Latin has no system voice on most devices; Italian is the closest pronunciation.
+        let voice = selectedLanguage == .latin
+            ? (AVSpeechSynthesisVoice(language: "la") ?? AVSpeechSynthesisVoice(language: "it-IT"))
+            : nil
+
+        speechID = AudioReadingPlayer.shared.speakStandalone(
+            "\(prayer.title). \(cleaned)",
+            rate: selectedLanguage == .latin ? 0.42 : 0.46,
+            voice: voice
+        )
     }
     
     private func stopSpeech() {
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-        isSpeaking = false
+        AudioReadingPlayer.shared.stopStandalone(speechID)
+        speechID = nil
     }
 }

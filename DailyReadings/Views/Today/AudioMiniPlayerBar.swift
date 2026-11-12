@@ -30,7 +30,7 @@ public struct AudioMiniPlayerBar: View {
                         .frame(width: 38, height: 38)
                     
                     Image(systemName: player.isPlaying ? "waveform" : "headphones")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.scaled(size: 16, weight: .semibold))
                         .foregroundStyle(AppTheme.Colors.solemnGold)
                         .symbolEffect(.variableColor.iterative, isActive: player.isPlaying)
                 }
@@ -38,17 +38,17 @@ public struct AudioMiniPlayerBar: View {
                 // Reading Title & Counter
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(reading.type.shortName): \(reading.citation.displayReference)")
-                        .font(.system(size: 13, weight: .bold, design: .serif))
+                        .font(.scaled(size: 13, weight: .bold, design: .serif))
                         .foregroundStyle(Color.primary)
                         .lineLimit(1)
                     
                     HStack(spacing: 6) {
                         Text("Reading \(player.currentReadingIndex + 1) of \(player.activeReadings.count)")
-                            .font(.system(size: 11, weight: .medium))
+                            .font(.scaled(size: 11, weight: .medium))
                             .foregroundStyle(Color.secondary)
                         
                         Text("•")
-                            .font(.system(size: 9))
+                            .font(.scaled(size: 9))
                             .foregroundStyle(Color.secondary.opacity(0.6))
                         
                         // Speed Cycling Button
@@ -58,7 +58,7 @@ public struct AudioMiniPlayerBar: View {
                             }
                         } label: {
                             Text(player.speed.label)
-                                .font(.system(size: 11, weight: .bold))
+                                .font(.scaled(size: 11, weight: .bold))
                                 .foregroundStyle(liturgicalColor.uiAccentColor)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 1)
@@ -78,7 +78,7 @@ public struct AudioMiniPlayerBar: View {
                         player.skipPrevious()
                     } label: {
                         Image(systemName: "backward.fill")
-                            .font(.system(size: 14))
+                            .font(.scaled(size: 14))
                             .foregroundStyle(Color.secondary)
                             .frame(width: 28, height: 28)
                     }
@@ -100,7 +100,7 @@ public struct AudioMiniPlayerBar: View {
                                 .frame(width: 36, height: 36)
                             
                             Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.system(size: 14, weight: .bold))
+                                .font(.scaled(size: 14, weight: .bold))
                                 .foregroundStyle(Color.white)
                         }
                     }
@@ -111,7 +111,7 @@ public struct AudioMiniPlayerBar: View {
                         player.skipNext()
                     } label: {
                         Image(systemName: "forward.fill")
-                            .font(.system(size: 14))
+                            .font(.scaled(size: 14))
                             .foregroundStyle(Color.secondary)
                             .frame(width: 28, height: 28)
                     }
@@ -126,7 +126,7 @@ public struct AudioMiniPlayerBar: View {
                         }
                     } label: {
                         Image(systemName: "xmark")
-                            .font(.system(size: 12, weight: .semibold))
+                            .font(.scaled(size: 12, weight: .semibold))
                             .foregroundStyle(Color.secondary)
                             .frame(width: 26, height: 26)
                             .background(Color.secondary.opacity(0.1))

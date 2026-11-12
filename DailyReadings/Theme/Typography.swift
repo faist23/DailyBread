@@ -19,38 +19,47 @@ public enum AppTypography {
     
     /// Returns the serif New York font for scripture readings with scalable sizing.
     public static func scriptureBodyFont(size: CGFloat = 18, weight: Font.Weight = .regular) -> Font {
-        Font.system(size: size, weight: weight, design: .serif)
+        Font.scaled(size: size, weight: weight, design: .serif)
     }
     
     /// Returns the responsorial psalm response font.
     public static func scripturePsalmResponseFont(size: CGFloat = 17) -> Font {
-        Font.system(size: size, weight: .semibold, design: .serif).italic()
+        Font.scaled(size: size, weight: .semibold, design: .serif).italic()
     }
     
     /// Returns the reading title font (e.g., "FIRST READING", "GOSPEL").
     public static func readingTitleFont(size: CGFloat = 13) -> Font {
-        Font.system(size: size, weight: .bold, design: .default).smallCaps()
+        Font.scaled(size: size, weight: .bold, design: .default).smallCaps()
     }
     
     /// Returns the scripture citation font (e.g., "Wisdom 3:1-9").
     public static func readingCitationFont(size: CGFloat = 15) -> Font {
-        Font.system(size: size, weight: .medium, design: .serif).italic()
+        Font.scaled(size: size, weight: .medium, design: .serif).italic()
     }
     
     /// Returns the liturgical feast/day title font.
     public static func liturgicalTitleFont(size: CGFloat = 20) -> Font {
-        Font.system(size: size, weight: .bold, design: .default).smallCaps()
+        Font.scaled(size: size, weight: .bold, design: .default).smallCaps()
     }
     
     /// Returns the saint biography font.
     public static func saintBioFont(size: CGFloat = 15) -> Font {
-        Font.system(size: size, weight: .regular, design: .serif)
+        Font.scaled(size: size, weight: .regular, design: .serif)
     }
 }
 
 // MARK: - Font Extensions
 
 public extension Font {
+    /// A system font at `size` points that grows and shrinks with the user's Dynamic Type setting.
+    ///
+    /// Use this in place of `Font.system(size:)`, which ignores Dynamic Type. Growth is capped at
+    /// 1.5x so the fixed-size layouts (calendar grid, tab pills) stay intact at accessibility sizes.
+    static func scaled(size: CGFloat, weight: Font.Weight? = nil, design: Font.Design? = nil) -> Font {
+        let scaledSize = min(UIFontMetrics.default.scaledValue(for: size), size * 1.5)
+        return .system(size: scaledSize, weight: weight, design: design)
+    }
+
     /// Scripture body text in New York (serif).
     static var scriptureBody: Font {
         Font.system(.body, design: .serif)

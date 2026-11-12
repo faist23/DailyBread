@@ -90,49 +90,40 @@ public final class TodayViewModel {
             isLoading = false
         }
         
-        do {
-            if Task.isCancelled { return }
+        if Task.isCancelled { return }
 
-            // 1. Compute liturgical day from the real engine
-            let day = liturgicalCalendar.liturgicalDay(for: date)
-            self.liturgicalDay = day
-            
-            // 2. Fetch readings via ReadingsRepository (honoring user's preferred translation)
-            let translationPref = UserDefaults.standard.string(forKey: "bibleTranslation") ?? "World English Bible (WEB-C)"
-            let targetTranslation: String
-            if translationPref.contains("NAB") {
-                targetTranslation = "NAB"
-            } else if translationPref.contains("Douay") || translationPref.contains("DRB") {
-                targetTranslation = "DRB"
-            } else {
-                targetTranslation = "WEBC"
-            }
-            
-            if let repository = readingsRepository {
-                let readings = await repository.getReadings(for: date, preferredTranslation: targetTranslation)
-                if Task.isCancelled { return }
-                self.dailyReadings = readings
-                if targetTranslation == "NAB" {
-                    repository.triggerBackgroundPrefetchIfNeeded()
-                }
-            } else {
-                // Fallback: create a minimal ReadingsRepository without SwiftData cache
-                let fallbackRepo = ReadingsRepository()
-                let readings = await fallbackRepo.getReadings(for: date, preferredTranslation: targetTranslation)
-                if Task.isCancelled { return }
-                self.dailyReadings = readings
-            }
-            
-            // 3. Look up the Saint of the Day or Solemnity/Feast blurb
-            self.saint = saintsDatabase.saint(for: date, liturgicalDay: self.liturgicalDay)
-            
-        } catch is CancellationError {
-            // Silently ignore task cancellation caused by view lifecycle or tab switching
-            return
-        } catch {
-            guard !Task.isCancelled else { return }
-            self.error = "Unable to load readings: \(error.localizedDescription)"
+        // 1. Compute liturgical day from the real engine
+        let day = liturgicalCalendar.liturgicalDay(for: date)
+        self.liturgicalDay = day
+        
+        // 2. Fetch readings via ReadingsRepository (honoring user's preferred translation)
+        let translationPref = UserDefaults.standard.string(forKey: "bibleTranslation") ?? "World English Bible (WEB-C)"
+        let targetTranslation: String
+        if translationPref.contains("NAB") {
+            targetTranslation = "NAB"
+        } else if translationPref.contains("Douay") || translationPref.contains("DRB") {
+            targetTranslation = "DRB"
+        } else {
+            targetTranslation = "WEBC"
         }
+        
+        if let repository = readingsRepository {
+            let readings = await repository.getReadings(for: date, preferredTranslation: targetTranslation)
+            if Task.isCancelled { return }
+            self.dailyReadings = readings
+            if targetTranslation == "NAB" {
+                repository.triggerBackgroundPrefetchIfNeeded()
+            }
+        } else {
+            // Fallback: create a minimal ReadingsRepository without SwiftData cache
+            let fallbackRepo = ReadingsRepository()
+            let readings = await fallbackRepo.getReadings(for: date, preferredTranslation: targetTranslation)
+            if Task.isCancelled { return }
+            self.dailyReadings = readings
+        }
+        
+        // 3. Look up the Saint of the Day or Solemnity/Feast blurb
+        self.saint = saintsDatabase.saint(for: date, liturgicalDay: self.liturgicalDay)
     }
     
     /// Refreshes today's readings, forcing an update.

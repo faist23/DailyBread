@@ -91,17 +91,17 @@ public struct ReadingCard: View {
                     
                     if reading.type == .gospel {
                         Image(systemName: "cross.fill")
-                            .font(.system(size: 10))
+                            .font(.scaled(size: 10))
                             .foregroundStyle(liturgicalColor.uiAccentColor)
                     }
                     
                     if isSpeaking {
                         HStack(spacing: 3) {
                             Image(systemName: "waveform")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.scaled(size: 10, weight: .semibold))
                                 .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
                             Text("Speaking")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.scaled(size: 10, weight: .bold))
                         }
                         .foregroundStyle(liturgicalColor.uiAccentColor)
                         .padding(.horizontal, 6)
@@ -124,7 +124,7 @@ public struct ReadingCard: View {
                 }
             } label: {
                 Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.scaled(size: 13, weight: .semibold))
                     .foregroundStyle(Color.secondary)
                     .frame(width: 32, height: 32)
                     .background(Color.secondary.opacity(0.1))
@@ -140,7 +140,7 @@ public struct ReadingCard: View {
     private func psalmResponseHighlight(response: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.small) {
             Text("℟.")
-                .font(.system(size: CGFloat(scriptureFontSize), weight: .bold, design: .serif))
+                .font(.scaled(size: CGFloat(scriptureFontSize), weight: .bold, design: .serif))
                 .foregroundStyle(AppTheme.Colors.missalRed)
             
             Text(response)
@@ -171,9 +171,9 @@ public struct ReadingCard: View {
             } label: {
                 HStack(spacing: 5) {
                     Image(systemName: isSpeaking && audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.scaled(size: 14, weight: .semibold))
                     Text(isSpeaking && audioPlayer.isPlaying ? "Pause audio" : "Listen")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.scaled(size: 13, weight: .medium))
                 }
                 .foregroundStyle(liturgicalColor.uiAccentColor)
                 .padding(.vertical, 4)
@@ -190,7 +190,7 @@ public struct ReadingCard: View {
                 )
             } label: {
                 Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.scaled(size: 14, weight: .medium))
                     .foregroundStyle(isBookmarked ? LiturgicalColors.goldAccent : Color.secondary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 4)
@@ -202,9 +202,9 @@ public struct ReadingCard: View {
                 Button(action: onSelect) {
                     HStack(spacing: 5) {
                         Text("Read full view")
-                            .font(.system(size: 13, weight: .medium))
+                            .font(.scaled(size: 13, weight: .medium))
                         Image(systemName: "arrow.up.forward.app")
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.scaled(size: 12, weight: .medium))
                     }
                     .foregroundStyle(liturgicalColor.swiftUIColor)
                     .padding(.vertical, 4)

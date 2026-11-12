@@ -14,7 +14,7 @@ settings:
     DEVELOPMENT_TEAM: DT58WA8N32
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "14"
+    CURRENT_PROJECT_VERSION: "16"
     INFOPLIST_KEY_UILaunchScreen_Generation: true
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: false
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
@@ -57,6 +57,8 @@ targets:
       - path: DailyReadings/Resources/lectionary.json
         buildPhase: resources
       - path: DailyReadings/Resources/lectionary_dates.json
+        buildPhase: resources
+      - path: DailyReadings/Resources/versification.json
         buildPhase: resources
     settings:
       base:

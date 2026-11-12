@@ -73,7 +73,7 @@ public struct DateReadingsView: View {
                         }
                     } label: {
                         Image(systemName: audioPlayer.isPlaying ? "waveform" : "headphones")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.scaled(size: 14, weight: .semibold))
                             .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
                             .foregroundStyle(currentColor.uiAccentColor)
                     }
@@ -84,7 +84,7 @@ public struct DateReadingsView: View {
                     navigateDay(by: -1)
                 } label: {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.scaled(size: 14, weight: .semibold))
                 }
                 .accessibilityLabel("Previous Day")
                 
@@ -92,7 +92,7 @@ public struct DateReadingsView: View {
                     navigateDay(by: 1)
                 } label: {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.scaled(size: 14, weight: .semibold))
                 }
                 .accessibilityLabel("Next Day")
             }
@@ -131,6 +131,16 @@ public struct DateReadingsView: View {
                 // Mass Readings
                 if let readings = viewModel.dailyReadings?.readings, !readings.isEmpty {
                     readingsList(readings: readings)
+
+                    if let copyright = viewModel.dailyReadings?.copyright, !copyright.isEmpty {
+                        Text(copyright)
+                            .font(.caption2)
+                            .foregroundStyle(Color.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, AppTheme.Spacing.small)
+                            .padding(.top, 4)
+                            .frame(maxWidth: .infinity)
+                    }
                 } else if !viewModel.isLoading {
                     emptyStateView
                 }
@@ -173,7 +183,7 @@ public struct DateReadingsView: View {
                         .frame(width: 9, height: 9)
                     
                     Text("\(day.rank.displayName) • \(day.color.displayName)")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.scaled(size: 13, weight: .semibold))
                         .foregroundStyle(day.color.uiAccentColor)
                 }
                 .padding(.horizontal, 12)
@@ -220,7 +230,7 @@ public struct DateReadingsView: View {
                 .tint(currentColor.swiftUIColor)
                 .scaleEffect(1.2)
             Text("Loading Readings…")
-                .font(.system(size: 15, design: .serif))
+                .font(.scaled(size: 15, design: .serif))
                 .foregroundStyle(Color.secondary)
             Spacer()
         }
@@ -232,7 +242,7 @@ public struct DateReadingsView: View {
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.Spacing.small) {
             Text("No readings available for this date.")
-                .font(.system(size: 16, design: .serif))
+                .font(.scaled(size: 16, design: .serif))
                 .foregroundStyle(Color.secondary)
         }
         .frame(maxWidth: .infinity)

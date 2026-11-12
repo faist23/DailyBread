@@ -27,8 +27,12 @@ public struct GuidedRosaryView: View {
     @State private var steps: [GuidedRosaryStep] = []
     @State private var currentIndex: Int = 0
     @State private var isFinished: Bool = false
-    @State private var isSpeaking: Bool = false
-    @State private var synthesizer = AVSpeechSynthesizer()
+    /// Identifier of this view's recitation in the shared audio player, while it is speaking.
+    @State private var speechID: UUID?
+
+    private var isSpeaking: Bool {
+        speechID != nil && AudioReadingPlayer.shared.standaloneSpeechID == speechID
+    }
     @State private var showMeditationSheet: Bool = false
     
     public init(
@@ -103,7 +107,7 @@ public struct GuidedRosaryView: View {
                         stopSpeaking()
                         dismiss()
                     }
-                    .font(.system(size: 15, weight: .medium))
+                    .font(.scaled(size: 15, weight: .medium))
                     .foregroundStyle(Color.secondary)
                 }
                 
@@ -112,7 +116,7 @@ public struct GuidedRosaryView: View {
                         toggleSpeech()
                     } label: {
                         Image(systemName: isSpeaking ? "stop.circle.fill" : "speaker.wave.2")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.scaled(size: 15, weight: .semibold))
                             .foregroundStyle(isSpeaking ? AppTheme.Colors.missalRed : liturgicalColor.uiAccentColor)
                     }
                     .accessibilityLabel(isSpeaking ? "Stop recitation" : "Recite prayer")
@@ -152,18 +156,18 @@ public struct GuidedRosaryView: View {
     private func beadHeaderCard(step: GuidedRosaryStep) -> some View {
         VStack(spacing: 4) {
             Text(step.beadPosition.uppercased())
-                .font(.system(size: 11, weight: .bold))
+                .font(.scaled(size: 11, weight: .bold))
                 .tracking(1.2)
                 .foregroundStyle(liturgicalColor.uiAccentColor)
             
             Text(step.prayerName)
-                .font(.system(size: 20, weight: .bold, design: .serif))
+                .font(.scaled(size: 20, weight: .bold, design: .serif))
                 .foregroundStyle(Color.primary)
                 .multilineTextAlignment(.center)
             
             if let mystery = step.mysteryTitle {
                 Text(mystery)
-                    .font(.system(size: 13, weight: .medium, design: .serif).italic())
+                    .font(.scaled(size: 13, weight: .medium, design: .serif).italic())
                     .foregroundStyle(Color.secondary)
                     .multilineTextAlignment(.center)
                     .padding(.top, 1)
@@ -172,9 +176,9 @@ public struct GuidedRosaryView: View {
             if let fruit = step.fruitOfMystery {
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 10))
+                        .font(.scaled(size: 10))
                     Text("Fruit: \(fruit)")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.scaled(size: 11, weight: .semibold))
                 }
                 .foregroundStyle(liturgicalColor.uiAccentColor)
                 .padding(.horizontal, 8)
@@ -231,15 +235,15 @@ public struct GuidedRosaryView: View {
             if let scripture = step.scriptureRef {
                 HStack(spacing: 6) {
                     Image(systemName: "book.closed.fill")
-                        .font(.system(size: 11))
+                        .font(.scaled(size: 11))
                     Text(scripture)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.scaled(size: 12, weight: .semibold))
                 }
                 .foregroundStyle(liturgicalColor.uiAccentColor)
             }
             
             Text(meditation)
-                .font(.system(size: 14, weight: .regular, design: .serif))
+                .font(.scaled(size: 14, weight: .regular, design: .serif))
                 .foregroundStyle(Color.secondary)
                 .lineSpacing(4)
         }
@@ -260,7 +264,7 @@ public struct GuidedRosaryView: View {
     private func prayerCard(step: GuidedRosaryStep) -> some View {
         VStack(alignment: .leading, spacing: AppTheme.Spacing.compact) {
             Text(step.prayerText)
-                .font(.system(size: CGFloat(scriptureFontSize), weight: .regular, design: .serif))
+                .font(.scaled(size: CGFloat(scriptureFontSize), weight: .regular, design: .serif))
                 .foregroundStyle(Color.primary)
                 .lineSpacing(7)
                 .multilineTextAlignment(.leading)
@@ -290,9 +294,9 @@ public struct GuidedRosaryView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.backward")
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(.scaled(size: 13, weight: .semibold))
                         Text("Previous")
-                            .font(.system(size: 14, weight: .medium))
+                            .font(.scaled(size: 14, weight: .medium))
                     }
                     .foregroundStyle(currentIndex > 0 ? Color.primary : Color.secondary.opacity(0.4))
                     .frame(width: 100, height: 46)
@@ -305,10 +309,10 @@ public struct GuidedRosaryView: View {
                 // Step Counter / Index
                 VStack(spacing: 2) {
                     Text("\(currentIndex + 1) of \(steps.count)")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.scaled(size: 12, weight: .bold))
                         .foregroundStyle(Color.secondary)
                     Text("Bead")
-                        .font(.system(size: 10, weight: .medium))
+                        .font(.scaled(size: 10, weight: .medium))
                         .foregroundStyle(Color.secondary.opacity(0.7))
                 }
                 .frame(minWidth: 60)
@@ -319,9 +323,9 @@ public struct GuidedRosaryView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Text(currentIndex < steps.count - 1 ? "Next Bead" : "Complete")
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.scaled(size: 15, weight: .bold))
                         Image(systemName: currentIndex < steps.count - 1 ? "chevron.forward" : "checkmark")
-                            .font(.system(size: 13, weight: .bold))
+                            .font(.scaled(size: 13, weight: .bold))
                     }
                     .foregroundStyle(liturgicalColor.primaryButtonForeground)
                     .frame(maxWidth: .infinity)
@@ -375,24 +379,12 @@ public struct GuidedRosaryView: View {
     }
     
     private func speak(text: String) {
-        stopSpeaking()
-        AudioReadingPlayer.shared.stop()
-        AudioReadingPlayer.shared.activateAudioSession()
-        
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AudioReadingPlayer.shared.selectNaturalVoice() ?? AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.88
-        utterance.pitchMultiplier = 1.0
-        
-        synthesizer.speak(utterance)
-        isSpeaking = true
+        speechID = AudioReadingPlayer.shared.speakStandalone(text, rate: AVSpeechUtteranceDefaultSpeechRate * 0.88)
     }
     
     private func stopSpeaking() {
-        if synthesizer.isSpeaking {
-            synthesizer.stopSpeaking(at: .immediate)
-        }
-        isSpeaking = false
+        AudioReadingPlayer.shared.stopStandalone(speechID)
+        speechID = nil
     }
     
     // MARK: - Completion View
@@ -407,30 +399,30 @@ public struct GuidedRosaryView: View {
                     .frame(width: 100, height: 100)
                 
                 Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 52))
+                    .font(.scaled(size: 52))
                     .foregroundStyle(liturgicalColor.uiAccentColor)
             }
             
             VStack(spacing: 8) {
                 Text("Rosary Completed")
-                    .font(.system(size: 28, weight: .bold, design: .serif))
+                    .font(.scaled(size: 28, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 Text(mysteryType.rawValue)
-                    .font(.system(size: 16, weight: .medium, design: .serif).italic())
+                    .font(.scaled(size: 16, weight: .medium, design: .serif).italic())
                     .foregroundStyle(Color.secondary)
             }
             
             VStack(spacing: 6) {
                 Text("“May the divine assistance remain always with us, and may the souls of the faithful departed, through the mercy of God, rest in peace.”")
-                    .font(.system(size: 15, weight: .regular, design: .serif).italic())
+                    .font(.scaled(size: 15, weight: .regular, design: .serif).italic())
                     .foregroundStyle(Color.secondary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(5)
                     .padding(.horizontal, AppTheme.Spacing.large)
                 
                 Text("Amen.")
-                    .font(.system(size: 15, weight: .bold, design: .serif))
+                    .font(.scaled(size: 15, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                     .padding(.top, 4)
             }
@@ -442,7 +434,7 @@ public struct GuidedRosaryView: View {
                 dismiss()
             } label: {
                 Text("Return to Prayers")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.scaled(size: 16, weight: .semibold))
                     .foregroundStyle(liturgicalColor.primaryButtonForeground)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)

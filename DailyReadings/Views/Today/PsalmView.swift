@@ -90,10 +90,10 @@ public struct PsalmView: View {
                     if isSpeaking {
                         HStack(spacing: 3) {
                             Image(systemName: "waveform")
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(.scaled(size: 10, weight: .semibold))
                                 .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
                             Text("Speaking")
-                                .font(.system(size: 10, weight: .bold))
+                                .font(.scaled(size: 10, weight: .bold))
                         }
                         .foregroundStyle(liturgicalColor.uiAccentColor)
                         .padding(.horizontal, 6)
@@ -115,7 +115,7 @@ public struct PsalmView: View {
                 }
             } label: {
                 Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.scaled(size: 14, weight: .semibold))
                     .foregroundStyle(Color.secondary)
                     .frame(width: 32, height: 32)
                     .background(Color.secondary.opacity(0.1))
@@ -131,7 +131,7 @@ public struct PsalmView: View {
     private func responseBanner(response: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.small) {
             Text("℟.")
-                .font(.system(size: CGFloat(scriptureFontSize), weight: .bold, design: .serif))
+                .font(.scaled(size: CGFloat(scriptureFontSize), weight: .bold, design: .serif))
                 .foregroundStyle(AppTheme.Colors.missalRed)
             
             Text(response)
@@ -168,11 +168,11 @@ public struct PsalmView: View {
                     if let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
                         HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.xxsmall) {
                             Text("℟.")
-                                .font(.system(size: 13, weight: .bold, design: .serif))
+                                .font(.scaled(size: 13, weight: .bold, design: .serif))
                                 .foregroundStyle(AppTheme.Colors.missalRed)
                             
                             Text(response)
-                                .font(.system(size: 13, weight: .regular, design: .serif).italic())
+                                .font(.scaled(size: 13, weight: .regular, design: .serif).italic())
                                 .foregroundStyle(Color.secondary)
                         }
                         .padding(.top, 4)
@@ -197,9 +197,9 @@ public struct PsalmView: View {
             } label: {
                 HStack(spacing: 5) {
                     Image(systemName: isSpeaking && audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.scaled(size: 14, weight: .semibold))
                     Text(isSpeaking && audioPlayer.isPlaying ? "Pause audio" : "Listen")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.scaled(size: 13, weight: .medium))
                 }
                 .foregroundStyle(liturgicalColor.uiAccentColor)
                 .padding(.vertical, 6)
@@ -216,7 +216,7 @@ public struct PsalmView: View {
                 )
             } label: {
                 Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-                    .font(.system(size: 14, weight: .medium))
+                    .font(.scaled(size: 14, weight: .medium))
                     .foregroundStyle(isBookmarked ? LiturgicalColors.goldAccent : Color.secondary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 6)
@@ -227,9 +227,9 @@ public struct PsalmView: View {
             Button(action: action) {
                 HStack(spacing: 6) {
                     Text("Full Screen Reading")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.scaled(size: 13, weight: .medium))
                     Image(systemName: "arrow.up.left.and.arrow.down.right")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.scaled(size: 11, weight: .medium))
                 }
                 .foregroundStyle(liturgicalColor.swiftUIColor)
                 .padding(.vertical, 6)

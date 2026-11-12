@@ -76,11 +76,11 @@ public struct ReadingDetailView: View {
                                         if let response = reading.effectivePsalmResponse ?? reading.psalmResponse ?? reading.response {
                                             HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.xxsmall) {
                                                 Text("℟.")
-                                                    .font(.system(size: CGFloat(scriptureFontSize) * currentMagnification * 0.85, weight: .bold, design: .serif))
+                                                    .font(.scaled(size: CGFloat(scriptureFontSize) * currentMagnification * 0.85, weight: .bold, design: .serif))
                                                     .foregroundStyle(AppTheme.Colors.missalRed)
                                                 
                                                 Text(response)
-                                                    .font(.system(size: CGFloat(scriptureFontSize) * currentMagnification * 0.85, weight: .regular, design: .serif).italic())
+                                                    .font(.scaled(size: CGFloat(scriptureFontSize) * currentMagnification * 0.85, weight: .regular, design: .serif).italic())
                                                     .foregroundStyle(Color.secondary)
                                             }
                                             .padding(.top, 4)
@@ -131,7 +131,7 @@ public struct ReadingDetailView: View {
                     dismiss()
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.scaled(size: 14, weight: .semibold))
                         .foregroundStyle(Color.secondary)
                         .padding(8)
                         .background(Color.secondary.opacity(0.1))
@@ -151,7 +151,7 @@ public struct ReadingDetailView: View {
                     } label: {
                         let isBookmarked = bookmarkManager.isBookmarked(reading: reading)
                         Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.scaled(size: 15, weight: .semibold))
                             .foregroundStyle(isBookmarked ? LiturgicalColors.goldAccent : liturgicalColor.swiftUIColor)
                     }
                     .accessibilityLabel(bookmarkManager.isBookmarked(reading: reading) ? "Remove bookmark" : "Bookmark this reading")
@@ -162,7 +162,7 @@ public struct ReadingDetailView: View {
                         message: Text("DailyReadings Scripture Reading")
                     ) {
                         Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.scaled(size: 15, weight: .semibold))
                             .foregroundStyle(liturgicalColor.swiftUIColor)
                     }
                 }
@@ -184,7 +184,7 @@ public struct ReadingDetailView: View {
             
             // Translation Badge
             Text(selectedTranslation)
-                .font(.system(size: 12, weight: .semibold))
+                .font(.scaled(size: 12, weight: .semibold))
                 .foregroundStyle(liturgicalColor.swiftUIColor)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
@@ -207,7 +207,7 @@ public struct ReadingDetailView: View {
     private func psalmResponseBanner(response: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: AppTheme.Spacing.small) {
             Text("℟.")
-                .font(.system(size: CGFloat(scriptureFontSize) * currentMagnification, weight: .bold, design: .serif))
+                .font(.scaled(size: CGFloat(scriptureFontSize) * currentMagnification, weight: .bold, design: .serif))
                 .foregroundStyle(AppTheme.Colors.missalRed)
             
             Text(response)
@@ -236,17 +236,17 @@ public struct ReadingDetailView: View {
             
             if reading.type == .gospel {
                 Text("The Gospel of the Lord.")
-                    .font(.system(size: 14, weight: .semibold, design: .serif).italic())
+                    .font(.scaled(size: 14, weight: .semibold, design: .serif).italic())
                     .foregroundStyle(Color.secondary)
                 Text("℟. Praise to you, Lord Jesus Christ.")
-                    .font(.system(size: 14, weight: .semibold, design: .serif))
+                    .font(.scaled(size: 14, weight: .semibold, design: .serif))
                     .foregroundStyle(AppTheme.Colors.missalRed)
             } else if reading.type != .responsorialPsalm {
                 Text("The word of the Lord.")
-                    .font(.system(size: 14, weight: .semibold, design: .serif).italic())
+                    .font(.scaled(size: 14, weight: .semibold, design: .serif).italic())
                     .foregroundStyle(Color.secondary)
                 Text("℟. Thanks be to God.")
-                    .font(.system(size: 14, weight: .semibold, design: .serif))
+                    .font(.scaled(size: 14, weight: .semibold, design: .serif))
                     .foregroundStyle(AppTheme.Colors.missalRed)
             }
         }
@@ -266,7 +266,7 @@ public struct ReadingDetailView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "textformat.size.smaller")
                     Text("A-")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.scaled(size: 13, weight: .semibold))
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -277,7 +277,7 @@ public struct ReadingDetailView: View {
             
             // Current Font Size Indicator
             Text("\(Int(scriptureFontSize)) pt")
-                .font(.system(size: 13, weight: .medium, design: .monospaced))
+                .font(.scaled(size: 13, weight: .medium, design: .monospaced))
                 .foregroundStyle(Color.secondary)
             
             // Increase Font Button
@@ -289,7 +289,7 @@ public struct ReadingDetailView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "textformat.size.larger")
                     Text("A+")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.scaled(size: 13, weight: .semibold))
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)

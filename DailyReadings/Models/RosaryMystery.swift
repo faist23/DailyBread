@@ -36,9 +36,9 @@ public enum RosaryMysteryType: String, CaseIterable, Identifiable, Sendable {
             return .joyful
         case 3, 6: // Tuesday, Friday
             return .sorrowful
-        case 4: // Thursday
+        case 5: // Thursday
             return .luminous
-        case 1, 5: // Sunday, Wednesday
+        case 1, 4: // Sunday, Wednesday
             return .glorious
         default:
             return .joyful

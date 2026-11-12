@@ -57,7 +57,7 @@ public struct TodayView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text("DailyReadings")
-                    .font(.system(size: 16, weight: .semibold, design: .serif))
+                    .font(.scaled(size: 16, weight: .semibold, design: .serif))
                     .foregroundStyle(Color.primary.opacity(0.85))
             }
             
@@ -79,11 +79,11 @@ public struct TodayView: View {
                     } label: {
                         HStack(spacing: 5) {
                             Image(systemName: audioPlayer.isPlaying ? "waveform" : "headphones")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.scaled(size: 13, weight: .semibold))
                                 .symbolEffect(.variableColor.iterative, isActive: audioPlayer.isPlaying)
                             
                             Text(audioPlayer.isPlaying ? "Playing" : "Listen")
-                                .font(.system(size: 13, weight: .semibold, design: .serif))
+                                .font(.scaled(size: 13, weight: .semibold, design: .serif))
                         }
                         .foregroundStyle(currentColor.uiAccentColor)
                         .padding(.horizontal, 10)
@@ -224,12 +224,12 @@ public struct TodayView: View {
                 .frame(width: 9, height: 9)
             
             Text("\(day.rank.displayName) • \(day.color.displayName)")
-                .font(.system(size: 13, weight: .semibold))
+                .font(.scaled(size: 13, weight: .semibold))
                 .foregroundStyle(day.color.uiAccentColor)
             
             if day.isHolyDayOfObligation {
                 Text("• Holy Day of Obligation")
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.scaled(size: 12, weight: .medium))
                     .foregroundStyle(Color.secondary)
             }
         }
@@ -326,12 +326,12 @@ public struct TodayView: View {
             Spacer()
             
             Image(systemName: "book.pages")
-                .font(.system(size: 40))
+                .font(.scaled(size: 40))
                 .foregroundStyle(currentColor.uiAccentColor)
                 .symbolEffect(.pulse, options: .repeating)
             
             Text("Gathering Sacred Scripture…")
-                .font(.system(size: 16, weight: .medium, design: .serif))
+                .font(.scaled(size: 16, weight: .medium, design: .serif))
                 .foregroundStyle(Color.secondary)
             
             Spacer()
@@ -347,7 +347,7 @@ public struct TodayView: View {
                 .foregroundStyle(Color.orange)
             
             Text(message)
-                .font(.system(size: 14))
+                .font(.scaled(size: 14))
                 .foregroundStyle(Color.primary)
             
             Spacer()
@@ -357,7 +357,7 @@ public struct TodayView: View {
                     await viewModel.refresh()
                 }
             }
-            .font(.system(size: 13, weight: .semibold))
+            .font(.scaled(size: 13, weight: .semibold))
             .foregroundStyle(currentColor.uiAccentColor)
         }
         .padding(AppTheme.Spacing.medium)
@@ -370,7 +370,7 @@ public struct TodayView: View {
     private var emptyStateView: some View {
         VStack(spacing: AppTheme.Spacing.small) {
             Text("No readings found for today.")
-                .font(.system(size: 16, design: .serif))
+                .font(.scaled(size: 16, design: .serif))
                 .foregroundStyle(Color.secondary)
             
             Button("Reload") {

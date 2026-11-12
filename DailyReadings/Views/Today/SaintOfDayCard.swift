@@ -61,7 +61,7 @@ public struct SaintOfDayCard: View {
                     .frame(width: 44, height: 44)
                 
                 Image(systemName: "flame.fill")
-                    .font(.system(size: 20))
+                    .font(.scaled(size: 20))
                     .foregroundStyle(AppTheme.Colors.solemnGold)
             }
             
@@ -70,12 +70,12 @@ public struct SaintOfDayCard: View {
                     .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
                 
                 Text(saint.name)
-                    .font(.system(size: 19, weight: .bold, design: .serif))
+                    .font(.scaled(size: 19, weight: .bold, design: .serif))
                     .foregroundStyle(Color.primary)
                 
                 if let title = saint.title, !title.isEmpty {
                     Text(title)
-                        .font(.system(size: 14, weight: .medium, design: .serif).italic())
+                        .font(.scaled(size: 14, weight: .medium, design: .serif).italic())
                         .foregroundStyle(Color.secondary)
                 }
             }
@@ -120,9 +120,9 @@ public struct SaintOfDayCard: View {
             } label: {
                 HStack(spacing: 4) {
                     Text(isExpanded ? "Show Less" : "Read More")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.scaled(size: 13, weight: .semibold))
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(.scaled(size: 11, weight: .semibold))
                 }
                 .foregroundStyle(liturgicalColor.swiftUIColor)
                 .padding(.vertical, 2)
@@ -136,14 +136,14 @@ public struct SaintOfDayCard: View {
     private func patronagesSection(patronages: [String]) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("PATRON OF")
-                .font(.system(size: 11, weight: .bold))
+                .font(.scaled(size: 11, weight: .bold))
                 .foregroundStyle(Color.secondary.opacity(0.8))
                 .tracking(1.0)
             
             FlowLayout(spacing: 6) {
                 ForEach(patronages, id: \.self) { patronage in
                     Text(patronage)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.scaled(size: 12, weight: .medium))
                         .foregroundStyle(Color.primary.opacity(0.85))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
