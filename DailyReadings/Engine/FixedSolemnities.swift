@@ -341,7 +341,9 @@ public struct FixedSolemnities: Sendable {
     /// All fixed celebrations catalogued by `(month, day)`.
     public static let celebrationsByMonthAndDay: [CelebrationKey: [FixedCelebration]] = {
         let all: [FixedCelebration] = [
-            maryMotherOfGod, epiphanyUniversal, saintJoseph, theAnnunciation, nativityOfJohnTheBaptist,
+            // Note: In the US Calendar, Epiphany is transferred to the Sunday between Jan 2 and Jan 8,
+            // so epiphanyUniversal (Jan 6) is omitted from fixed celebrations to prevent duplicate celebration.
+            maryMotherOfGod, saintJoseph, theAnnunciation, nativityOfJohnTheBaptist,
             saintsPeterAndPaul, assumptionOfMary, allSaints, immaculateConception, theNativityOfTheLord,
             presentationOfTheLord, transfiguration, exaltationOfTheHolyCross, dedicationOfLateranBasilica,
             conversionOfSaintPaul, chairOfSaintPeter, saintMark, saintsPhilipAndJames, saintMatthias,
@@ -482,6 +484,24 @@ public struct FixedSolemnities: Sendable {
                 originalDay: 8,
                 targetDate: mondayDec9,
                 transferReason: "Transferred from December 8 to Monday December 9 because it coincided with the Second Sunday of Advent."
+            ))
+        }
+
+        // 4. Nativity of Saint John the Baptist (June 24) colliding with Sacred Heart
+        // UNLY §59 & Congregation for Divine Worship decree (Prot. N. 168/22):
+        // Sacred Heart is a Solemnity of the Lord (Rank 3), whereas the Nativity of St. John the Baptist
+        // is a Solemnity of a Saint (Rank 4). When they coincide on Friday, Sacred Heart takes precedence,
+        // and the Nativity of Saint John the Baptist is transferred to the preceding Thursday, June 23.
+        let johnBaptistDate = makeDate(year: year, month: 6, day: 24, calendar: gmtCal)
+        let sacredHeartDate = Computus.sacredHeart(year: year)
+        if gmtCal.isDate(johnBaptistDate, inSameDayAs: sacredHeartDate) {
+            let thursdayJune23 = gmtCal.date(byAdding: .day, value: -1, to: johnBaptistDate)!
+            transfers.append(TransferredCelebration(
+                celebration: nativityOfJohnTheBaptist,
+                originalMonth: 6,
+                originalDay: 24,
+                targetDate: thursdayJune23,
+                transferReason: "Transferred from June 24 to June 23 because it coincided with the Solemnity of the Most Sacred Heart of Jesus (UNLY §59)."
             ))
         }
 

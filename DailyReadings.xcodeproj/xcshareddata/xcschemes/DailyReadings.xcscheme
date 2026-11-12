@@ -21,6 +21,20 @@
                ReferencedContainer = "container:DailyReadings.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "61B01135F4E024C5193F0A63"
+               BuildableName = "DailyReadingsTests.xctest"
+               BlueprintName = "DailyReadingsTests"
+               ReferencedContainer = "container:DailyReadings.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -39,7 +53,20 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "61B01135F4E024C5193F0A63"
+               BuildableName = "DailyReadingsTests.xctest"
+               BlueprintName = "DailyReadingsTests"
+               ReferencedContainer = "container:DailyReadings.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

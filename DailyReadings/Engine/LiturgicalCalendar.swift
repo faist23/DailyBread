@@ -190,7 +190,8 @@ public struct LiturgicalCalendar: Sendable {
             date: norm.normalizedDate,
             season: temporalDay.season,
             weekday: norm.weekday,
-            isFastAndAbstinence: isFastAndAbstinence
+            isFastAndAbstinence: isFastAndAbstinence,
+            isSolemnity: finalRank.isSolemnity
         )
 
         // 9. Compute Psalter Week
@@ -247,7 +248,7 @@ public struct LiturgicalCalendar: Sendable {
     /// First Sunday of Advent: The Sunday falling between November 27 and December 3 inclusive.
     /// (Equivalently, the fourth Sunday before Christmas Day).
     public static func firstSundayOfAdvent(year: Int, calendar: Calendar = .current) -> Date {
-        var gmtCal = normalizedCalendar()
+        let gmtCal = normalizedCalendar()
         for day in 27...33 {
             var m = 11
             var d = day
@@ -266,7 +267,7 @@ public struct LiturgicalCalendar: Sendable {
     /// Epiphany of the Lord in the United States:
     /// Transferred to the Sunday occurring between January 2 and January 8.
     public static func epiphanyDate(year: Int, calendar: Calendar = .current) -> Date {
-        var gmtCal = normalizedCalendar()
+        let gmtCal = normalizedCalendar()
         for day in 2...8 {
             let date = FixedSolemnities.makeDate(year: year, month: 1, day: day, calendar: gmtCal)
             if gmtCal.component(.weekday, from: date) == 1 {
@@ -357,7 +358,8 @@ public struct LiturgicalCalendar: Sendable {
         // -------------------------------------------------------------
         // A. ADVENT SEASON (First Sunday of Advent through Dec 24)
         // -------------------------------------------------------------
-        if date >= adventStart && month == 12 && day <= 24 {
+        let christmasDay = FixedSolemnities.makeDate(year: year, month: 12, day: 25, calendar: calendar)
+        if date >= adventStart && date < christmasDay {
             let daysFromAdvent = calendar.dateComponents([.day], from: adventStart, to: date).day ?? 0
             let weekNumber = (daysFromAdvent / 7) + 1
 
@@ -371,7 +373,7 @@ public struct LiturgicalCalendar: Sendable {
                     rank: .primarySolemnity,
                     color: isGaudete ? .rose : .violet
                 )
-            } else if day >= 17 && day <= 24 {
+            } else if month == 12 && day >= 17 && day <= 24 {
                 // Privileged Weekdays of Advent (December 17–24)
                 let monthDayFormatter = DateFormatter()
                 monthDayFormatter.dateFormat = "MMMM d"
@@ -386,7 +388,7 @@ public struct LiturgicalCalendar: Sendable {
                 )
             } else {
                 // Ordinary Weekdays of Advent (up to Dec 16)
-                let weekOrdinal = ["First", "Second", "Third"][min(max(0, weekNumber - 1), 2)]
+                let weekOrdinal = ["First", "Second", "Third", "Fourth"][min(max(0, weekNumber - 1), 3)]
                 return TemporalDayComputation(
                     season: .advent,
                     seasonWeek: weekNumber,
@@ -746,72 +748,6 @@ public struct LiturgicalCalendar: Sendable {
         // F2. Ordinary Time Part 2: Monday after Pentecost through Christ the King week
         // Key algorithm: Count backwards from Christ the King (Week 34)
         if date > pentecost && date < adventStart {
-            // Check Movable Solemnities anchored to Pentecost:
-            let maryMotherOfChurch = Computus.maryMotherOfTheChurch(year: year)
-            if calendar.isDate(date, inSameDayAs: maryMotherOfChurch) {
-                return TemporalDayComputation(
-                    season: .ordinaryTime,
-                    seasonWeek: 10, // will be adjusted below
-                    title: "Memorial of the Blessed Virgin Mary, Mother of the Church",
-                    rank: .obligatoryMemorial,
-                    color: .white
-                )
-            }
-
-            let trinitySunday = Computus.trinitySunday(year: year)
-            if calendar.isDate(date, inSameDayAs: trinitySunday) {
-                return TemporalDayComputation(
-                    season: .ordinaryTime,
-                    seasonWeek: 11,
-                    title: "The Most Holy Trinity",
-                    rank: .generalSolemnity,
-                    color: .white
-                )
-            }
-
-            let corpusChristi = Computus.corpusChristiSunday(year: year)
-            if calendar.isDate(date, inSameDayAs: corpusChristi) {
-                return TemporalDayComputation(
-                    season: .ordinaryTime,
-                    seasonWeek: 12,
-                    title: "The Most Holy Body and Blood of Christ (Corpus Christi)",
-                    rank: .generalSolemnity,
-                    color: .white
-                )
-            }
-
-            let sacredHeart = Computus.sacredHeart(year: year)
-            if calendar.isDate(date, inSameDayAs: sacredHeart) {
-                return TemporalDayComputation(
-                    season: .ordinaryTime,
-                    seasonWeek: 12,
-                    title: "The Most Sacred Heart of Jesus",
-                    rank: .generalSolemnity,
-                    color: .white
-                )
-            }
-
-            let immaculateHeart = Computus.immaculateHeart(year: year)
-            if calendar.isDate(date, inSameDayAs: immaculateHeart) {
-                return TemporalDayComputation(
-                    season: .ordinaryTime,
-                    seasonWeek: 12,
-                    title: "The Immaculate Heart of the Blessed Virgin Mary",
-                    rank: .obligatoryMemorial,
-                    color: .white
-                )
-            }
-
-            if calendar.isDate(date, inSameDayAs: christTheKing) {
-                return TemporalDayComputation(
-                    season: .ordinaryTime,
-                    seasonWeek: 34,
-                    title: "Our Lord Jesus Christ, King of the Universe",
-                    rank: .generalSolemnity,
-                    color: .white
-                )
-            }
-
             // General Ordinary Time Part 2 calculation:
             // Find the Sunday of the current week (for Sundays, the date itself; for weekdays, the preceding Sunday).
             // Exception: The week starting Monday after Pentecost has Pentecost as its preceding Sunday.
@@ -831,6 +767,72 @@ public struct LiturgicalCalendar: Sendable {
             } else {
                 let weeksBeforeCTK = calendar.dateComponents([.weekOfYear], from: sundayOfCurrentWeek, to: christTheKing).weekOfYear ?? 0
                 weekNumber = max(1, 34 - weeksBeforeCTK)
+            }
+
+            // Check Movable Solemnities anchored to Pentecost:
+            let maryMotherOfChurch = Computus.maryMotherOfTheChurch(year: year)
+            if calendar.isDate(date, inSameDayAs: maryMotherOfChurch) {
+                return TemporalDayComputation(
+                    season: .ordinaryTime,
+                    seasonWeek: weekNumber,
+                    title: "Memorial of the Blessed Virgin Mary, Mother of the Church",
+                    rank: .obligatoryMemorial,
+                    color: .white
+                )
+            }
+
+            let trinitySunday = Computus.trinitySunday(year: year)
+            if calendar.isDate(date, inSameDayAs: trinitySunday) {
+                return TemporalDayComputation(
+                    season: .ordinaryTime,
+                    seasonWeek: weekNumber,
+                    title: "The Most Holy Trinity",
+                    rank: .generalSolemnity,
+                    color: .white
+                )
+            }
+
+            let corpusChristi = Computus.corpusChristiSunday(year: year)
+            if calendar.isDate(date, inSameDayAs: corpusChristi) {
+                return TemporalDayComputation(
+                    season: .ordinaryTime,
+                    seasonWeek: weekNumber,
+                    title: "The Most Holy Body and Blood of Christ (Corpus Christi)",
+                    rank: .generalSolemnity,
+                    color: .white
+                )
+            }
+
+            let sacredHeart = Computus.sacredHeart(year: year)
+            if calendar.isDate(date, inSameDayAs: sacredHeart) {
+                return TemporalDayComputation(
+                    season: .ordinaryTime,
+                    seasonWeek: weekNumber,
+                    title: "The Most Sacred Heart of Jesus",
+                    rank: .generalSolemnity,
+                    color: .white
+                )
+            }
+
+            let immaculateHeart = Computus.immaculateHeart(year: year)
+            if calendar.isDate(date, inSameDayAs: immaculateHeart) {
+                return TemporalDayComputation(
+                    season: .ordinaryTime,
+                    seasonWeek: weekNumber,
+                    title: "The Immaculate Heart of the Blessed Virgin Mary",
+                    rank: .obligatoryMemorial,
+                    color: .white
+                )
+            }
+
+            if calendar.isDate(date, inSameDayAs: christTheKing) {
+                return TemporalDayComputation(
+                    season: .ordinaryTime,
+                    seasonWeek: 34,
+                    title: "Our Lord Jesus Christ, King of the Universe",
+                    rank: .generalSolemnity,
+                    color: .white
+                )
             }
 
             if isSunday {
@@ -950,10 +952,16 @@ public struct LiturgicalCalendar: Sendable {
         date: Date,
         season: LiturgicalSeason,
         weekday: Int,
-        isFastAndAbstinence: Bool
+        isFastAndAbstinence: Bool,
+        isSolemnity: Bool = false
     ) -> Bool {
         if isFastAndAbstinence {
             return true
+        }
+        // Canon 1251: Abstinence from meat is to be observed on all Fridays,
+        // UNLESS a solemnity should fall on a Friday (e.g. Saint Joseph on March 19).
+        if isSolemnity {
+            return false
         }
         // In the US, all Fridays of Lent are mandatory days of abstinence from meat
         if season == .lent && weekday == 6 { // 6 = Friday

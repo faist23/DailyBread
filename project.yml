@@ -14,7 +14,7 @@ settings:
     DEVELOPMENT_TEAM: DT58WA8N32
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: "1.0.0"
-    CURRENT_PROJECT_VERSION: "12"
+    CURRENT_PROJECT_VERSION: "13"
     INFOPLIST_KEY_UILaunchScreen_Generation: true
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: false
     INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
@@ -26,8 +26,13 @@ schemes:
     build:
       targets:
         DailyReadings: all
+        DailyReadingsTests: [test]
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - DailyReadingsTests
     archive:
       config: Release
 
@@ -60,3 +65,16 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: DailyReadings
         SWIFT_STRICT_CONCURRENCY: complete
     dependencies: []
+
+  DailyReadingsTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: DailyReadingsTests
+    dependencies:
+      - target: DailyReadings
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.ridepro.DailyReadingsTests
+        GENERATE_INFOPLIST_FILE: true
+        SWIFT_STRICT_CONCURRENCY: complete

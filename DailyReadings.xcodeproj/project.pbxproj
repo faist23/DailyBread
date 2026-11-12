@@ -14,6 +14,7 @@
 		0C109939EC76B9E26DED5AB1 /* TodayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA01285060492A2DA9008352 /* TodayViewModel.swift */; };
 		1AF4CFB0922ACF71A8A1B450 /* GuidedRosaryBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3675563602ECF35C6CF3DB /* GuidedRosaryBuilder.swift */; };
 		1E4AC155467A1FCC41C0B6E0 /* AudioReadingPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2607539EE6170B10FDEF0042 /* AudioReadingPlayer.swift */; };
+		21003790292CEAC44779B578 /* LiturgicalCalendarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78083BBE2A3517830D180EDE /* LiturgicalCalendarTests.swift */; };
 		219B796F4BC3BAF744D192D6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9189985265926497006E0 /* SettingsView.swift */; };
 		289B855F91E7D1EE0258B294 /* BibleVerse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7E7F6722DAA38BEA83A4B7F /* BibleVerse.swift */; };
 		295C106CC8907B4233FABCE6 /* VerseOfDayCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C4E16A985859AA433596E6E /* VerseOfDayCard.swift */; };
@@ -67,6 +68,16 @@
 		FE7624388C3E0FA4D16B5A3C /* RosaryMystery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041A25C108116A6279E62AAB /* RosaryMystery.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1C8165A3925414E5369633A2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A729D7A99C43FE320B2232CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B80AE1FB043D9FFB899DB856;
+			remoteInfo = DailyReadings;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		041A25C108116A6279E62AAB /* RosaryMystery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RosaryMystery.swift; sourceTree = "<group>"; };
 		0746E67BAA496208984026D6 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
@@ -93,6 +104,7 @@
 		6FEAFC1CE448C8D99A61F3C1 /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		71BFE20B8B02EF1E1DAC62D9 /* LiturgicalColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalColor.swift; sourceTree = "<group>"; };
 		73106A62665AECB6BE142392 /* GuidedRosaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidedRosaryView.swift; sourceTree = "<group>"; };
+		78083BBE2A3517830D180EDE /* LiturgicalCalendarTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalCalendarTests.swift; sourceTree = "<group>"; };
 		786F97E2A2318C15B9E9CC1E /* lectionary_dates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary_dates.json; sourceTree = "<group>"; };
 		78E5C23999DB16D6A8EE6BDF /* Prayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prayer.swift; sourceTree = "<group>"; };
 		82795DFF5BFB79EADA889534 /* bible_drb.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = bible_drb.sqlite; sourceTree = "<group>"; };
@@ -108,6 +120,7 @@
 		B3AB7EBF254A8BED5742B587 /* BibleDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BibleDatabase.swift; sourceTree = "<group>"; };
 		BA71552D1478FB0AFEDD6FFF /* ReadingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingDetailView.swift; sourceTree = "<group>"; };
 		BADD1A0409DD5B587A454955 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		C210E22EE8FE46AEF4177FE4 /* DailyReadingsTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = DailyReadingsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B36DD67C1AB02217612FF7 /* ReadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingCard.swift; sourceTree = "<group>"; };
 		C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = lectionary.json; sourceTree = "<group>"; };
 		C579F30F81C7EB40CF1A17E8 /* LiturgicalDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiturgicalDay.swift; sourceTree = "<group>"; };
@@ -268,6 +281,7 @@
 			isa = PBXGroup;
 			children = (
 				ABBB033C5AB974A39AE019BA /* DailyReadings.app */,
+				C210E22EE8FE46AEF4177FE4 /* DailyReadingsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -276,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				0BD3E547EAA9C4DB3C9C3042 /* DailyReadings */,
+				D3862D6E9B8111DFCCA54C38 /* DailyReadingsTests */,
 				BA0E3EC5152BAFD51F5D0A68 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -290,6 +305,14 @@
 				D6B740763CA5A642571DCCFB /* RosaryDetailView.swift */,
 			);
 			path = Prayers;
+			sourceTree = "<group>";
+		};
+		D3862D6E9B8111DFCCA54C38 /* DailyReadingsTests */ = {
+			isa = PBXGroup;
+			children = (
+				78083BBE2A3517830D180EDE /* LiturgicalCalendarTests.swift */,
+			);
+			path = DailyReadingsTests;
 			sourceTree = "<group>";
 		};
 		F4D942594094526B5D325643 /* Models */ = {
@@ -312,6 +335,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		61B01135F4E024C5193F0A63 /* DailyReadingsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD8D7448C91F10F11CD0669C /* Build configuration list for PBXNativeTarget "DailyReadingsTests" */;
+			buildPhases = (
+				F7FFE57B0926E4A043A47B81 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0ED6120A0149A07AACA2C5F7 /* PBXTargetDependency */,
+			);
+			name = DailyReadingsTests;
+			packageProductDependencies = (
+			);
+			productName = DailyReadingsTests;
+			productReference = C210E22EE8FE46AEF4177FE4 /* DailyReadingsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		B80AE1FB043D9FFB899DB856 /* DailyReadings */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 95759594C5DED63DB709FC03 /* Build configuration list for PBXNativeTarget "DailyReadings" */;
@@ -339,6 +380,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					61B01135F4E024C5193F0A63 = {
+						DevelopmentTeam = DT58WA8N32;
+						ProvisioningStyle = Automatic;
+					};
 					B80AE1FB043D9FFB899DB856 = {
 						DevelopmentTeam = DT58WA8N32;
 						ProvisioningStyle = Automatic;
@@ -360,6 +405,7 @@
 			projectRoot = "";
 			targets = (
 				B80AE1FB043D9FFB899DB856 /* DailyReadings */,
+				61B01135F4E024C5193F0A63 /* DailyReadingsTests */,
 			);
 		};
 /* End PBXProject section */
@@ -440,9 +486,43 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F7FFE57B0926E4A043A47B81 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21003790292CEAC44779B578 /* LiturgicalCalendarTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		0ED6120A0149A07AACA2C5F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B80AE1FB043D9FFB899DB856 /* DailyReadings */;
+			targetProxy = 1C8165A3925414E5369633A2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		07BAE3E7D416ECF32A1F5D55 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridepro.DailyReadingsTests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DailyReadings.app/DailyReadings";
+			};
+			name = Release;
+		};
 		0A014956468924C6C7A30E17 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -461,6 +541,24 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		0FF7C6CE7A5DC0C2AB1CD3F0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ridepro.DailyReadingsTests;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DailyReadings.app/DailyReadings";
+			};
+			name = Debug;
 		};
 		32A7BD9972700A1346E81E48 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -497,7 +595,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = DT58WA8N32;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -589,7 +687,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = DT58WA8N32;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -637,6 +735,15 @@
 			buildConfigurations = (
 				8BA2A8C89A571701703F7659 /* Debug */,
 				0A014956468924C6C7A30E17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BD8D7448C91F10F11CD0669C /* Build configuration list for PBXNativeTarget "DailyReadingsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0FF7C6CE7A5DC0C2AB1CD3F0 /* Debug */,
+				07BAE3E7D416ECF32A1F5D55 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

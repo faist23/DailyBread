@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
-**Last Updated:** 2026-11-11  
-**Current Version:** 1.0.0 (Build 12)  
+**Last Updated:** 2026-11-12  
+**Current Version:** 1.0.0 (Build 13)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
@@ -140,6 +140,14 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Root cause: Buttons in `RosaryDetailView` ("Start Bead-by-Bead Rosary") and `HowToPrayRosaryView` ("Start Guided Bead-by-Bead Rosary") rendered with `.foregroundStyle(Color.white)` over `.background(liturgicalColor.swiftUIColor)`, which resolves to ivory/white on white feast days.
 - Added `primaryButtonBackground` and `primaryButtonForeground` to `LiturgicalColor`: Uses rich burnished liturgical gold (`rgb(175, 130, 30)`) on white feast days, providing high contrast and crisp legibility for white text across all primary action buttons.
 - Updated reading category titles in `ReadingCard`, `PsalmView`, and `ReadingDetailView` to utilize `liturgicalColor.uiAccentColor` instead of raw `swiftUIColor` to ensure titles remain clearly legible on white solemnities.
+
+### 19. Canonical Liturgical Engine Correctness & Unit Test Suite (`LiturgicalCalendar`, `FixedSolemnities`, `DailyReadingsTests`) (Build 13)
+- **Advent November Start Fix**: Removed rigid `month == 12` check in `LiturgicalCalendar.swift`. Bounded Advent calculation strictly between `adventStart` and `christmasDay` (December 25). Correctly recognizes November 29, 2026 and November 28, 2027 as First Sunday of Advent (Violet, Year B & Year C).
+- **Epiphany Duplicate Elimination**: Omitted fixed Jan 6 `epiphanyUniversal` from `FixedSolemnities.celebrationsByMonthAndDay` for the US calendar where Epiphany is celebrated on the Sunday between Jan 2 and Jan 8, preventing duplicate celebration on Jan 6.
+- **Canon 1251 Lenten Friday Solemnity Abstinence Exemption**: Updated `isDayOfAbstinence` to check `finalRank.isSolemnity`. When a solemnity falls on a Friday of Lent (e.g., St. Joseph on March 19, 2027), the obligation of abstinence from meat is canonically waived.
+- **Post-Pentecost Ordinary Time Week Continuity**: Pre-calculated `weekNumber` using backwards anchor from Christ the King for all movable solemnities/memorials following Pentecost (Mary Mother of the Church, Trinity, Corpus Christi, Sacred Heart). In 2026, Mary Mother of the Church correctly receives Week 8, matching Tuesday's Week 8.
+- **Solemnity Collision Handling**: Added collision rule in `FixedSolemnities.computeTransferredCelebrations` for when the Sacred Heart of Jesus collides with the Nativity of Saint John the Baptist (June 24, 2033). Sacred Heart (Rank 3) is celebrated on Friday, and Nativity of St. John the Baptist (Rank 4) is anticipated on Thursday, June 23 (UNLY §59 / Prot. N. 168/22).
+- **Automated Unit Test Suite**: Created `DailyReadingsTests` target with [`DailyReadingsTests/LiturgicalCalendarTests.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadingsTests/LiturgicalCalendarTests.swift) with 20 assertions pinning all calendar calculations.
 
 ---
 
