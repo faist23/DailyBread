@@ -17,11 +17,13 @@
 - **Liturgical Verse of the Day**:
   - Morning focus hero card anchored directly in the day's Mass readings (Gospel Acclamation, Gospel, or Psalm antiphon).
   - One-tap clipboard copy and native share actions.
-- **Treasury of Catholic Prayers & Holy Rosary**:
+- **Treasury of Catholic Prayers & Interactive Holy Rosary**:
   - Dedicated Prayers tab with categorized devotions: Daily Rhythm (Morning Offering, Angelus, Regina Caeli, Evening Examen, Compline), Foundational (Our Father, Hail Mary, Creeds), Marian, and Saints & Protection (St. Michael, Anima Christi, St. Francis).
   - Traditional Latin and English texts with side-by-side / toggle view.
   - Built-in text-to-speech recitation in both Latin and English.
-  - Interactive Holy Rosary guide with automatic day-of-week mystery detection (Joyful, Sorrowful, Glorious, Luminous), scripture references, and decade meditations.
+  - **"How to Pray the Rosary" Tutorial**: Sequential 6-step beginner's guide, bead anatomy, weekly mystery rhythm, and contemplative spiritual advice.
+  - **Interactive Bead-by-Bead Guided Companion**: Tap-to-advance prayer screen with active decade bead tracker (10 beads), scripture meditations, full prayer text in New York serif, gentle haptic feedback on each counted bead, and audio recitation.
+  - Automatic day-of-week mystery detection (Joyful, Sorrowful, Glorious, Luminous) with scripture references and decade meditations.
 - **Personal Devotions & Bookmarking**:
   - One-tap scripture passage bookmarks on all reading cards and detail views.
   - Dedicated Bookmarks collection screen in Settings with full-screen reading access.

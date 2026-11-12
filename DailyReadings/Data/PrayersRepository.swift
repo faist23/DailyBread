@@ -515,6 +515,24 @@ public final class PrayersRepository: Sendable {
             // 3. MARIAN & DEVOTIONAL
             // ==========================================
             Prayer(
+                id: "how-to-pray-the-rosary",
+                title: "How to Pray the Rosary",
+                category: .rosary,
+                textEnglish: """
+                A comprehensive beginner's guide to praying the Holy Rosary:
+                • The 6 step-by-step sequential prayers
+                • The physical anatomy of beads (Crucifix, opening beads, 5 decades, centerpiece)
+                • The weekly mystery schedule (Joyful, Sorrowful, Glorious, Luminous)
+                • Spiritual advice for contemplative prayer and overcoming distractions
+
+                Tap to open the illustrated tutorial and start the interactive bead-by-bead prayer companion.
+                """,
+                source: "Catholic Devotional Tradition",
+                rubricNote: "Includes the 6-step sequential guide, bead anatomy, and interactive companion.",
+                isRosaryGuide: true
+            ),
+            
+            Prayer(
                 id: "holy-rosary-guide",
                 title: "The Holy Rosary Guide",
                 category: .rosary,

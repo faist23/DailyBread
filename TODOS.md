@@ -121,6 +121,20 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Integrated audio recitation directly into `PrayerDetailView` with Latin & English text-to-speech.
 - Built interactive `RosaryDetailView` with automated day-of-week mystery detection (Joyful on Mon/Sat, Sorrowful on Tue/Fri, Glorious on Wed/Sun, Luminous on Thu), decade meditations, scripture references, and spiritual fruits.
 
+### 17. "How to Pray the Rosary" Guide & Interactive Bead-by-Bead Companion (`HowToPrayRosaryView`, `GuidedRosaryView`, `GuidedRosaryBuilder`, `GuidedRosaryStep`, `RosaryDetailView`) (Build 11)
+- Built `HowToPrayRosaryView`: Comprehensive beginner tutorial featuring the 6 sequential steps (Crucifix, opening Our Father & 3 Hail Marys, chain prayers, 5 decades, concluding Salve Regina), physical bead anatomy, weekly mystery rhythm, and contemplative advice for overcoming distractions.
+- Built `GuidedRosaryStep` model and `GuidedRosaryBuilder`: Assembles the complete sequential bead-by-bead prayer journey (Sign of the Cross, Creed, opening virtues, decade announcements with scripture, Our Father, 10 Hail Marys with progress tracking, Glory Be, Fatima Prayer, and concluding Hail Holy Queen and closing prayer).
+- Built `GuidedRosaryView`: Interactive full-screen prayer companion with:
+  - Visual bead tracking: Active 10-dot decade row showing completed beads, current glowing bead, and remaining beads.
+  - Overall progress bar and bead position badges (`Decade 1 • Bead 4 of 10`).
+  - High-readability New York serif prayer typography with dynamic sizing.
+  - Mystery meditation cards with scripture citations to keep the mind focused on Christ.
+  - Gentle haptic feedback (`UIImpactFeedbackGenerator(style: .light)`) on every bead counted.
+  - Speech recitation toggle (`AVSpeechSynthesizer`) for auditory prayer assistance.
+  - Celebratory completion screen with concluding blessing.
+- Integrated dual-mode segmented toggle (`Mysteries` / `How to Pray`) and one-tap `"Start Bead-by-Bead Rosary"` hero action in `RosaryDetailView`.
+- Added dedicated `"How to Pray the Rosary"` entry in `PrayersRepository` and routed directly from `PrayersView`.
+
 ---
 
 ## Active & Upcoming TODOS

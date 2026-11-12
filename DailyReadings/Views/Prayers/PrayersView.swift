@@ -78,8 +78,10 @@ public struct PrayersView: View {
             prompt: "Search prayers by name or keyword..."
         )
         .sheet(item: $selectedPrayer) { prayer in
-            if prayer.isRosaryGuide {
-                RosaryDetailView(liturgicalColor: liturgicalColor)
+            if prayer.id == "how-to-pray-the-rosary" {
+                RosaryDetailView(liturgicalColor: liturgicalColor, initialMode: .howToPray)
+            } else if prayer.isRosaryGuide {
+                RosaryDetailView(liturgicalColor: liturgicalColor, initialMode: .mysteries)
             } else {
                 PrayerDetailView(prayer: prayer, liturgicalColor: liturgicalColor)
             }
