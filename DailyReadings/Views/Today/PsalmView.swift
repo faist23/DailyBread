@@ -85,7 +85,7 @@ public struct PsalmView: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(reading.type.displayTitle)
-                        .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
+                        .readingTitleStyle(tintColor: liturgicalColor.uiAccentColor)
                     
                     if isSpeaking {
                         HStack(spacing: 3) {

@@ -131,6 +131,26 @@ public extension LiturgicalColor {
         }
     }
 
+    /// Background color for prominent filled action buttons (e.g. "Start Bead-by-Bead Rosary", "Next Bead").
+    /// For white liturgical days, uses rich burnished gold so white text has strong contrast.
+    var primaryButtonBackground: Color {
+        switch self {
+        case .white:
+            return Color(red: 175 / 255, green: 130 / 255, blue: 30 / 255)
+        case .rose:
+            return Color(red: 185 / 255, green: 90 / 255, blue: 115 / 255)
+        case .black:
+            return Color(red: 45 / 255, green: 45 / 255, blue: 50 / 255)
+        default:
+            return swiftUIColor
+        }
+    }
+
+    /// Foreground text/icon color for prominent filled action buttons.
+    var primaryButtonForeground: Color {
+        Color.white
+    }
+
     /// Icon color for display against colored backgrounds or headers.
     var iconColor: Color {
         switch self {

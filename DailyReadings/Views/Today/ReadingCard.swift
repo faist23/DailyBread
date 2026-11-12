@@ -87,12 +87,12 @@ public struct ReadingCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(reading.type.displayTitle)
-                        .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
+                        .readingTitleStyle(tintColor: liturgicalColor.uiAccentColor)
                     
                     if reading.type == .gospel {
                         Image(systemName: "cross.fill")
                             .font(.system(size: 10))
-                            .foregroundStyle(liturgicalColor.swiftUIColor)
+                            .foregroundStyle(liturgicalColor.uiAccentColor)
                     }
                     
                     if isSpeaking {

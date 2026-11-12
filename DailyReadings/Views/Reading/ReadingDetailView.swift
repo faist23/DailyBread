@@ -51,7 +51,7 @@ public struct ReadingDetailView: View {
                     VStack(alignment: .leading, spacing: AppTheme.Spacing.large) {
                         // Title / Reading Category
                         Text(reading.type.displayTitle)
-                            .readingTitleStyle(tintColor: liturgicalColor.swiftUIColor)
+                            .readingTitleStyle(tintColor: liturgicalColor.uiAccentColor)
                             .padding(.top, AppTheme.Spacing.medium)
                         
                         // Responsorial Psalm Antiphon Banner

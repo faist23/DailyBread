@@ -135,6 +135,12 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Integrated dual-mode segmented toggle (`Mysteries` / `How to Pray`) and one-tap `"Start Bead-by-Bead Rosary"` hero action in `RosaryDetailView`.
 - Added dedicated `"How to Pray the Rosary"` entry in `PrayersRepository` and routed directly from `PrayersView`.
 
+### 18. Liturgical Contrast Fix for White Feasts & Bead-by-Bead Buttons (`LiturgicalColors`, `RosaryDetailView`, `HowToPrayRosaryView`, `GuidedRosaryView`, `ReadingCard`, `PsalmView`) (Build 12)
+- Fixed unreadable white-on-white text occurring on white liturgical feasts (e.g. St. Martin of Tours, Bishop).
+- Root cause: Buttons in `RosaryDetailView` ("Start Bead-by-Bead Rosary") and `HowToPrayRosaryView` ("Start Guided Bead-by-Bead Rosary") rendered with `.foregroundStyle(Color.white)` over `.background(liturgicalColor.swiftUIColor)`, which resolves to ivory/white on white feast days.
+- Added `primaryButtonBackground` and `primaryButtonForeground` to `LiturgicalColor`: Uses rich burnished liturgical gold (`rgb(175, 130, 30)`) on white feast days, providing high contrast and crisp legibility for white text across all primary action buttons.
+- Updated reading category titles in `ReadingCard`, `PsalmView`, and `ReadingDetailView` to utilize `liturgicalColor.uiAccentColor` instead of raw `swiftUIColor` to ensure titles remain clearly legible on white solemnities.
+
 ---
 
 ## Active & Upcoming TODOS

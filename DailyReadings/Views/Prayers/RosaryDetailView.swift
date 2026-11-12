@@ -170,12 +170,12 @@ public struct RosaryDetailView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 13, weight: .bold))
                 }
-                .foregroundStyle(Color.white)
+                .foregroundStyle(liturgicalColor.primaryButtonForeground)
                 .padding(.horizontal, AppTheme.Spacing.medium)
                 .padding(.vertical, 14)
-                .background(liturgicalColor.swiftUIColor)
+                .background(liturgicalColor.primaryButtonBackground)
                 .clipShape(RoundedRectangle(cornerRadius: AppTheme.CornerRadius.medium, style: .continuous))
-                .shadow(color: liturgicalColor.uiAccentColor.opacity(0.28), radius: 6, y: 3)
+                .shadow(color: liturgicalColor.primaryButtonBackground.opacity(0.28), radius: 6, y: 3)
             }
             .buttonStyle(.plain)
             

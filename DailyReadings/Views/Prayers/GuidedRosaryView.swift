@@ -323,12 +323,12 @@ public struct GuidedRosaryView: View {
                         Image(systemName: currentIndex < steps.count - 1 ? "chevron.forward" : "checkmark")
                             .font(.system(size: 13, weight: .bold))
                     }
-                    .foregroundStyle(Color.white)
+                    .foregroundStyle(liturgicalColor.primaryButtonForeground)
                     .frame(maxWidth: .infinity)
                     .frame(height: 46)
-                    .background(liturgicalColor.swiftUIColor)
+                    .background(liturgicalColor.primaryButtonBackground)
                     .clipShape(Capsule())
-                    .shadow(color: liturgicalColor.uiAccentColor.opacity(0.3), radius: 4, y: 2)
+                    .shadow(color: liturgicalColor.primaryButtonBackground.opacity(0.3), radius: 4, y: 2)
                 }
                 .buttonStyle(.plain)
             }
@@ -441,10 +441,10 @@ public struct GuidedRosaryView: View {
             } label: {
                 Text("Return to Prayers")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Color.white)
+                    .foregroundStyle(liturgicalColor.primaryButtonForeground)
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(liturgicalColor.swiftUIColor)
+                    .background(liturgicalColor.primaryButtonBackground)
                     .clipShape(Capsule())
             }
             .padding(.horizontal, AppTheme.Spacing.large)

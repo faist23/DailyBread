@@ -55,10 +55,10 @@ public struct HowToPrayRosaryView: View {
                             Text("Start Guided Bead-by-Bead Rosary")
                                 .font(.system(size: 14, weight: .semibold))
                         }
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(liturgicalColor.primaryButtonForeground)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background(liturgicalColor.swiftUIColor)
+                        .background(liturgicalColor.primaryButtonBackground)
                         .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
