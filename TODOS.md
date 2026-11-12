@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
-**Last Updated:** 2026-11-10  
-**Current Version:** 1.0.0 (Build 9)  
+**Last Updated:** 2026-11-11  
+**Current Version:** 1.0.0 (Build 10)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 | SwiftUI | SwiftData  
@@ -109,6 +109,18 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - Updated `PsalmView`, `ReadingCard`, `ReadingDetailView`, and `AudioReadingPlayer` to render the prominent missal-styled response banner with red "℟." rubric lettering and repeated response cues between stanzas, and recite the antiphon during audio playback.
 - Fixed omission of final psalm response: Removed the `index < stanzas.count - 1` exclusion so the congregational refrain `℟. [Response]` is also displayed after the final stanza (and rendered in `ReadingDetailView` full-screen reader and spoken at the conclusion by the audio lector).
 
+### 15. Liturgical Verse of the Day Hero Card (`VerseOfTheDayProvider`, `VerseOfDayCard`, `TodayView`)
+- Added `VerseOfTheDay` model and `VerseOfTheDayProvider` that dynamically derives the day's keynote scripture from the Gospel Acclamation, the Gospel, or the Responsorial Psalm refrain, with seasonal fallback for offline reliability.
+- Designed `VerseOfDayCard` featuring illuminated gold border, New York serif italic quotation, source tag, citation, and one-tap clipboard copy and native share actions.
+- Positioned as the top hero focus card on `TodayView` above the Mass readings.
+
+### 16. Catholic Treasury of Prayers & Interactive Rosary Tab (`PrayersView`, `PrayersRepository`, `RosaryDetailView`, `PrayerDetailView`, `MainTabView`)
+- Added dedicated 4th tab `Prayers` to `MainTabView`.
+- Built comprehensive offline Catholic prayers catalog categorized by *Daily Rhythm* (Morning Offering, Angelus, Regina Caeli, Grace, Evening Examen, Act of Contrition, Compline), *Foundational* (Our Father, Hail Mary, Glory Be, Apostles' Creed, Nicene Creed, Confiteor), *Marian & Devotional* (Memorare, Salve Regina, Angel of God, Magnificat, Divine Mercy Chaplet), and *Saints & Protection* (St. Michael, Anima Christi, St. Francis, St. Joseph, St. Patrick).
+- Added traditional Latin text and side-by-side / toggle picker in `PrayerDetailView` for all traditional prayers.
+- Integrated audio recitation directly into `PrayerDetailView` with Latin & English text-to-speech.
+- Built interactive `RosaryDetailView` with automated day-of-week mystery detection (Joyful on Mon/Sat, Sorrowful on Tue/Fri, Glorious on Wed/Sun, Luminous on Thu), decade meditations, scripture references, and spiritual fruits.
+
 ---
 
 ## Active & Upcoming TODOS
@@ -134,6 +146,8 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 ## Key Files Reference
 
 - **Audio Engine & Lock Screen**: [`DailyReadings/Data/AudioReadingPlayer.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/AudioReadingPlayer.swift)
+- **Verse of the Day**: [`DailyReadings/Data/VerseOfTheDayProvider.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/VerseOfTheDayProvider.swift) | [`DailyReadings/Views/Today/VerseOfDayCard.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Today/VerseOfDayCard.swift)
+- **Treasury of Prayers & Rosary**: [`DailyReadings/Data/PrayersRepository.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/PrayersRepository.swift) | [`DailyReadings/Views/Prayers/PrayersView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Prayers/PrayersView.swift)
 - **Psalm Response Provider**: [`DailyReadings/Data/PsalmResponseProvider.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/PsalmResponseProvider.swift)
 - **Readings Repository & Offline Cache**: [`DailyReadings/Data/ReadingsRepository.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/ReadingsRepository.swift)
 - **Settings View**: [`DailyReadings/Views/Settings/SettingsView.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Views/Settings/SettingsView.swift)

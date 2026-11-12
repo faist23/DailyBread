@@ -130,6 +130,12 @@ public struct TodayView: View {
                     errorBanner(message: error)
                 }
                 
+                // Verse of the Day Card
+                VerseOfDayCard(
+                    verse: VerseOfTheDayProvider.verse(from: viewModel.dailyReadings, date: viewModel.currentDate),
+                    liturgicalColor: currentColor
+                )
+                
                 // Mass Readings Section
                 if let readings = viewModel.dailyReadings?.readings, !readings.isEmpty {
                     readingsList(readings: readings)

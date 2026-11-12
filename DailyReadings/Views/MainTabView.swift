@@ -28,7 +28,8 @@ public struct MainTabView: View {
     public enum Tab: Int, Hashable {
         case today = 0
         case calendar = 1
-        case settings = 2
+        case prayers = 2
+        case settings = 3
     }
     
     // MARK: - Initialization
@@ -64,7 +65,16 @@ public struct MainTabView: View {
             }
             .tag(Tab.calendar)
             
-            // Tab 3: Settings
+            // Tab 3: Prayers
+            NavigationStack {
+                PrayersView(liturgicalColor: todayViewModel.liturgicalDay?.color ?? .green)
+            }
+            .tabItem {
+                Label("Prayers", systemImage: selectedTab == .prayers ? "cross.fill" : "cross")
+            }
+            .tag(Tab.prayers)
+            
+            // Tab 4: Settings
             NavigationStack {
                 SettingsView()
             }

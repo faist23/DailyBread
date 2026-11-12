@@ -14,6 +14,14 @@
 - **Daily Mass Readings**:
   - First Reading, Responsorial Psalm with antiphon banner and stanza response cues, Second Reading (Sundays/Solemnities), Gospel Acclamation, and the Holy Gospel.
   - Multi-tier offline & online support: online New American Bible (NAB) via Evangelizo API with automatic 30-day background pre-fetching, cached locally in SwiftData, with guaranteed full offline fallback to the complete Douay-Rheims Bible (DRB).
+- **Liturgical Verse of the Day**:
+  - Morning focus hero card anchored directly in the day's Mass readings (Gospel Acclamation, Gospel, or Psalm antiphon).
+  - One-tap clipboard copy and native share actions.
+- **Treasury of Catholic Prayers & Holy Rosary**:
+  - Dedicated Prayers tab with categorized devotions: Daily Rhythm (Morning Offering, Angelus, Regina Caeli, Evening Examen, Compline), Foundational (Our Father, Hail Mary, Creeds), Marian, and Saints & Protection (St. Michael, Anima Christi, St. Francis).
+  - Traditional Latin and English texts with side-by-side / toggle view.
+  - Built-in text-to-speech recitation in both Latin and English.
+  - Interactive Holy Rosary guide with automatic day-of-week mystery detection (Joyful, Sorrowful, Glorious, Luminous), scripture references, and decade meditations.
 - **Personal Devotions & Bookmarking**:
   - One-tap scripture passage bookmarks on all reading cards and detail views.
   - Dedicated Bookmarks collection screen in Settings with full-screen reading access.
@@ -49,6 +57,8 @@
 - **Engine Layer**: `LiturgicalCalendar`, `Computus`, `LiturgicalSeason`, `LiturgicalRank`, `LiturgicalColor`, `FixedSolemnities`
 - **Data Layer**:
   - `ReadingsRepository`: Multi-tier coordinator (SwiftData cache → Evangelizo API → Douay-Rheims Bible).
+  - `VerseOfTheDayProvider`: Dynamically derives daily scripture focus from active Mass readings.
+  - `PrayersRepository`: Offline treasury of categorized traditional prayers and Rosary decade meditations.
   - `PsalmResponseProvider`: Canonical Lectionary psalter response provider covering all 150 Psalms and Biblical Canticles.
   - `BookmarkManager`: Devotional scripture bookmarks coordinator with JSON persistence.
   - `BibleDatabase`: SQLite actor querying the bundled Douay-Rheims Bible.
