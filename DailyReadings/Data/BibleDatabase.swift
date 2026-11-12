@@ -375,15 +375,22 @@ public enum BibleBook: Int, CaseIterable, Codable, Sendable {
 public actor BibleDatabase {
     private nonisolated(unsafe) var dbPointer: OpaquePointer?
     private let databaseURL: URL?
+    public let isVulgateNumbering: Bool
     
-    /// Default shared actor instance using the bundled Douay-Rheims SQLite file.
-    public static let shared = BibleDatabase()
+    /// Default shared actor instance using the bundled World English Bible (Catholic edition).
+    public static let shared = BibleDatabase.webc
 
-    /// Initializes the database connection with an optional custom file URL.
-    /// If no URL is provided, it looks for "bible_drb.sqlite" in the main bundle.
-    public init(databaseURL: URL? = nil) {
-        let url = databaseURL ?? Bundle.main.url(forResource: "bible_drb", withExtension: "sqlite")
+    /// Dedicated actor instance for World English Bible (Catholic edition) with modern English and Hebrew Psalm numbering.
+    public static let webc = BibleDatabase(resourceName: "bible_webc", isVulgateNumbering: false)
+
+    /// Dedicated actor instance for Douay-Rheims Bible with Latin Vulgate numbering.
+    public static let drb = BibleDatabase(resourceName: "bible_drb", isVulgateNumbering: true)
+
+    /// Initializes the database connection with an optional custom file URL or resource name.
+    public init(databaseURL: URL? = nil, resourceName: String = "bible_webc", isVulgateNumbering: Bool = false) {
+        let url = databaseURL ?? Bundle.main.url(forResource: resourceName, withExtension: "sqlite")
         self.databaseURL = url
+        self.isVulgateNumbering = isVulgateNumbering
         
         guard let targetURL = url else {
             self.dbPointer = nil
@@ -717,7 +724,12 @@ public actor BibleDatabase {
                 verseNumbers = []
             }
 
-            let slices = Self.mapHebrewToVulgate(book: book, chapter: span.chapter, verseNumbers: verseNumbers)
+            let slices: [BibleQuerySlice]
+            if isVulgateNumbering {
+                slices = Self.mapHebrewToVulgate(book: book, chapter: span.chapter, verseNumbers: verseNumbers)
+            } else {
+                slices = [BibleQuerySlice(bookId: book.rawValue, chapter: span.chapter, verseNumbers: verseNumbers)]
+            }
             for slice in slices {
                 let verses = queryVerses(bookId: slice.bookId, chapter: slice.chapter, verseNumbers: slice.verseNumbers)
                 allVerses.append(contentsOf: verses)

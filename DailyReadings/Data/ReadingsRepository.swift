@@ -97,7 +97,7 @@ public final class ReadingsRepository {
 
         let dateKey = CachedReading.makeDateKey(from: date)
 
-        // 1. If user prefers NAB, attempt Cache -> Online -> Offline DRB
+        // 1. If user prefers NAB, attempt Cache -> Online -> Offline WEB-C Fallback
         if preferredTranslation.uppercased() == "NAB" {
             // Step 1A: Check SwiftData cache
             if !forceRefresh, let readings = fetchFromCache(dateKey: dateKey, translation: "NAB") {
@@ -117,15 +117,22 @@ public final class ReadingsRepository {
                 self.cachedNABDaysCount = countCachedNABDays(daysAhead: 30)
                 return onlineReadings
             } catch {
-                self.lastError = "Online fetch unavailable: \(error.localizedDescription). Using Douay-Rheims Bible."
+                self.lastError = "Online fetch unavailable: \(error.localizedDescription). Using World English Bible."
             }
+            
+            // Guaranteed fallback when NAB network fails: offline WEB-C
+            let fallbackReadings = await generateOfflineReadings(for: date, translation: "WEBC")
+            self.currentReadings = fallbackReadings
+            self.activeTranslation = "WEBC"
+            return fallbackReadings
         }
 
-        // 2. Guaranteed Fallback: Local Douay-Rheims Bible via BibleDatabase + PericoreIndex
-        let fallbackReadings = await generateOfflineDouayRheimsReadings(for: date)
-        self.currentReadings = fallbackReadings
-        self.activeTranslation = "DRB"
-        return fallbackReadings
+        // 2. Offline Public Domain Translations: WEB-C (Modern Default) or Douay-Rheims (Traditional)
+        let offlineTranslation = preferredTranslation.uppercased() == "DRB" ? "DRB" : "WEBC"
+        let offlineReadings = await generateOfflineReadings(for: date, translation: offlineTranslation)
+        self.currentReadings = offlineReadings
+        self.activeTranslation = offlineTranslation
+        return offlineReadings
     }
 
     /// Fetches and verifies NAB readings from the Evangelizo API, backfilling any missing citations
@@ -276,25 +283,32 @@ public final class ReadingsRepository {
         }
     }
 
-    /// Directly generates Douay-Rheims readings entirely offline without performing any network requests.
-    public func getOfflineReadings(for date: Date) async -> DailyReadings {
-        return await generateOfflineDouayRheimsReadings(for: date)
+    /// Directly generates offline Catholic Mass readings without performing any network requests.
+    public func getOfflineReadings(for date: Date, translation: String = "WEBC") async -> DailyReadings {
+        return await generateOfflineReadings(for: date, translation: translation)
     }
 
     // MARK: - Offline Generation Pipeline
 
-    private func generateOfflineDouayRheimsReadings(for date: Date) async -> DailyReadings {
+    private func generateOfflineReadings(for date: Date, translation: String = "WEBC") async -> DailyReadings {
         let liturgicalDay = liturgicalCalendar.liturgicalDay(for: date)
         let entries = pericoreIndex.entries(for: liturgicalDay)
+        let isDRB = translation.uppercased() == "DRB"
+        let db = isDRB ? BibleDatabase.drb : BibleDatabase.webc
+        let translationCode = isDRB ? "DRB" : "WEBC"
+        let translationName = isDRB ? "Douay-Rheims" : "World English Bible (Catholic Edition)"
+        let copyrightNotice = isDRB
+            ? "Douay-Rheims Bible (Challoner Revision, 1752), public domain. Translated from the Latin Vulgate."
+            : "World English Bible (Catholic edition), public domain. Private devotional reading; not the liturgical text read at Mass."
 
         var readings: [Reading] = []
 
         for entry in entries {
-            let verses = await bibleDatabase.queryVerses(citation: entry.citation)
-            let formattedText = await bibleDatabase.formattedText(for: verses)
+            let verses = await db.queryVerses(citation: entry.citation)
+            let formattedText = await db.formattedText(for: verses)
 
             let text = formattedText.isEmpty
-                ? "[\(entry.citation.displayReference) — Douay-Rheims offline text.]"
+                ? "[\(entry.citation.displayReference) — \(translationName) offline text.]"
                 : formattedText
 
             let reading = Reading(
@@ -302,7 +316,7 @@ public final class ReadingsRepository {
                 citation: entry.citation,
                 text: text,
                 response: entry.response,
-                translation: "DRB"
+                translation: translationCode
             )
             readings.append(reading)
         }
@@ -311,7 +325,8 @@ public final class ReadingsRepository {
             date: date,
             liturgicalTitle: liturgicalDay.title,
             readings: readings,
-            translation: "DRB"
+            translation: translationCode,
+            copyright: copyrightNotice
         )
     }
 

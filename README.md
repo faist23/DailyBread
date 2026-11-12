@@ -13,7 +13,10 @@
 
 - **Daily Mass Readings**:
   - First Reading, Responsorial Psalm with antiphon banner and stanza response cues, Second Reading (Sundays/Solemnities), Gospel Acclamation, and the Holy Gospel.
-  - Multi-tier offline & online support: online New American Bible (NAB) via Evangelizo API with automatic 30-day background pre-fetching, cached locally in SwiftData, with guaranteed full offline fallback to the complete Douay-Rheims Bible (DRB).
+  - Multi-tier translation matrix:
+    - **World English Bible (Catholic Edition, WEB-C)**: Default modern English translation (public domain, complete 73-book Catholic canon, offline SQLite).
+    - **Douay-Rheims Bible (DRB)**: Traditional English translation (Challoner revision 1752, Latin Vulgate with Hebrew lectionary psalm mapping, offline SQLite).
+    - **New American Bible (NAB/NABRE)**: Optional liturgical text for testing via Evangelizo online feed with 30-day SwiftData caching, CCD attribution, and direct USCCB readings links.
 - **Liturgical Verse of the Day**:
   - Morning focus hero card anchored directly in the day's Mass readings (Gospel Acclamation, Gospel, or Psalm antiphon).
   - One-tap clipboard copy and native share actions.
@@ -58,12 +61,12 @@
 
 - **Engine Layer**: `LiturgicalCalendar`, `Computus`, `LiturgicalSeason`, `LiturgicalRank`, `LiturgicalColor`, `FixedSolemnities`
 - **Data Layer**:
-  - `ReadingsRepository`: Multi-tier coordinator (SwiftData cache → Evangelizo API → Douay-Rheims Bible).
+  - `ReadingsRepository`: Multi-tier coordinator (WEB-C default offline → Douay-Rheims traditional offline → optional NAB online with SwiftData cache).
   - `VerseOfTheDayProvider`: Dynamically derives daily scripture focus from active Mass readings.
   - `PrayersRepository`: Offline treasury of categorized traditional prayers and Rosary decade meditations.
   - `PsalmResponseProvider`: Canonical Lectionary psalter response provider covering all 150 Psalms and Biblical Canticles.
   - `BookmarkManager`: Devotional scripture bookmarks coordinator with JSON persistence.
-  - `BibleDatabase`: SQLite actor querying the bundled Douay-Rheims Bible.
+  - `BibleDatabase`: SQLite actor querying bundled Catholic Bibles (`bible_webc.sqlite` for WEB-C, `bible_drb.sqlite` for Douay-Rheims).
   - `PericoreIndex`: Maps liturgical days and calendar dates (2023–2027) to lectionary citations.
   - `SaintsDatabase`: Bundled saints database indexed by feast date.
 - **UI Layer**: Modern iOS 17 `@Observable` view models (`TodayViewModel`, `CalendarViewModel`) and declarative SwiftUI views.

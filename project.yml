@@ -50,6 +50,8 @@ targets:
         buildPhase: resources
       - path: DailyReadings/Resources/bible_drb.sqlite
         buildPhase: resources
+      - path: DailyReadings/Resources/bible_webc.sqlite
+        buildPhase: resources
       - path: DailyReadings/Resources/saints.json
         buildPhase: resources
       - path: DailyReadings/Resources/lectionary.json

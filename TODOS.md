@@ -29,6 +29,12 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Sacred Heart Collision Resolution (June 24, 2033)**: Sacred Heart takes precedence on Friday June 24, with Nativity of Saint John the Baptist anticipated on June 23 (UNLY §59 / Prot. N. 168/22).
 
 ### 2. Scripture & Translation Engine Overhaul (Build 14)
+- **World English Bible (Catholic Edition, WEB-C) Bundled**: Compiled and indexed full 73-book Catholic Canon into [`bible_webc.sqlite`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Resources/bible_webc.sqlite) (35,379 verses), set as default modern translation.
+- **Transparent Translation Labeling**: Marked all translation footers honestly across Settings and scripture views:
+  - WEB-C: *"World English Bible (Catholic edition), public domain. Private devotional reading; not the liturgical text read at Mass."*
+  - Douay-Rheims: *"Douay-Rheims (Challoner revision, 1752), public domain. Traditional English translated from the Latin Vulgate with all 73 Catholic books. 100% available offline."*
+  - NAB: *"New American Bible (NAB/NABRE). Liturgical text for the Dioceses of the United States. Pre-downloaded 30 days in advance via Evangelizo."*
+- **Catholic American Bible (CAB) Digital Licensing Waitlist**: Logged instructions and contact for USCCB permissions office for 2027 digital permissions opening.
 - **Hebrew ↔ Vulgate Psalm Numbering (DRB Offline)**: Added canonical mapping in [`BibleDatabase.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/BibleDatabase.swift). Lectionary Psalm 23 queries Vulgate Psalm 22 (*"The Lord ruleth me"*); Psalm 116 splits between Vulgate 114 and 115; Psalm 147 splits between Vulgate 146 and 147.
 - **Joel & Malachi Chapter Alignments**: Mapped Hebrew Joel 3:1-5 to Vulgate Joel 2:28-32, Joel 4 to Vulgate Joel 3, and Malachi 3:19-24 to Malachi 4:1-6.
 - **Multi-Chapter & Cross-Chapter Citations**: Rewrote citation parser in [`BibleDatabase.swift`](file:///Users/craigfaist/desktop/weatherapp/DailyReadings/DailyReadings/Data/BibleDatabase.swift) to parse semicolons (e.g. `Is 63:16b-17, 19b; 64:2-7`) and cross-chapter spans (e.g. `Heb 7:25—8:6`), querying chapters in sequence.
@@ -50,7 +56,7 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Cancellation Error Suppression**: Handled `CancellationError` silently in `TodayViewModel.swift` without displaying spurious error banners.
 - **Safe SwiftData Cache Retrieval**: In `ReadingsRepository.swift`, decoded `DailyReadings` inside `fetchFromCache`, preventing detached `@Model` scope faults.
 - **Optimized Cache Counting & Purging**: Used `fetchCount` with key-range predicates instead of full table scans, and batched expired row deletions.
-- **22 Unit Tests Passing**: Standalone test suite (`LiturgicalCalendarTests` + `ScriptureEngineTests`) executed with 0 failures (`** TEST SUCCEEDED **`).
+- **24 Unit Tests Passing**: Standalone test suite (`LiturgicalCalendarTests` + `ScriptureEngineTests`) executed with 0 failures (`** TEST SUCCEEDED **`).
 
 ---
 

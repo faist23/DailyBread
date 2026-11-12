@@ -14,7 +14,7 @@ public struct SettingsView: View {
     
     // MARK: - Stored Preferences
     
-    @AppStorage("bibleTranslation") private var selectedTranslation: String = "Douay-Rheims"
+    @AppStorage("bibleTranslation") private var selectedTranslation: String = "World English Bible (WEB-C)"
     @AppStorage("scriptureFontSize") private var scriptureFontSize: Double = 18.0
     @AppStorage("readingLineSpacing") private var readingLineSpacing: Double = 7.0
     @AppStorage("reminderEnabled") private var reminderEnabled: Bool = false
@@ -31,6 +31,7 @@ public struct SettingsView: View {
     // MARK: - Translation Options
     
     private let availableTranslations = [
+        "World English Bible (WEB-C)",
         "Douay-Rheims",
         "New American Bible (NAB)"
     ]
@@ -201,11 +202,15 @@ public struct SettingsView: View {
             Text("Scripture Translation")
         } footer: {
             if selectedTranslation.contains("NAB") {
-                Text("NAB readings are automatically pre-downloaded 30 days in advance so you can pray without an internet connection (e.g. in church or while traveling).")
+                Text("New American Bible (NAB/NABRE). Liturgical text for the Dioceses of the United States. Pre-downloaded 30 days in advance via Evangelizo.")
+                    .font(.footnote)
+                    .foregroundStyle(Color.secondary)
+            } else if selectedTranslation.contains("Douay") {
+                Text("Douay-Rheims (Challoner revision, 1752), public domain. Traditional English translated from the Latin Vulgate with all 73 Catholic books. 100% available offline.")
                     .font(.footnote)
                     .foregroundStyle(Color.secondary)
             } else {
-                Text("Douay-Rheims (1609/1752) is bundled directly in the app with all 73 Catholic books and is always 100% available offline.")
+                Text("World English Bible (Catholic edition), public domain. Modern English with all 73 Catholic books. Private devotional reading; not the liturgical text read at Mass.")
                     .font(.footnote)
                     .foregroundStyle(Color.secondary)
             }

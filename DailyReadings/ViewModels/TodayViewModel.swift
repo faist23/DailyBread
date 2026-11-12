@@ -98,8 +98,15 @@ public final class TodayViewModel {
             self.liturgicalDay = day
             
             // 2. Fetch readings via ReadingsRepository (honoring user's preferred translation)
-            let translationPref = UserDefaults.standard.string(forKey: "bibleTranslation") ?? "Douay-Rheims"
-            let targetTranslation = translationPref.contains("NAB") ? "NAB" : "DRB"
+            let translationPref = UserDefaults.standard.string(forKey: "bibleTranslation") ?? "World English Bible (WEB-C)"
+            let targetTranslation: String
+            if translationPref.contains("NAB") {
+                targetTranslation = "NAB"
+            } else if translationPref.contains("Douay") || translationPref.contains("DRB") {
+                targetTranslation = "DRB"
+            } else {
+                targetTranslation = "WEBC"
+            }
             
             if let repository = readingsRepository {
                 let readings = await repository.getReadings(for: date, preferredTranslation: targetTranslation)

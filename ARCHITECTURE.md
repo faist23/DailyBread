@@ -79,12 +79,19 @@ The liturgical engine operates entirely offline without third-party network depe
 * **`LiturgicalColor.swift` & `LiturgicalColors.swift`**: Maps GIRM canonical colors (White, Red, Green, Violet, Rose, Black) with tailored tints for light/dark mode. Implements `primaryButtonBackground` using burnished gold (`#AF821E`) for White feasts to guarantee high WCAG contrast against white text.
 
 ### 4.2. Multi-Tier Bible & Lectionary Pipeline (`DailyReadings/Data/`)
-A core design requirement is handling Bible copyright rules legally while offering zero-compromise offline reading:
-1. **Tier 1: SwiftData Cache (`CachedReading`)**: Stores previously fetched readings locally. Cache retention is 90 days.
-2. **Tier 2: Online NAB via Evangelizio API (`EvangelizioService`)**: The New American Bible (NAB) is the official US liturgical translation (copyrighted by USCCB/CCD). It cannot be statically bundled into an open binary without licensing. Therefore, it is fetched via REST API.
-   * **Automatic 30-Day Pre-fetch**: When connected to Wi-Fi/cellular, `ReadingsRepository` quietly pre-fetches the next 30 days into SwiftData with a polite 120ms inter-request throttle.
-   * **Paragraph Flow Engine**: Automatically merges single-line verse splits from raw API exports into flowing prose matching Douay-Rheims, while preserving stanzas in Responsorial Psalms.
-3. **Tier 3: Bundled Douay-Rheims Bible (`BibleDatabase.swift`)**: The historic Douay-Rheims (1609/1752 Challoner revision) is public domain. The complete Bible is bundled in `bible_drb.sqlite` (accessed via a dedicated Swift `actor`). If network is absent and a date is uncached in SwiftData, the app queries `PericoreIndex` and `BibleDatabase` to construct the Mass readings on the fly.
+A core design requirement is transparent scripture attribution and zero-compromise offline devotional reading:
+1. **Tier 1: Bundled World English Bible (Catholic Edition, WEB-C) [Default]**:
+   - Bundled in `bible_webc.sqlite` (35,379 verses, all 73 Catholic books including Greek Esther and Daniel).
+   - Completely public domain; modern American English with Hebrew psalm numbering that natively aligns with Catholic lectionary citations.
+   - Transparently labeled in-app: *"World English Bible (Catholic edition), public domain. Private devotional reading; not the liturgical text read at Mass."*
+2. **Tier 2: Bundled Douay-Rheims Bible (DRB) [Traditional]**:
+   - The historic Douay-Rheims (1609/1752 Challoner revision) is public domain, bundled in `bible_drb.sqlite`.
+   - Incorporates automated Hebrew ↔ Latin Vulgate Psalm mappings (e.g. lectionary Psalm 23 maps to Vulgate Psalm 22 *"The Lord ruleth me"*), cross-chapter span parsing, and Joel/Malachi chapter offsets.
+   - Transparently labeled: *"Douay-Rheims Bible (Challoner Revision, 1752), public domain. Translated from the Latin Vulgate."*
+3. **Tier 3: Online NAB Testing Tier (`EvangelizioService`) & USCCB Links**:
+   - The New American Bible (NAB/NABRE) is the liturgical translation for US dioceses. Digital permissions are administered by the Confraternity of Christian Doctrine (CCD) via the USCCB.
+   - Supported for personal developer testing via Evangelizo feed with polite 30-day SwiftData pre-fetching (`CachedReading`), full CCD copyright attribution, and direct links to official daily readings at `bible.usccb.org`.
+   - **Catholic American Bible (CAB) Roadmap**: The USCCB permissions office has placed digital licensing on hold pending the 2027 release of the Catholic American Bible. DailyReadings is registered on the digital permissions waitlist (`nabperm@usccb.org`).
 4. **Responsorial Psalm Enhancements (`PsalmResponseProvider`)**: Provides canonical lectionary responses for all 150 Psalms and Biblical Canticles (Exodus 15, Daniel 3, Luke 1, etc.), guaranteeing the red rubric **℟.** banner and stanza cues even if third-party APIs truncate them.
 
 ### 4.3. Reverent Audio Recitation Engine (`AudioReadingPlayer.swift`)

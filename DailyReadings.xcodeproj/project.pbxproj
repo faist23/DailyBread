@@ -66,6 +66,7 @@
 		E6DDDF13D102409A3A70941B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 25B2CECB644062D2B2D66AF5 /* PrivacyInfo.xcprivacy */; };
 		E8963E99B418FA751A0B3D09 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADD1A0409DD5B587A454955 /* NotificationManager.swift */; };
 		E9DE4025482A3AFC27E46306 /* lectionary.json in Resources */ = {isa = PBXBuildFile; fileRef = C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */; };
+		F98D5CE923F483237D7B9BCE /* bible_webc.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 64C3C69E8A04D523109E9E4E /* bible_webc.sqlite */; };
 		FE7624388C3E0FA4D16B5A3C /* RosaryMystery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 041A25C108116A6279E62AAB /* RosaryMystery.swift */; };
 /* End PBXBuildFile section */
 
@@ -100,6 +101,7 @@
 		542426414464C4B6036D9263 /* SaintsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaintsDatabase.swift; sourceTree = "<group>"; };
 		597121C7FF29EA76AB4F3BBE /* Reading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reading.swift; sourceTree = "<group>"; };
 		60B549D73019CE966561FBEC /* GuidedRosaryStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidedRosaryStep.swift; sourceTree = "<group>"; };
+		64C3C69E8A04D523109E9E4E /* bible_webc.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = bible_webc.sqlite; sourceTree = "<group>"; };
 		6691C1372DEE8C924269E56A /* PrayerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerDetailView.swift; sourceTree = "<group>"; };
 		6972237991E6AF1FE2917B71 /* Computus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computus.swift; sourceTree = "<group>"; };
 		6C3675563602ECF35C6CF3DB /* GuidedRosaryBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidedRosaryBuilder.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 			isa = PBXGroup;
 			children = (
 				82795DFF5BFB79EADA889534 /* bible_drb.sqlite */,
+				64C3C69E8A04D523109E9E4E /* bible_webc.sqlite */,
 				786F97E2A2318C15B9E9CC1E /* lectionary_dates.json */,
 				C4EEF469B4C3D5FBB91DEC90 /* lectionary.json */,
 				CF6BBDF73735F3069BD4A39A /* saints.json */,
@@ -421,6 +424,7 @@
 				7FBD438E98B27D1E55ADD626 /* Assets.xcassets in Resources */,
 				E6DDDF13D102409A3A70941B /* PrivacyInfo.xcprivacy in Resources */,
 				A4FC7E742966D3409C55307E /* bible_drb.sqlite in Resources */,
+				F98D5CE923F483237D7B9BCE /* bible_webc.sqlite in Resources */,
 				E9DE4025482A3AFC27E46306 /* lectionary.json in Resources */,
 				AD16AB051ADE2C9DE524D963 /* lectionary_dates.json in Resources */,
 				5079529899DACB3D22EB3F57 /* saints.json in Resources */,

@@ -115,20 +115,38 @@ final class ScriptureEngineTests: XCTestCase {
         XCTAssertEqual(spans[2].verseNumbers, [4, 5, 6, 7, 8, 9])
     }
 
-    // MARK: - 4. Live SQLite Bible Queries
+    // MARK: - 4. Live SQLite Bible Queries (WEB-C and DRB)
 
-    func testDatabaseQueryPsalm23YieldsLordIsMyShepherd() async {
-        let db = BibleDatabase.shared
+    func testWebCDatabaseQueryPsalm23() async {
+        let db = BibleDatabase.webc
+        let citation = ReadingCitation(book: "Psalms", chapter: 23, verses: "1-3")
+        let verses = await db.queryVerses(citation: citation)
+        XCTAssertFalse(verses.isEmpty, "Query must return verses from SQLite")
+        let text = await db.formattedText(for: verses)
+        XCTAssertTrue(text.contains("LORD is my shepherd") || text.contains("lack nothing"), "WEB-C Psalm 23 uses modern English")
+    }
+
+    func testWebCDatabaseQueryMatthew6() async {
+        let db = BibleDatabase.webc
+        let citation = ReadingCitation(book: "Matthew", chapter: 6, verses: "33")
+        let verses = await db.queryVerses(citation: citation)
+        XCTAssertFalse(verses.isEmpty)
+        let text = await db.formattedText(for: verses)
+        XCTAssertTrue(text.contains("seek first God’s Kingdom") || text.contains("righteousness"), "WEB-C Matthew 6:33 text match")
+    }
+
+    func testDRBDatabaseQueryPsalm23YieldsLordIsMyShepherd() async {
+        let db = BibleDatabase.drb
         let citation = ReadingCitation(book: "Psalms", chapter: 23, verses: "1-3")
         let verses = await db.queryVerses(citation: citation)
         XCTAssertFalse(verses.isEmpty, "Query must return verses from SQLite")
         // In Douay-Rheims, Vulgate Psalm 22:1 text contains "The Lord ruleth me"
         let text = await db.formattedText(for: verses)
-        XCTAssertTrue(text.contains("ruleth me") || text.contains("want nothing"), "Psalm 23 citation must query Vulgate Psalm 22")
+        XCTAssertTrue(text.contains("ruleth me") || text.contains("want nothing"), "Psalm 23 citation in DRB must query Vulgate Psalm 22")
     }
 
     func testDatabaseQueryCrossChapterHebrews() async {
-        let db = BibleDatabase.shared
+        let db = BibleDatabase.webc
         let citation = ReadingCitation(book: "Hebrews", chapter: 7, verses: "25—8:2")
         let verses = await db.queryVerses(citation: citation)
         XCTAssertFalse(verses.isEmpty)
