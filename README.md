@@ -95,3 +95,13 @@
    ```
 
 3. Select your target simulator (e.g. iPhone 16) and press **Run** (⌘R).
+
+---
+
+## Testing
+
+The project includes an automated test target with 24 unit tests covering calendar edge cases, Computus calculations, citation parsing, Hebrew-to-Vulgate mappings, and SQLite queries:
+
+```bash
+xcodebuild test -scheme DailyReadings -destination "platform=iOS Simulator,name=iPhone 16"
+```

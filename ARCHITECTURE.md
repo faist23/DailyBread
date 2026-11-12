@@ -23,9 +23,10 @@ This document provides a comprehensive technical overview of **DailyReadings**, 
 | **Platform** | iOS 17.0+ (iPhone & iPad universal) |
 | **Language** | Swift 6.0 (`SWIFT_STRICT_CONCURRENCY = complete`) |
 | **UI Framework** | SwiftUI (declarative, `@Observable` state pattern) |
-| **Persistence** | SwiftData (`@Model CachedReading`) + SQLite (`bible_drb.sqlite`) + `UserDefaults` |
+| **Persistence** | SwiftData (`@Model CachedReading`) + SQLite (`bible_webc.sqlite` default modern + `bible_drb.sqlite` traditional) + `UserDefaults` |
 | **Audio** | `AVFoundation` (`AVSpeechSynthesizer`, `AVAudioSession`), `MediaPlayer` (`MPNowPlayingInfoCenter`) |
 | **Project Spec** | [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`project.yml`) generating `DailyReadings.xcodeproj` |
+| **Test Suite** | `DailyReadingsTests` (24 unit tests: `LiturgicalCalendarTests` & `ScriptureEngineTests`) |
 | **Bundle ID** | `com.ridepro.DailyReadings` |
 | **Team ID** | `DT58WA8N32` |
 | **Privacy** | Apple Privacy Manifest compliant (`DailyReadings/PrivacyInfo.xcprivacy`) |
@@ -51,10 +52,11 @@ DailyReadings follows a decoupled, unidirectional architecture structured into f
                                     │
 ┌───────────────────────────────────▼────────────────────────────────────┐
 │                       DATA & REPOSITORY LAYER                          │
-│  ReadingsRepository (Multi-tier cache coordinator)                     │
-│  ├── SwiftData Cache (CachedReading)                                  │
+│  ReadingsRepository (Multi-tier translation & cache coordinator)       │
+│  ├── BibleDatabase.webc (Bundled WEB-C SQLite Actor — Modern Default)  │
+│  ├── BibleDatabase.drb (Bundled Douay-Rheims SQLite Actor — Tradition) │
 │  ├── EvangelizioService (Online NAB Lectionary API + 30-Day Prefetch)  │
-│  └── BibleDatabase (Bundled Douay-Rheims SQLite Actor)                 │
+│  └── SwiftData Cache (CachedReading)                                  │
 │  Auxiliary Providers: PsalmResponseProvider, VerseOfTheDayProvider,    │
 │                       PrayersRepository, SaintsDatabase, PericoreIndex │
 └───────────────────────────────────┬────────────────────────────────────┘
@@ -195,10 +197,14 @@ DailyReadings/
     │       └── SettingsView.swift    # Translation, audio voices, cache status, bookmarks
     │
     └── Resources/                    # Bundled offline assets
-        ├── bible_drb.sqlite          # Complete Douay-Rheims Bible database (73 books)
+        ├── bible_webc.sqlite         # Complete World English Bible Catholic Edition (73 books, default)
+        ├── bible_drb.sqlite          # Complete Douay-Rheims Bible database (73 books, traditional)
         ├── lectionary.json           # Pericope index mapping liturgical days to citations
         ├── lectionary_dates.json     # Date-based mapping fallback
         └── saints.json               # Catholic hagiography database
+DailyReadingsTests/                   # Automated Unit Test Target (24 passing tests)
+├── LiturgicalCalendarTests.swift     # 9 tests for calendar edge cases, Advent bounds, Computus
+└── ScriptureEngineTests.swift        # 15 tests for citation parsing, Hebrew-Vulgate mapping & SQLite queries
 ```
 
 ---
@@ -213,19 +219,39 @@ DailyReadings compiles under **Swift 6 complete concurrency checking** (`SWIFT_S
 
 ---
 
-## 7. Recommended Focus Areas for Claude AI Analysis
+## 7. Status & Audit History (Claude AI Review & Resolution)
 
-When analyzing DailyReadings, we recommend directing attention to the following areas:
+In November 2026, Claude AI completed a comprehensive audit of the liturgical engine, offline Douay-Rheims path, audio playback, and Swift 6 concurrency. All critical findings were remediated and pinned with automated tests across Builds 13 and 14:
 
-1. **Liturgical Calendar Edge Cases**:
-   * Review `Computus.swift`, `LiturgicalCalendar.swift`, and `FixedSolemnities.swift`.
-   * Check edge cases such as the Annunciation (March 25) falling during Holy Week or the Easter Octave (transferred to the Monday after Divine Mercy Sunday).
-   * Check Christmas season calculations when Epiphany is celebrated on Sunday (US norm) vs January 6 (traditional norm).
-2. **Swift 6 Concurrency & Actor Handoffs**:
-   * Audit closures and background tasks in `ReadingsRepository.swift`, `AudioReadingPlayer.swift`, and `BibleDatabase.swift` for any latent concurrency issues or redundant main-thread dispatching.
-3. **Memory & Battery Efficiency in Background Audio**:
-   * Review `AudioReadingPlayer.swift` during long recitations (e.g., continuous Mass readings or a 5-decade Rosary). Verify that `AVSpeechSynthesizer` instances and `UIBackgroundTaskIdentifier` tokens are deallocated cleanly without leaks.
-4. **SwiftData Query Performance & Cache Pruning**:
-   * Review `ReadingsRepository.swift` and `CachedReading.swift`. Assess whether index attributes (`@Attribute(.unique)`) and cleanup routines effectively prevent unbounded local storage growth over years of daily usage.
-5. **UI Accessibility & Dynamic Type**:
-   * Check whether `AppTheme.Typography` and custom font modifiers correctly scale with iOS Dynamic Type and support VoiceOver labels across custom controls (like the 10-dot Rosary bead tracker).
+| Finding Category | Issue Discovered | Status & Resolution (Builds 13–14) |
+| :--- | :--- | :--- |
+| **Calendar: Advent Bound** | Advent starting in November was not recognized (`month == 12` check). | **Resolved**: Bounded by `adventStart` and `christmasDay`. Verified by test. |
+| **Calendar: Epiphany Duplicate** | Epiphany Universal (Jan 6) showed duplicate after US Sunday celebration. | **Resolved**: Universal entry filtered out when celebration transfers to Sunday. |
+| **Calendar: Lenten Abstinence** | Lenten Friday solemnities (e.g. St. Joseph) were marked for abstinence. | **Resolved**: Canon 1251 exemption properly waives meat abstinence. |
+| **Calendar: Sacred Heart Collision** | Sacred Heart / Nativity of John the Baptist collision (June 24, 2033). | **Resolved**: UNLY §59 / Prot. N. 168/22 precedence implemented. |
+| **Scripture: Psalm Numbering** | Lectionary cited Hebrew numbering, but DRB used Latin Vulgate. | **Resolved**: Canonical Hebrew ↔ Vulgate mapping implemented in `BibleDatabase`. |
+| **Scripture: Multi-Chapter Citations** | Cross-chapter spans and multi-chapter semicolons were truncated. | **Resolved**: Multi-chapter span parser added with sequential chapter queries. |
+| **Scripture: Missing Readings** | 12 dates in `lectionary_dates.json` lacked proper first readings. | **Resolved**: Patched all 12 dates with correct canonical lectionary citations. |
+| **Scripture: Default Translation** | NAB licensing required offline public-domain default. | **Resolved**: Bundled full 73-book WEB-C as default modern translation. |
+| **Audio: Utterance / Audition Race** | Voice preview completion advanced reading queue. | **Resolved**: Distinct tracking for `currentReadingUtterance` vs audition. |
+| **Audio: Interruption Recovery** | Resume never reactivated `AVAudioSession`; no headphone disconnect handling. | **Resolved**: Added session reactivation and `routeChangeNotification` pauses. |
+| **Audio: Synthesizer Consolidation** | 3 separate synthesizers existed across Views. | **Resolved**: Unified through `AudioReadingPlayer.shared`. |
+| **App Lifecycle: Midnight Rollover** | Today view went stale overnight. | **Resolved**: Observed `scenePhase == .active` and `significantTimeChangeNotification`. |
+| **Concurrency: Swift 6 Isolation** | Isolation warnings in interruption observers and cache fetching. | **Resolved**: Conformed to `@preconcurrency AVSpeechSynthesizerDelegate` on `@MainActor`. |
+
+---
+
+## 8. Recommended Focus Areas for Ongoing Claude AI Analysis
+
+When reviewing DailyReadings at this stage, Claude AI should focus on:
+
+1. **User Experience & Contemplative Flow**:
+   * Evaluated reading cadence, typography scaling, whitespace balance, and line height across light and dark modes.
+   * Feedback on the interactive bead-by-bead Holy Rosary guide and "How to Pray" tutorial.
+2. **Dynamic Type & Accessibility**:
+   * Verify all scripture cards and button touch targets properly accommodate Accessibility Large text sizes.
+   * Audit VoiceOver accessibility labels on custom components (e.g., decade tracker dots, antiphon badges).
+3. **Audio Utterance Pacing**:
+   * Fine-tuning speech synthesizer boundary pauses between readings, liturgical announcements, and psalm antiphons for maximum reverence.
+4. **Codebase Cleanliness & Invariant Verification**:
+   * Verify all 24 unit tests in `DailyReadingsTests` remain green under Xcode 16 / Swift 6 strict concurrency.
