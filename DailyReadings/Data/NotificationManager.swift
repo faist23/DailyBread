@@ -67,10 +67,42 @@ public final class NotificationManager {
     
     // MARK: - Scheduling
     
+    /// Constructs the rich liturgical notification content for a daily reminder,
+    /// featuring the liturgical feast or saint in the subtitle and the Verse of the Day in the body.
+    nonisolated public static func makeDailyReminderContent(for liturgicalDay: LiturgicalDay, verse: VerseOfTheDay) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        if liturgicalDay.isNonSundayHolyDayOfObligation {
+            content.title = "Holy Day of Obligation 🔔"
+        } else if liturgicalDay.isSunday {
+            content.title = "Sunday Mass Readings 📖"
+        } else {
+            content.title = "DailyReadings 📖"
+        }
+        content.subtitle = liturgicalDay.title
+        
+        let cleanText = verse.text.trimmingCharacters(in: CharacterSet(charactersIn: "\"“”'"))
+        let formattedVerse: String
+        if cleanText.count > 180 {
+            let truncated = cleanText.prefix(175).trimmingCharacters(in: .whitespaces)
+            formattedVerse = "\(truncated)…"
+        } else {
+            formattedVerse = cleanText
+        }
+        
+        if !formattedVerse.isEmpty {
+            let citationSuffix = verse.citation.isEmpty ? "" : " — \(verse.citation)"
+            content.body = "“\(formattedVerse)”\(citationSuffix)"
+        } else {
+            content.body = "Today's Mass readings and scripture reflection are ready for your prayer."
+        }
+        content.sound = .default
+        return content
+    }
+    
     /// Schedules daily prayer reminders at the specified time of day.
     ///
-    /// Pre-schedules personalized notifications for the next 7 days using the liturgical calendar,
-    /// plus a recurring fallback reminder.
+    /// Pre-schedules personalized, single notifications for the next 30 days using the liturgical calendar
+    /// and Verse of the Day, avoiding duplicate alerts.
     ///
     /// - Parameter time: A date containing the target hour and minute for the daily reminder.
     public func scheduleDailyReminders(at time: Date) async {
@@ -85,16 +117,16 @@ public final class NotificationManager {
         
         let center = UNUserNotificationCenter.current()
         
-        // Remove existing DailyReadings notifications first
-        await cancelReminders()
+        // Remove existing daily reminders and legacy recurring alerts
+        await cancelDailyReminders()
         
         let calendar = Calendar.current
         let targetHour = calendar.component(.hour, from: time)
         let targetMinute = calendar.component(.minute, from: time)
         
-        // 1. Pre-schedule the next 7 days with individualized liturgical titles
+        // Pre-schedule the next 30 days with individualized liturgical titles and Verse of the Day
         let now = Date.now
-        for dayOffset in 0..<7 {
+        for dayOffset in 0..<30 {
             guard let targetDate = calendar.date(byAdding: .day, value: dayOffset, to: now) else { continue }
             
             var components = calendar.dateComponents([.year, .month, .day], from: targetDate)
@@ -107,22 +139,10 @@ public final class NotificationManager {
             }
             
             let liturgicalDay = LiturgicalCalendar.shared.liturgicalDay(for: targetDate)
+            let readings = await ReadingsRepository.shared.getOfflineReadings(for: targetDate)
+            let verseOfTheDay = VerseOfTheDayProvider.verse(from: readings, date: targetDate)
             
-            let content = UNMutableNotificationContent()
-            if liturgicalDay.isNonSundayHolyDayOfObligation {
-                content.title = "Holy Day of Obligation 🔔"
-                content.subtitle = liturgicalDay.title
-                content.body = "Today is a Holy Day of Obligation. Daily Mass readings and scripture reflection are ready."
-            } else if liturgicalDay.isSunday {
-                content.title = "Sunday Mass Readings 📖"
-                content.subtitle = liturgicalDay.title
-                content.body = "Today's Sunday Mass readings and psalm reflection are ready for your prayer."
-            } else {
-                content.title = "DailyReadings 📖"
-                content.subtitle = liturgicalDay.title
-                content.body = "Today's Mass readings and scripture reflection are ready for your prayer."
-            }
-            content.sound = .default
+            let content = Self.makeDailyReminderContent(for: liturgicalDay, verse: verseOfTheDay)
             
             let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
             let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
@@ -136,27 +156,7 @@ public final class NotificationManager {
             try? await center.add(request)
         }
         
-        // 2. Schedule recurring fallback reminder
-        let fallbackContent = UNMutableNotificationContent()
-        fallbackContent.title = "DailyReadings 📖"
-        fallbackContent.subtitle = "Time for Sacred Scripture"
-        fallbackContent.body = "Begin your day with today's Catholic Mass readings and daily prayer."
-        fallbackContent.sound = .default
-        
-        var recurringComponents = DateComponents()
-        recurringComponents.hour = targetHour
-        recurringComponents.minute = targetMinute
-        
-        let recurringTrigger = UNCalendarNotificationTrigger(dateMatching: recurringComponents, repeats: true)
-        let recurringRequest = UNNotificationRequest(
-            identifier: Self.fallbackIdentifier,
-            content: fallbackContent,
-            trigger: recurringTrigger
-        )
-        
-        try? await center.add(recurringRequest)
-        
-        // 3. Schedule Holy Day Vigil Alerts if enabled
+        // Schedule Holy Day Vigil Alerts if enabled
         let holyDayAlertsEnabled = UserDefaults.standard.bool(forKey: "holyDayAlertsEnabled")
         if holyDayAlertsEnabled {
             await scheduleHolyDayVigilAlerts()
@@ -221,7 +221,17 @@ public final class NotificationManager {
         center.removePendingNotificationRequests(withIdentifiers: toRemove)
     }
     
-    /// Cancels all pending DailyReadings reminders.
+    /// Cancels scheduled daily morning reminders (including any legacy recurring alerts).
+    public func cancelDailyReminders() async {
+        let center = UNUserNotificationCenter.current()
+        let pending = await center.pendingNotificationRequests()
+        let toRemove = pending
+            .map(\.identifier)
+            .filter { $0.hasPrefix(Self.identifierPrefix) || $0 == Self.fallbackIdentifier }
+        center.removePendingNotificationRequests(withIdentifiers: toRemove)
+    }
+    
+    /// Cancels all pending DailyReadings reminders (both daily prayer reminders and holy day alerts).
     public func cancelReminders() async {
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests()

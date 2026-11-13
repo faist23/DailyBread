@@ -142,7 +142,7 @@ For Ascension Sunday, Pentecost and Holy Thursday the cycle index is used even w
 * **Interactive Holy Rosary (`HowToPrayRosaryView`, `GuidedRosaryView`, `GuidedRosaryBuilder`, `RosaryDetailView`)**:
   * Dual-mode view: "Mysteries" (today's mystery detection, fruits, scripture) and "How to Pray" (6-step tutorial, bead anatomy, beginner advice).
   * Interactive bead-by-bead prayer companion with visual 10-bead decade track, haptic taps (`UIImpactFeedbackGenerator`), scripture context, and completion blessing.
-* **Holy Days of Obligation Vigil Alerts (`NotificationManager`)**: Evaluates Canon Law and USCCB calendars, scheduling 7:00 PM vigil push notifications the evening before an obligation.
+* **Daily Prayer Reminders & Vigil Alerts (`NotificationManager`)**: Pre-schedules single daily morning prayer reminders featuring the Saint or Feast of the day and the Verse of the Day, as well as 7:00 PM vigil push notifications the evening before a Holy Day of Obligation.
 
 ---
 
@@ -174,7 +174,7 @@ DailyReadings/
     │   ├── EvangelizioService.swift  # REST service fetching online NAB Lectionary
     │   ├── GuidedRosaryBuilder.swift # Step sequencer for interactive bead-by-bead Rosary
     │   ├── LiturgicalCelebrationBlurbs.swift # Historical & theological feast summaries
-    │   ├── NotificationManager.swift # Local push notifications for vigil alerts
+    │   ├── NotificationManager.swift # Local push notifications: morning reminder + vigil alerts
     │   ├── PericoreIndex.swift       # Lectionary lookup: dated index, then liturgical-cycle keys
     │   ├── PrayersRepository.swift   # Offline Catholic prayers repository (English + Latin)
     │   ├── PsalmResponseProvider.swift # Lectionary Responsorial Psalm antiphon database

@@ -235,4 +235,64 @@ final class LiturgicalCalendarTests: XCTestCase {
         XCTAssertEqual(martyrs?.rank, .obligatoryMemorial)
         XCTAssertTrue(martyrs?.isUSProper == true)
     }
+
+    // MARK: - 8. Daily Reminder Notification Content
+
+    func testDailyReminderNotificationContentFormatsVerseAndSaint() {
+        let weekday = LiturgicalDay(
+            date: Date(),
+            season: .ordinaryTime,
+            seasonWeek: 32,
+            title: "Saint Frances Xavier Cabrini, Virgin",
+            rank: .obligatoryMemorial,
+            color: .white,
+            sundayCycle: .yearB,
+            weekdayCycle: .yearII,
+            isSunday: false,
+            isHolyDayOfObligation: false,
+            dayOfWeekInSeason: 5
+        )
+
+        let verse = VerseOfTheDay(
+            text: "Blessed are they who follow the law of the Lord!",
+            citation: "Psalm 119:1",
+            theme: "Responsorial Refrain",
+            sourceNote: "Today's Psalm"
+        )
+
+        let content = NotificationManager.makeDailyReminderContent(for: weekday, verse: verse)
+
+        XCTAssertEqual(content.title, "DailyReadings 📖")
+        XCTAssertEqual(content.subtitle, "Saint Frances Xavier Cabrini, Virgin")
+        XCTAssertEqual(content.body, "“Blessed are they who follow the law of the Lord!” — Psalm 119:1")
+    }
+
+    func testDailyReminderNotificationContentHolyDayOfObligation() {
+        let holyDay = LiturgicalDay(
+            date: Date(),
+            season: .advent,
+            seasonWeek: 2,
+            title: "Solemnity of the Immaculate Conception of the Blessed Virgin Mary",
+            rank: .generalSolemnity,
+            color: .white,
+            sundayCycle: .yearC,
+            weekdayCycle: .yearI,
+            isSunday: false,
+            isHolyDayOfObligation: true,
+            dayOfWeekInSeason: 1
+        )
+
+        let verse = VerseOfTheDay(
+            text: "Hail, full of grace! The Lord is with you.",
+            citation: "Luke 1:28",
+            theme: "Gospel Acclamation",
+            sourceNote: "Today's Liturgy"
+        )
+
+        let content = NotificationManager.makeDailyReminderContent(for: holyDay, verse: verse)
+
+        XCTAssertEqual(content.title, "Holy Day of Obligation 🔔")
+        XCTAssertEqual(content.subtitle, "Solemnity of the Immaculate Conception of the Blessed Virgin Mary")
+        XCTAssertEqual(content.body, "“Hail, full of grace! The Lord is with you.” — Luke 1:28")
+    }
 }

@@ -35,6 +35,16 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Automated test suite expanded to 52 unit tests:** Added `testAscensionCelebratedOnSundayByDefaultInUS`, `testAscensionCelebratedOnThursdayWhenProvincialToggleActive`, `testSeventhSundayOfEasterResolvesAllReadingsInYearC`, and `testObligatoryMemorialsInFixedSolemnities`. All 52 tests pass (`** TEST SUCCEEDED **`).
 - **App Store Connect Assets:** Added `APP_STORE_LISTING.md` and dedicated zero-tracking `PRIVACY.md`.
 
+### Unified daily morning notification with Verse of the Day
+- **Reported:** Users received two notifications every morning at the scheduled prayer reminder time (one about daily readings and one with the Saint/Feast of the day).
+- **Root Cause:** `NotificationManager.scheduleDailyReminders(at:)` scheduled both a recurring daily fallback alert (`com.ridepro.DailyReadings.reminder.recurring`) and dated individual alerts for the same hour and minute, causing iOS `UNUserNotificationCenter` to fire both simultaneously.
+- **Single rich notification:** Consolidated into a single unified notification pre-scheduled for the next 30 days.
+  - `content.title`: Liturgical context (`DailyReadings 📖`, `Sunday Mass Readings 📖`, or `Holy Day of Obligation 🔔`).
+  - `content.subtitle`: The Saint or Feast of the day (e.g. `Saint Frances Xavier Cabrini, Virgin` or `Thirty-Third Sunday in Ordinary Time`).
+  - `content.body`: The **Verse of the Day** with quotation marks and citation (e.g. `“Blessed are they who follow the law of the Lord!” — Psalm 119:1`).
+- **Legacy cleanup:** `cancelDailyReminders()` purges any pending legacy recurring alerts and existing dated reminders, while preserving Holy Day vigil alerts.
+- **Automated test suite expanded to 54 unit tests:** Added `testDailyReminderNotificationContentFormatsVerseAndSaint` and `testDailyReminderNotificationContentHolyDayOfObligation` in `LiturgicalCalendarTests`. All 54 tests pass (`** TEST SUCCEEDED **`).
+
 ### Responsorial Psalm formatting & antiphon placement
 - **Reported:** In the World English Bible (and Douay-Rheims), the Responsorial Psalm showed sentences running together as a single long paragraph with the antiphon response only at the very end.
 - **Stanza separation with `\n\n`:** Responsorial psalms are now formatted via `BibleDatabase.formattedPsalmText(citation:includeVerseNumbers:)` in `ReadingsRepository.swift`. Each citation segment (e.g., `Psalm 146:7, 8-9a, 9bc-10`) is mapped to a stanza separated by double-newlines (`\n\n`), enabling `PsalmView` and `AudioReadingPlayer` to properly render and recite the antiphon response after each stanza.

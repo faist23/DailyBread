@@ -182,7 +182,7 @@ public struct SettingsView: View {
         } header: {
             Text("Prayer Reminders & Alerts")
         } footer: {
-            Text("Receive daily notifications with the feast title and vigil alerts at 7:00 PM the evening before Holy Days of Obligation.")
+            Text("Receive a daily morning reminder featuring the Saint or Feast of the day and the Verse of the Day, plus vigil alerts at 7:00 PM the evening before Holy Days of Obligation.")
                 .font(.footnote)
                 .foregroundStyle(Color.secondary)
         }
