@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
-**Last Updated:** 2026-11-12  
-**Current Version:** 1.0.0 (Build 17)  
+**Last Updated:** 2026-11-13  
+**Current Version:** 1.0.0 (Build 18)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 (`SWIFT_STRICT_CONCURRENCY = complete`) | SwiftUI | SwiftData  
@@ -15,6 +15,20 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Aesthetic:** Missal-inspired typography, New York serif, subtle gold liturgical accents, warm scripture paper backgrounds, and distraction-free layout.
 - **Offline Reliability:** Guaranteed offline liturgical Computus calendar algorithm and bundled Douay-Rheims Bible SQLite database, with seamless online New American Bible (NAB) lectionary fetching and SwiftData caching.
 - **Audio Experience:** Reverent, contemplative audio recitation designed for personal prayer, morning commutes, and hands-free devotion.
+
+---
+
+## Build 18 (13 November 2026)
+
+### Unified daily morning notification with Verse of the Day
+- **Reported:** Users received two notifications every morning at the scheduled prayer reminder time (one about daily readings and one with the Saint/Feast of the day).
+- **Root Cause:** `NotificationManager.scheduleDailyReminders(at:)` scheduled both a recurring daily fallback alert (`com.ridepro.DailyReadings.reminder.recurring`) and dated individual alerts for the same hour and minute, causing iOS `UNUserNotificationCenter` to fire both simultaneously.
+- **Single rich notification:** Consolidated into a single unified notification pre-scheduled for the next 30 days.
+  - `content.title`: Liturgical context (`DailyReadings 📖`, `Sunday Mass Readings 📖`, or `Holy Day of Obligation 🔔`).
+  - `content.subtitle`: The Saint or Feast of the day (e.g. `Saint Frances Xavier Cabrini, Virgin` or `Thirty-Third Sunday in Ordinary Time`).
+  - `content.body`: The **Verse of the Day** with quotation marks and citation (e.g. `“Blessed are they who follow the law of the Lord!” — Psalm 119:1`).
+- **Legacy cleanup:** `cancelDailyReminders()` purges any pending legacy recurring alerts and existing dated reminders, while preserving Holy Day vigil alerts.
+- **Automated test suite expanded to 54 unit tests:** Added `testDailyReminderNotificationContentFormatsVerseAndSaint` and `testDailyReminderNotificationContentHolyDayOfObligation` in `LiturgicalCalendarTests`. All 54 tests pass (`** TEST SUCCEEDED **`).
 
 ---
 
@@ -34,16 +48,6 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Precedence Rule Refined:** Optional memorials populate `optionalMemorials` and subtitle without displacing the continuous weekday Mass readings of Ordinary Time.
 - **Automated test suite expanded to 52 unit tests:** Added `testAscensionCelebratedOnSundayByDefaultInUS`, `testAscensionCelebratedOnThursdayWhenProvincialToggleActive`, `testSeventhSundayOfEasterResolvesAllReadingsInYearC`, and `testObligatoryMemorialsInFixedSolemnities`. All 52 tests pass (`** TEST SUCCEEDED **`).
 - **App Store Connect Assets:** Added `APP_STORE_LISTING.md` and dedicated zero-tracking `PRIVACY.md`.
-
-### Unified daily morning notification with Verse of the Day
-- **Reported:** Users received two notifications every morning at the scheduled prayer reminder time (one about daily readings and one with the Saint/Feast of the day).
-- **Root Cause:** `NotificationManager.scheduleDailyReminders(at:)` scheduled both a recurring daily fallback alert (`com.ridepro.DailyReadings.reminder.recurring`) and dated individual alerts for the same hour and minute, causing iOS `UNUserNotificationCenter` to fire both simultaneously.
-- **Single rich notification:** Consolidated into a single unified notification pre-scheduled for the next 30 days.
-  - `content.title`: Liturgical context (`DailyReadings 📖`, `Sunday Mass Readings 📖`, or `Holy Day of Obligation 🔔`).
-  - `content.subtitle`: The Saint or Feast of the day (e.g. `Saint Frances Xavier Cabrini, Virgin` or `Thirty-Third Sunday in Ordinary Time`).
-  - `content.body`: The **Verse of the Day** with quotation marks and citation (e.g. `“Blessed are they who follow the law of the Lord!” — Psalm 119:1`).
-- **Legacy cleanup:** `cancelDailyReminders()` purges any pending legacy recurring alerts and existing dated reminders, while preserving Holy Day vigil alerts.
-- **Automated test suite expanded to 54 unit tests:** Added `testDailyReminderNotificationContentFormatsVerseAndSaint` and `testDailyReminderNotificationContentHolyDayOfObligation` in `LiturgicalCalendarTests`. All 54 tests pass (`** TEST SUCCEEDED **`).
 
 ### Responsorial Psalm formatting & antiphon placement
 - **Reported:** In the World English Bible (and Douay-Rheims), the Responsorial Psalm showed sentences running together as a single long paragraph with the antiphon response only at the very end.
@@ -307,7 +311,7 @@ The order of prayers, the prayer texts and the mysteries were reviewed and are a
 - [x] **Ascension Thursday provinces** are not supported. Implemented full support for ecclesiastical provinces of Boston, Hartford, New York, Newark, Omaha, and Philadelphia. Added user toggle in `SettingsView` under *Liturgical Calendar*, wired `LiturgicalCalendar` with dynamic `ascensionOnThursday` evaluation, seeded Seventh Sunday of Easter (`easter_sun_7_A`, `easter_sun_7_B`, `easter_sun_7_C`) in `lectionary_seeds.json`, rebuilt `lectionary.json` (980 keys), and added unit test coverage in `LiturgicalCalendarTests`.
 
 ### P1 — App Store Submission & TestFlight Monitoring
-- [x] **Bump build version to 1.0.0 (Build 17)**.
+- [x] **Bump build version to 1.0.0 (Build 18)** for TestFlight beta testing.
 - [x] **App Store Connect Store Listing**:
   - Prepared `APP_STORE_LISTING.md` with verified App Name (29 chars), Subtitle (28 chars), Promotional text (154 chars), complete marketing description, keyword string (92 chars), review notes, and 6-slide screenshot specifications.
   - Added dedicated zero-tracking privacy policy document in `PRIVACY.md`.

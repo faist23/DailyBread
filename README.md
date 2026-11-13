@@ -140,4 +140,4 @@ The Xcode project is generated from `project.yml`; run `xcodegen generate` after
 
 ## Status
 
-Not released. Current build: 1.0.0 (17). What was done and what is still open is in `TODOS.md` ("Build 17" and "Active & Upcoming TODOS") and `ARCHITECTURE.md` sections 7 and 8.
+Not released. Current build: 1.0.0 (18). What was done and what is still open is in `TODOS.md` ("Build 18" and "Active & Upcoming TODOS") and `ARCHITECTURE.md` sections 7 and 8.
