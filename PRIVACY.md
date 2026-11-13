@@ -1,6 +1,6 @@
 # Privacy Policy for DailyReadings
 
-**Last Updated:** November 12, 2026
+**Last Updated:** November 13, 2026
 
 DailyReadings ("we", "our", or "the app") is committed to protecting your privacy. This Privacy Policy describes how your information is handled when you use the DailyReadings iOS application.
 

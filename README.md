@@ -31,9 +31,10 @@
 - **Personal Devotions & Bookmarking**:
   - One-tap scripture passage bookmarks on all reading cards and detail views.
   - Dedicated Bookmarks collection screen in Settings with full-screen reading access.
-- **Holy Days of Obligation Vigil Alerts**:
+- **Holy Days of Obligation Vigil Alerts & Daily Reminders**:
   - Canon Law and USCCB abrogation rule evaluation for non-Sunday obligations.
   - 7:00 PM evening vigil push notifications and prominent banners on Today's view.
+  - Unified morning prayer reminder pre-scheduled 30 days ahead, featuring the Saint or Feast of the day and the Verse of the Day.
 - **Comprehensive Liturgical Engine**:
   - Full implementation of Meeus/Jones/Butcher Computus algorithm for movable feasts.
   - Conforms to the *Universal Norms for the Liturgical Year* and *Proper Calendar for the Dioceses of the United States of America* (USCCB).
@@ -103,7 +104,7 @@
 
 ## Testing
 
-The project includes an automated test target with 48 unit tests covering calendar edge cases, Computus calculations, citation parsing, verse-numbering maps, SQLite queries, psalm stanza formatting, liturgical audio recitation, the Rosary's weekly schedule, and a walk of every lectionary citation through 2028 in both bundled Bibles:
+The project includes an automated test target with 54 unit tests covering calendar edge cases, Computus calculations, citation parsing, verse-numbering maps, SQLite queries, psalm stanza formatting, liturgical audio recitation, daily reminder notifications, the Rosary's weekly schedule, and a walk of every lectionary citation through 2028 in both bundled Bibles:
 
 ```bash
 xcodebuild test -scheme DailyReadings -destination "platform=iOS Simulator,name=iPhone 17"

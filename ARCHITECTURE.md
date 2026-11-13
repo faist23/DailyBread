@@ -306,6 +306,9 @@ A second audit ran every lectionary citation through both bundled Bibles and fou
 | Ascension Thursday provinces not supported | **Resolved**: Added user toggle in `SettingsView`, dynamic `ascensionOnThursday` evaluation in `LiturgicalCalendar`, and seeded Seventh Sunday of Easter readings (`easter_sun_7_A/B/C`). |
 | Memorials list partial in `FixedSolemnities` | **Resolved**: Added missing Roman and US calendar obligatory memorials and key optional memorials; precedence rule prevents optional memorials from displacing Ordinary Time weekday readings. |
 | Empty state missing USCCB link | **Resolved**: Direct styled web links added to `DateReadingsView` and `TodayView`. |
+| Responsorial psalm sentences ran together without stanza breaks | **Resolved**: Formatted with `\n\n` per citation segment in `BibleDatabase.formattedPsalmText`, enabling antiphon responses after each stanza in visual UI and audio recitation. |
+| Spoken audio recited book chapter and verse numbers | **Resolved**: Added `BibleBook.liturgicalAnnouncement` covering all 73 Catholic canonical books; chapter and verse numbers omitted from audio recitation while preserved in visual UI. |
+| Duplicate morning notification firing simultaneously | **Resolved**: Consolidated into a single unified morning notification pre-scheduled for 30 days, pairing the feast/saint title in the subtitle with the Verse of the Day in the body. |
 
 ---
 
@@ -332,6 +335,9 @@ Listed in the order they matter. `TODOS.md` carries the same list as checkboxes.
 - **December 9 obligation:** Verified and confirmed with Vatican Dicastery ruling.
 - **Ascension Thursday provinces:** Fully supported with `SettingsView` toggle and Seventh Sunday of Easter seed data.
 - **Roman Calendar memorials:** Completed obligatory memorials and key optional memorials in `FixedSolemnities`.
+- **Responsorial Psalm formatting & antiphon placement:** Stanza separation with `\n\n` for proper antiphon placement in visual UI and audio recitation.
+- **Liturgical spoken announcements:** Omitted chapter and verse numbers from audio recitation using canonical Roman Lectionary book announcements.
+- **Unified morning notification with Verse of the Day:** Single consolidated daily reminder with Saint/Feast subtitle and scripture quote body.
 - **App Store listing & privacy policy:** Documented in `APP_STORE_LISTING.md` and `PRIVACY.md`.
 
 **Rosary guide (optional)**
@@ -358,5 +364,5 @@ When reviewing DailyReadings at this stage, Claude AI should focus on:
 3. **Audio Utterance Pacing**:
    * Fine-tuning speech synthesizer boundary pauses between readings, liturgical announcements, and psalm antiphons for maximum reverence.
 4. **Codebase Cleanliness & Invariant Verification**:
-   * Verify all 52 unit tests in `DailyReadingsTests` remain green under Swift 6 strict concurrency.
+   * Verify all 54 unit tests in `DailyReadingsTests` remain green under Swift 6 strict concurrency.
    * After any change to `lectionary_dates.json` or the seeds, rebuild `lectionary.json` and re-run `LectionaryCoverageTests`.
