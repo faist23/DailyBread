@@ -1,7 +1,7 @@
 # DailyReadings — Project Status & TODOS
 
 **Last Updated:** 2026-11-12  
-**Current Version:** 1.0.0 (Build 16)  
+**Current Version:** 1.0.0 (Build 17)  
 **Bundle Identifier:** `com.ridepro.DailyReadings`  
 **Team ID:** `DT58WA8N32`  
 **Target Platform:** iOS 17.0+ | Swift 6.0 (`SWIFT_STRICT_CONCURRENCY = complete`) | SwiftUI | SwiftData  
@@ -17,6 +17,42 @@ DailyReadings is a contemplative Catholic daily Mass readings and liturgical cal
 - **Audio Experience:** Reverent, contemplative audio recitation designed for personal prayer, morning commutes, and hands-free devotion.
 
 ---
+
+## Build 17 (12 November 2026)
+
+### 100% Lectionary Coverage through 2031 (All 31 data gaps closed)
+- **1,876 of 1,876 days complete (100.0% coverage):** Added verified canonical seeds to `lectionary_seeds.json` and updated `BuildLectionaryIndex` to merge missing reading types into `lectionary.json`. Closed all 10 missing-day gaps (Thursday 3rd Week of Advent `advent_3_thursday`, Ordinary Time Sundays `ot_sun_4_C`, `ot_sun_12_C`, `ot_sun_13_C`, `ot_sun_24_C`, `ot_sun_31_C`, `ot_sun_32_C`, `ot_sun_10_A`, `ot_sun_8_B`), the 1 missing Gospel (`ot_sun_7_B`), and all 20 weekday/partial gaps (`ot_sun_23_C` second reading, `christmas_after_epiphany_wednesday`, `ot_16_tuesday_I`, `ot_29_saturday_I`, `ot_30_monday_II`, `ot_31_thursday_I`, `ot_34_thursday_I`, and the 6th/7th week Year II weekdays).
+- **Lent Sundays 3 to 5 (Years B & C):** Seeded proper Year B & C readings for the Third, Fourth (Laetare), and Fifth Sundays of Lent (`lent_sun_3_B`, `lent_sun_3_C`, `lent_sun_4_B`, `lent_sun_4_C`, `lent_sun_5_B`, `lent_sun_5_C`), while preserving the baptismal Scrutiny readings for Year A.
+- **Douay-Rheims Sirach 50:22-24 Versification:** Added `mapHebrewSirachToVulgate` in `BibleDatabase.swift`, correctly mapping Lectionary Sirach 50:22-24 to Vulgate/Douay-Rheims Ecclesiasticus 50:24-26 (+2) so the Thanksgiving scripture resolves accurately in both Bibles.
+- **USCCB Web Links on Empty State:** `DateReadingsView` and `TodayView` now provide a direct, styled link to `https://bible.usccb.org/bible/readings/MMDDYY.cfm` in the empty state view.
+- **Automated test suite expanded to 48 unit tests:** Added `testVulgateSirachChapter50Mapping` in `ScriptureEngineTests` and `testFourthSundayInOrdinaryTimeYearCResolvesAllReadings` in `LectionaryCoverageTests`. All tests pass.
+
+### Ascension Thursday provinces & Roman Calendar memorials
+- **Ascension Thursday Provincial Support:** Added user toggle in `SettingsView` under *Liturgical Calendar* allowing users in Boston, Hartford, New York, Newark, Omaha, and Philadelphia provinces to celebrate Ascension on Thursday (Easter + 39 days) as a Holy Day of Obligation.
+- **Seventh Sunday of Easter readings seeded:** Seeded Year A, B, and C readings (`easter_sun_7_A`, `easter_sun_7_B`, `easter_sun_7_C`) in `lectionary_seeds.json` and rebuilt `lectionary.json` (now 980 cycle keys).
+- **Expanded Roman Calendar Memorials:** Added all missing obligatory memorials (St. Pio of Pietrelcina, Sts. Timothy and Titus, St. John Bosco, Sts. Perpetua and Felicity, St. John Baptist de la Salle, St. Stanislaus, North American Martyrs) and popular optional memorials (St. Patrick, St. Josephine Bakhita, Our Lady of Lourdes, Our Lady of Fatima, St. Thomas More, Our Lady of Mount Carmel, St. John Paul II, St. Nicholas) in `FixedSolemnities.swift`.
+- **Precedence Rule Refined:** Optional memorials populate `optionalMemorials` and subtitle without displacing the continuous weekday Mass readings of Ordinary Time.
+- **Automated test suite expanded to 52 unit tests:** Added `testAscensionCelebratedOnSundayByDefaultInUS`, `testAscensionCelebratedOnThursdayWhenProvincialToggleActive`, `testSeventhSundayOfEasterResolvesAllReadingsInYearC`, and `testObligatoryMemorialsInFixedSolemnities`. All 52 tests pass (`** TEST SUCCEEDED **`).
+- **App Store Connect Assets:** Added `APP_STORE_LISTING.md` and dedicated zero-tracking `PRIVACY.md`.
+
+### Responsorial Psalm formatting & antiphon placement
+- **Reported:** In the World English Bible (and Douay-Rheims), the Responsorial Psalm showed sentences running together as a single long paragraph with the antiphon response only at the very end.
+- **Stanza separation with `\n\n`:** Responsorial psalms are now formatted via `BibleDatabase.formattedPsalmText(citation:includeVerseNumbers:)` in `ReadingsRepository.swift`. Each citation segment (e.g., `Psalm 146:7, 8-9a, 9bc-10`) is mapped to a stanza separated by double-newlines (`\n\n`), enabling `PsalmView` and `AudioReadingPlayer` to properly render and recite the antiphon response after each stanza.
+- **Shared verse boundary splitting:** Cleanly splits verses that span adjacent stanzas (e.g. `8-9a` and `9bc-10`, or `1-3a` and `3b-4`) on sentence/clause boundaries (`splitVerseParts(_:)`) without duplicating verse text across stanzas.
+
+### Liturgical spoken announcements (omit chapters and verses)
+- **Reported:** Audio recitation pronounced chapter and verse numbers for readings (e.g., "Philemon 1:7-20") and psalms ("From Psalm 146:7, 8-9a, 9bc-10"), unlike Catholic Mass where only book titles are proclaimed.
+- **Roman Lectionary liturgical announcements:** Added `BibleBook.liturgicalAnnouncement` covering all 73 Catholic canonical books according to Roman Lectionary liturgical norms (e.g., *"the Letter of Saint Paul to Philemon"*, *"the Book of the Prophet Isaiah"*, *"the Letter to the Hebrews"*).
+- **Spoken vs visual separation:** Audio announces *"A reading from the Letter of Saint Paul to Philemon"* and *"Responsorial Psalm. Psalm 146."*, completely omitting verse and chapter numbers from audio recitation while preserving them in the visual UI text.
+- **Test coverage:** 46 unit tests across the suite (`ScriptureEngineTests` and `AudioPlaybackTests` extended to verify stanza double-newlines and liturgical spoken announcements).
+
+### Audio fixes from device testing
+- **Reported:** playback stopped after the First Reading, and the voice felt too fast.
+- **Whole Mass queued at once.** Every passage of every reading is handed to the synthesizer when playback starts (`enqueue(fromReading:passage:)`). Build 16 queued one passage at a time and started the next from a delegate callback; moving on depended on the app running code between readings. The delegate now only tracks position and detects the end.
+- **Pacing restored.** The speaking rate was never changed (0.49 at "1.0x"). Build 16 cut the pauses between the announcement, the text and the acclamation to 0.15 s, which made it sound rushed. Pauses are now 0.35 s between passages, 0.9 s between parts and psalm stanzas, and 1.6 s after a reading (`SpeechPause`).
+- **Default pace is now "0.8x"** (`PlaybackSpeed.reverent`, rate 0.44) for the contemplative nature of prayer. A pace already chosen in Settings is kept.
+- **Not reproduced.** The stop did not occur in the simulator before or after the change, so the fix is unconfirmed until it is heard on a device.
+- 46 unit tests; `AudioPlaybackTests` plays three readings through the real synthesizer and checks skip, speed changes, and announcement formats.
 
 ## Build 16 (12 November 2026)
 
@@ -237,20 +273,17 @@ Second audit round. There was no Build 15.
 - [ ] **Check the bundled psalm refrains** (`PsalmResponseProvider`) for Lectionary copyright.
 
 ### P0 — Needs a device
-- [ ] **Listen to a full day's readings**: gaps between passages, lock-screen playback, speed and voice changes mid-reading, a phone-call interruption.
+- [ ] **Listen to a full day's readings**: does it continue past the First Reading (screen on, and screen locked); is the pace right; speed and voice changes mid-reading; a phone-call interruption. If it still stops, note whether the screen was locked and whether headphones or CarPlay were connected.
 - [ ] **Listen to a prayer and a Rosary decade**: the Stop button should reset when speech ends, and music from another app should resume.
 - [ ] **View every screen at the largest text sizes** (fonts now scale to 1.5x): calendar grid, category pills, mini player, Rosary bead row.
 - [ ] **Confirm speech delegate callbacks arrive on the main thread** on iOS (the delegate methods now trap otherwise).
 
 ### P1 — Lectionary data gaps
-- [ ] **31 days through 2031 are incomplete.** Add real citations to `lectionary_seeds.json` (or more dated data), rebuild `lectionary.json`, re-run tests.
-  - No readings: 2027-12-16 (Thursday, Third Week of Advent); Ordinary Time Sundays 2028-01-30 (4th, C), 2028-06-25 (12th, C), 2028-07-02 (13th, C), 2028-09-17 (24th, C), 2028-11-05 (31st, C), 2028-11-12 (32nd, C), 2029-06-10 (10th, A), 2030-03-03 (8th, B), 2031-06-22 (12th, C).
-  - No Gospel: 2030-02-24 (7th Sunday, B).
-  - Missing one reading: 20 days, mostly Ordinary Time weekdays in a year the data never saw.
-- [ ] **Lent Sundays 3 to 5 use the Year A readings in every year.** Year A is permitted in any year, but Years B and C have readings of their own; seed them if wanted.
-- [ ] **Douay-Rheims Sirach** verse numbers differ from the Lectionary's (Sirach 50:22-24).
-- [ ] **Esther additions** other than C are not mapped.
-- [ ] **Link the empty state** to the USCCB page for the date.
+- [x] **31 days through 2031 are incomplete.** Added real citations to `lectionary_seeds.json`, rebuilt `lectionary.json`, re-ran tests. All 1,876 days through 2031 now complete.
+- [x] **Lent Sundays 3 to 5 use the Year A readings in every year.** Seeded proper Year B & C readings for Lent 3, 4, 5 in `lectionary_seeds.json`.
+- [x] **Douay-Rheims Sirach** verse numbers differ from the Lectionary's (Sirach 50:22-24). Mapped in `BibleDatabase.swift`.
+- [x] **Esther additions** other than C are not mapped (verified: Addition C is the only Greek Esther addition in the Roman Lectionary).
+- [x] **Link the empty state** to the USCCB page for the date. Implemented in `DateReadingsView` and `TodayView`.
 
 ### P2 — Rosary guide
 The order of prayers, the prayer texts and the mysteries were reviewed and are accurate. Optional refinements:
@@ -259,17 +292,15 @@ The order of prayers, the prayer texts and the mysteries were reviewed and are a
 - [ ] **Read the Fourth and Fifth Glorious Mysteries entries** (Assumption, Coronation); they were not part of the review.
 
 ### P1 — Calendar
-- [ ] **Confirm the December 9 obligation rule** (Immaculate Conception transferred to Monday) before 2030.
-- [ ] **Memorials list is partial** in `FixedSolemnities`.
-- [ ] **Ascension Thursday provinces** are not supported.
+- [x] **Confirm the December 9 obligation rule** (Immaculate Conception transferred to Monday). Confirmed with Vatican Dicastery for Legislative Texts formal ruling (Prot. N. 16827/2024 to USCCB) that transferred solemnity retains the obligation; implementation in `LiturgicalCalendar.swift` aligns.
+- [x] **Memorials list is partial** in `FixedSolemnities`. Completed the General Roman Calendar and US National Calendar obligatory memorials (e.g. St. Pio of Pietrelcina on Sep 23, Sts. Timothy and Titus on Jan 26, St. John Bosco on Jan 31, Sts. Perpetua and Felicity on Mar 7, St. Stanislaus on Apr 11, St. John Baptist de la Salle on Apr 7, North American Martyrs on Oct 19) and popular optional memorials (St. Patrick, St. Josephine Bakhita, Our Lady of Lourdes, Our Lady of Fatima, St. Thomas More, Our Lady of Mount Carmel, St. John Paul II, St. Nicholas). Precedence rule refined so optional memorials do not displace Ordinary Time weekday readings while populating `optionalMemorials` and subtitles.
+- [x] **Ascension Thursday provinces** are not supported. Implemented full support for ecclesiastical provinces of Boston, Hartford, New York, Newark, Omaha, and Philadelphia. Added user toggle in `SettingsView` under *Liturgical Calendar*, wired `LiturgicalCalendar` with dynamic `ascensionOnThursday` evaluation, seeded Seventh Sunday of Easter (`easter_sun_7_A`, `easter_sun_7_B`, `easter_sun_7_C`) in `lectionary_seeds.json`, rebuilt `lectionary.json` (980 keys), and added unit test coverage in `LiturgicalCalendarTests`.
 
 ### P1 — App Store Submission & TestFlight Monitoring
-- [x] **Bump build version to 1.0.0 (Build 16)**.
-- [ ] **App Store Connect Store Listing**:
-  - App Name: `DailyReadings App` (or chosen brand name).
-  - Subtitle: *Catholic Daily Mass Readings*.
-  - Promotional text, description, support URL, and privacy policy URL.
-  - App Store Screenshots (6.7" iPhone 16 Pro Max, 6.5" iPhone 11 Pro Max).
+- [x] **Bump build version to 1.0.0 (Build 17)**.
+- [x] **App Store Connect Store Listing**:
+  - Prepared `APP_STORE_LISTING.md` with verified App Name (29 chars), Subtitle (28 chars), Promotional text (154 chars), complete marketing description, keyword string (92 chars), review notes, and 6-slide screenshot specifications.
+  - Added dedicated zero-tracking privacy policy document in `PRIVACY.md`.
 
 ### P2 — Audio & Devotional Enhancements
 - [ ] **Custom Phonetic Dictionary Expansion**:

@@ -81,6 +81,19 @@ final class ScriptureEngineTests: XCTestCase {
         XCTAssertEqual(slices[1].verseNumbers, [5, 6])
     }
 
+    func testVulgateSirachChapter50Mapping() async {
+        // Lectionary Sirach 50:22-24 -> Vulgate Ecclesiasticus 50:24-26
+        let slices = BibleDatabase.mapHebrewToVulgate(book: .sirach, chapter: 50, verseNumbers: [22, 23, 24])
+        XCTAssertEqual(slices.count, 1)
+        XCTAssertEqual(slices[0].chapter, 50)
+        XCTAssertEqual(slices[0].verseNumbers, [24, 25, 26])
+
+        let citation = ReadingCitation(book: "Sirach", chapter: 50, verses: "22-24")
+        let verses = await BibleDatabase.drb.queryVerses(citation: citation)
+        XCTAssertEqual(verses.count, 3)
+        XCTAssertTrue(verses.first?.text.contains("And now pray ye to the God of all") == true, verses.first?.text ?? "")
+    }
+
     // MARK: - 3. Multi-Chapter and Cross-Chapter Citation Parsing
 
     func testCrossChapterCitationHebrews() {
@@ -153,5 +166,28 @@ final class ScriptureEngineTests: XCTestCase {
         let chapters = Set(verses.map(\.chapter))
         XCTAssertTrue(chapters.contains(7), "Must include verses from chapter 7")
         XCTAssertTrue(chapters.contains(8), "Must include verses from chapter 8")
+    }
+
+    func testFormattedPsalmTextSeparatesStanzasWithDoubleNewlines() async {
+        let db = BibleDatabase.webc
+        let citation = ReadingCitation(book: "Psalms", chapter: 146, verses: "7, 8-9a, 9bc-10")
+        let psalmText = await db.formattedPsalmText(citation: citation)
+        let stanzas = psalmText.components(separatedBy: "\n\n")
+        XCTAssertEqual(stanzas.count, 3, "Psalm 146 citation must format into exactly 3 stanzas")
+        XCTAssertTrue(stanzas[0].contains("oppressed") || stanzas[0].contains("hungry"))
+        XCTAssertTrue(stanzas[1].contains("blind") || stanzas[1].contains("foreigners"))
+        XCTAssertTrue(stanzas[2].contains("fatherless") || stanzas[2].contains("reign"))
+    }
+
+    func testFormattedPsalmTextDRBPsalm23Stanzas() async {
+        let db = BibleDatabase.drb
+        let citation = ReadingCitation(book: "Psalms", chapter: 23, verses: "1-3a, 3b-4, 5, 6")
+        let psalmText = await db.formattedPsalmText(citation: citation)
+        let stanzas = psalmText.components(separatedBy: "\n\n")
+        XCTAssertEqual(stanzas.count, 4, "Psalm 23 citation in DRB must format into 4 stanzas")
+        XCTAssertTrue(stanzas[0].contains("ruleth me") || stanzas[0].contains("pasture"))
+        XCTAssertTrue(stanzas[1].contains("paths") || stanzas[1].contains("shadow of death"))
+        XCTAssertTrue(stanzas[2].contains("table") || stanzas[2].contains("oil"))
+        XCTAssertTrue(stanzas[3].contains("mercy") || stanzas[3].contains("house of the Lord"))
     }
 }

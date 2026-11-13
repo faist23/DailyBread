@@ -75,7 +75,9 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     public private(set) var liturgicalTitle: String = ""
     public private(set) var currentLiturgicalColor: LiturgicalColor?
     private var cachedArtwork: (key: String, image: UIImage)?
-    public var speed: PlaybackSpeed = .normal {
+    /// Speaking pace. Defaults to the slowest setting ("0.8x"), which suits prayer; a pace the
+    /// listener has chosen in Settings is remembered and takes precedence.
+    public var speed: PlaybackSpeed = .reverent {
         didSet {
             UserDefaults.standard.set(speed.rawValue, forKey: "audioReadingSpeed")
         }
@@ -86,8 +88,7 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         didSet {
             UserDefaults.standard.set(selectedVoiceIdentifier, forKey: "selectedAudioVoiceId")
             if isPlaying && !isAuditioning {
-                synthesizer.stopSpeaking(at: .immediate)
-                speakCurrentChunk()
+                enqueue(fromReading: currentReadingIndex, passage: currentPassageIndex)
             }
         }
     }
@@ -225,14 +226,23 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     private var isInterrupted: Bool = false
     private var isAuditioning: Bool = false
     private var remoteCommandsConfigured: Bool = false
-    private var currentReadingUtterance: AVSpeechUtterance?
+    /// A passage waiting in, or being spoken by, the synthesizer.
+    private struct QueuedPassage {
+        let utterance: AVSpeechUtterance
+        let readingIndex: Int
+        let passageIndex: Int
+    }
+
+    /// Every passage of the readings still to be spoken, keyed by its utterance. The whole Mass is
+    /// handed to the synthesizer at once, so moving from one reading to the next does not depend on
+    /// this app running code in between (which iOS may not allow with the screen locked).
+    private var queuedPassages: [ObjectIdentifier: QueuedPassage] = [:]
     private var currentAuditionUtterance: AVSpeechUtterance?
     private var currentStandaloneUtterance: AVSpeechUtterance?
 
-    /// The current reading split into short passages, each spoken as its own utterance, so a change
-    /// of speed or voice resumes from the passage being read instead of the top of the reading.
-    private var currentChunks: [String] = []
-    private var currentChunkIndex: Int = 0
+    /// Index of the passage being spoken within the current reading. A change of speed or voice
+    /// resumes from this passage instead of the top of the reading.
+    private var currentPassageIndex: Int = 0
 
     /// Identifier of the prayer or Rosary bead now being recited outside the Mass readings, if any.
     /// Views compare it with the identifier `speakStandalone` gave them to know whether they are speaking.
@@ -437,7 +447,7 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         activateAudioSession()
         setupRemoteCommands()
         
-        speakCurrentReading()
+        enqueue(fromReading: currentReadingIndex, passage: 0)
     }
     
     /// Plays or resumes recitation.
@@ -481,10 +491,11 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     
     /// Stops speech playback completely and resets.
     public func stop(deactivateSession: Bool = true) {
-        if synthesizer.isSpeaking {
+        // Forget the queue first, so the cancel callbacks for it are ignored.
+        queuedPassages.removeAll()
+        if synthesizer.isSpeaking || synthesizer.isPaused {
             synthesizer.stopSpeaking(at: .immediate)
         }
-        currentReadingUtterance = nil
         currentAuditionUtterance = nil
         currentStandaloneUtterance = nil
         standaloneSpeechID = nil
@@ -502,79 +513,101 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     public func skipNext() {
         guard !activeReadings.isEmpty else { return }
         if currentReadingIndex + 1 < activeReadings.count {
-            currentReadingIndex += 1
-            currentReading = activeReadings[currentReadingIndex]
-            synthesizer.stopSpeaking(at: .immediate)
-            speakCurrentReading()
+            enqueue(fromReading: currentReadingIndex + 1, passage: 0)
         } else {
             stop()
         }
     }
     
-    /// Skips to the previous reading in the liturgy.
+    /// Skips to the previous reading in the liturgy, or restarts the first one.
     public func skipPrevious() {
         guard !activeReadings.isEmpty else { return }
-        if currentReadingIndex > 0 {
-            currentReadingIndex -= 1
-            currentReading = activeReadings[currentReadingIndex]
-            synthesizer.stopSpeaking(at: .immediate)
-            speakCurrentReading()
-        } else {
-            synthesizer.stopSpeaking(at: .immediate)
-            speakCurrentReading()
-        }
+        enqueue(fromReading: max(0, currentReadingIndex - 1), passage: 0)
     }
     
-    /// Changes playback speed. If currently playing, smoothly restarts the reading at the new speed.
+    /// Changes playback speed. If currently playing, resumes from the current passage at the new speed.
     public func cycleSpeed() {
         speed = speed.next
         if isPlaying {
-            synthesizer.stopSpeaking(at: .immediate)
-            speakCurrentChunk()
+            enqueue(fromReading: currentReadingIndex, passage: currentPassageIndex)
         }
     }
     
     // MARK: - Speech Synthesis
-    
-    private func speakCurrentReading() {
-        guard currentReadingIndex < activeReadings.count else {
-            stop()
-            return
-        }
-        
-        let reading = activeReadings[currentReadingIndex]
-        self.currentReading = reading
-        self.isPlaying = true
-        self.isPaused = false
-        
-        currentChunks = liturgicalSpeechParts(for: reading).flatMap(Self.speechChunks)
-        currentChunkIndex = 0
-        speakCurrentChunk()
+
+    /// A passage of speech and the silence that follows it.
+    struct SpeechPassage: Equatable {
+        let text: String
+        let pauseAfter: TimeInterval
     }
 
-    /// Speaks the current passage of the current reading.
-    private func speakCurrentChunk() {
-        guard currentChunkIndex < currentChunks.count else {
+    /// Silence after a passage. These set the pace of the recitation; the speaking rate itself is `speed`.
+    enum SpeechPause {
+        /// Between sentences of the same part of a reading.
+        static let withinPart: TimeInterval = 0.35
+        /// Between parts: after the announcement, before the closing acclamation, between psalm stanzas.
+        static let betweenParts: TimeInterval = 0.9
+        /// After a reading, before the next one is announced.
+        static let afterReading: TimeInterval = 1.6
+    }
+
+    /// The reading as it is proclaimed, in passages short enough to resume from.
+    static func passages(forParts parts: [String]) -> [SpeechPassage] {
+        var passages: [SpeechPassage] = []
+        for (partIndex, part) in parts.enumerated() {
+            let chunks = speechChunks(part)
+            for (chunkIndex, chunk) in chunks.enumerated() {
+                let endsPart = chunkIndex == chunks.count - 1
+                let endsReading = endsPart && partIndex == parts.count - 1
+                let pause = endsReading ? SpeechPause.afterReading : (endsPart ? SpeechPause.betweenParts : SpeechPause.withinPart)
+                passages.append(SpeechPassage(text: chunk, pauseAfter: pause))
+            }
+        }
+        return passages
+    }
+
+    /// Replaces whatever the synthesizer holds with every passage from the given position to the
+    /// end of the last reading.
+    private func enqueue(fromReading readingIndex: Int, passage passageIndex: Int) {
+        guard readingIndex < activeReadings.count else {
             stop()
             return
         }
-        let isLastChunk = currentChunkIndex == currentChunks.count - 1
-        let utterance = AVSpeechUtterance(string: currentChunks[currentChunkIndex])
 
-        utterance.rate = speed.rawValue
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 1.0
-        // A short breath between passages; a contemplative pause after the reading.
-        utterance.postUtteranceDelay = isLastChunk ? 1.2 : 0.15
-        utterance.voice = selectNaturalVoice()
+        // Forget the old queue first, so its cancel callbacks are ignored.
+        queuedPassages.removeAll()
+        if synthesizer.isSpeaking || synthesizer.isPaused {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
 
-        self.isPlaying = true
-        self.isPaused = false
-        self.currentReadingUtterance = utterance
-        self.currentAuditionUtterance = nil
+        currentReadingIndex = readingIndex
+        currentPassageIndex = passageIndex
+        currentReading = activeReadings[readingIndex]
+        isPlaying = true
+        isPaused = false
+        currentAuditionUtterance = nil
 
-        updateNowPlayingInfo()
-        synthesizer.speak(utterance)
+        let voice = selectNaturalVoice()
+        for index in readingIndex..<activeReadings.count {
+            let passages = Self.passages(forParts: Self.liturgicalSpeechParts(for: activeReadings[index]))
+            let firstPassage = index == readingIndex ? min(passageIndex, max(0, passages.count - 1)) : 0
+            for (offset, passage) in passages.enumerated() where offset >= firstPassage {
+                let utterance = AVSpeechUtterance(string: passage.text)
+                utterance.rate = speed.rawValue
+                utterance.pitchMultiplier = 1.0
+                utterance.volume = 1.0
+                utterance.postUtteranceDelay = passage.pauseAfter
+                utterance.voice = voice
+                queuedPassages[ObjectIdentifier(utterance)] = QueuedPassage(utterance: utterance, readingIndex: index, passageIndex: offset)
+                synthesizer.speak(utterance)
+            }
+        }
+
+        if queuedPassages.isEmpty {
+            stop()
+        } else {
+            updateNowPlayingInfo()
+        }
     }
 
     /// Splits text into passages of a few sentences each.
@@ -670,28 +703,35 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
         utterance.voice = voice
         
         self.currentAuditionUtterance = utterance
-        self.currentReadingUtterance = nil
         
         synthesizer.speak(utterance)
     }
     
     /// The reading as it is proclaimed: announcement, text, acclamation. One element per part.
-    private func liturgicalSpeechParts(for reading: Reading) -> [String] {
+    public static func liturgicalSpeechParts(for reading: Reading) -> [String] {
         var parts: [String] = []
         
         switch reading.type {
         case .firstReading:
-            parts.append("First Reading. A reading from \(reading.citation.displayReference).")
+            let bookAnnouncement = BibleBook.find(named: reading.citation.book)?.liturgicalAnnouncement
+                ?? "the \(reading.citation.book)"
+            parts.append("First Reading. A reading from \(bookAnnouncement).")
             parts.append(cleanScriptureForSpeech(reading.text))
             parts.append("The Word of the Lord. Thanks be to God.")
             
         case .secondReading:
-            parts.append("Second Reading. A reading from \(reading.citation.displayReference).")
+            let bookAnnouncement = BibleBook.find(named: reading.citation.book)?.liturgicalAnnouncement
+                ?? "the \(reading.citation.book)"
+            parts.append("Second Reading. A reading from \(bookAnnouncement).")
             parts.append(cleanScriptureForSpeech(reading.text))
             parts.append("The Word of the Lord. Thanks be to God.")
             
         case .responsorialPsalm:
-            parts.append("Responsorial Psalm. From \(reading.citation.displayReference).")
+            if let chapter = reading.citation.chapter, BibleBook.find(named: reading.citation.book) == .psalms {
+                parts.append("Responsorial Psalm. Psalm \(chapter).")
+            } else {
+                parts.append("Responsorial Psalm.")
+            }
             let response = (reading.response?.isEmpty == false ? reading.response : nil)
                 ?? reading.effectivePsalmResponse
             if let response, !response.isEmpty {
@@ -717,7 +757,8 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
             }
             
         case .gospel:
-            parts.append("The Holy Gospel according to \(reading.citation.book).")
+            let gospelBook = BibleBook.find(named: reading.citation.book)?.canonicalName ?? reading.citation.book
+            parts.append("The Holy Gospel according to \(gospelBook).")
             parts.append(cleanScriptureForSpeech(reading.text))
             parts.append("The Gospel of the Lord. Praise to you, Lord Jesus Christ.")
             
@@ -756,7 +797,7 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     ]
     
     /// Cleans verse numbering, annotations, or symbols for natural, reverent speech.
-    private func cleanScriptureForSpeech(_ text: String) -> String {
+    public static func cleanScriptureForSpeech(_ text: String) -> String {
         var cleaned = text
             .replacingOccurrences(of: "\\[\\d+\\]", with: "", options: .regularExpression)
             .replacingOccurrences(of: "\\(\\w\\)", with: "", options: .regularExpression)
@@ -776,10 +817,18 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
     // MARK: - AVSpeechSynthesizerDelegate
     
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
-        guard utterance === self.currentReadingUtterance else { return }
-        self.isPlaying = true
-        self.isPaused = false
-        self.updateNowPlayingInfo()
+        guard let passage = queuedPassages[ObjectIdentifier(utterance)] else { return }
+        let readingChanged = passage.readingIndex != currentReadingIndex || currentReading == nil
+        currentReadingIndex = passage.readingIndex
+        currentPassageIndex = passage.passageIndex
+        currentReading = activeReadings.indices.contains(passage.readingIndex) ? activeReadings[passage.readingIndex] : currentReading
+        let stateChanged = !isPlaying || isPaused
+        isPlaying = true
+        isPaused = false
+        // The lock screen only needs refreshing when the reading or the play state changes.
+        if readingChanged || stateChanged {
+            updateNowPlayingInfo()
+        }
     }
     
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
@@ -795,29 +844,22 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
             self.deactivateAudioSession()
             return
         }
-        guard utterance === self.currentReadingUtterance else { return }
-        self.currentReadingUtterance = nil
-
-        if self.currentChunkIndex + 1 < self.currentChunks.count {
-            self.currentChunkIndex += 1
-            self.speakCurrentChunk()
-        } else if self.currentReadingIndex + 1 < self.activeReadings.count {
-            self.currentReadingIndex += 1
-            self.speakCurrentReading()
-        } else {
+        guard queuedPassages.removeValue(forKey: ObjectIdentifier(utterance)) != nil else { return }
+        // The synthesizer moves to the next queued passage on its own. Only the end needs handling.
+        if queuedPassages.isEmpty {
             self.stop()
         }
     }
     
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didPause utterance: AVSpeechUtterance) {
-        guard utterance === self.currentReadingUtterance else { return }
+        guard queuedPassages[ObjectIdentifier(utterance)] != nil else { return }
         self.isPlaying = false
         self.isPaused = true
         self.updateNowPlayingInfo()
     }
     
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didContinue utterance: AVSpeechUtterance) {
-        guard utterance === self.currentReadingUtterance else { return }
+        guard queuedPassages[ObjectIdentifier(utterance)] != nil else { return }
         self.isPlaying = true
         self.isPaused = false
         self.updateNowPlayingInfo()
@@ -834,12 +876,12 @@ public final class AudioReadingPlayer: NSObject, @preconcurrency AVSpeechSynthes
             self.standaloneSpeechID = nil
             return
         }
-        // An utterance replaced by a newer one (skip, speed or voice change) reports its cancel
-        // after the new one has started. Only the current utterance may change playback state.
-        guard utterance === self.currentReadingUtterance else { return }
-        self.currentReadingUtterance = nil
-        self.isPlaying = false
-        self.isPaused = false
+        // Passages are only cancelled by `stop` or `enqueue`, which have already cleared the queue
+        // and set the play state. A cancel that still finds its passage means the system stopped it.
+        guard queuedPassages.removeValue(forKey: ObjectIdentifier(utterance)) != nil else { return }
+        if queuedPassages.isEmpty {
+            self.stop()
+        }
     }
 }
 

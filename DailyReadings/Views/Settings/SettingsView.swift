@@ -21,6 +21,7 @@ public struct SettingsView: View {
     @AppStorage("reminderTimeInterval") private var reminderTimeInterval: Double = 25200 // 7:00 AM (7 * 3600)
     @AppStorage("holyDayAlertsEnabled") private var holyDayAlertsEnabled: Bool = true
     @AppStorage("selectedAudioVoiceId") private var selectedVoiceId: String = ""
+    @AppStorage("ascensionOnThursday") private var ascensionOnThursday: Bool = false
     
     @State private var notificationManager = NotificationManager.shared
     @State private var audioPlayer = AudioReadingPlayer.shared
@@ -50,7 +51,10 @@ public struct SettingsView: View {
                 // Section 2: Translation Picker
                 translationSection
                 
-                // Section 3: Devotional Bookmarks
+                // Section 3: Liturgical Calendar
+                calendarSection
+                
+                // Section 4: Devotional Bookmarks
                 bookmarksSection
                 
                 // Section 4: Audio & Lector Voice
@@ -267,6 +271,20 @@ public struct SettingsView: View {
             }
         }
         .padding(.vertical, 4)
+    }
+    
+    // MARK: - Liturgical Calendar Section
+    
+    private var calendarSection: some View {
+        Section {
+            Toggle("Ascension on Thursday", isOn: $ascensionOnThursday)
+        } header: {
+            Text("Liturgical Calendar")
+        } footer: {
+            Text("Celebrated on Thursday (Easter + 39 days) in the ecclesiastical provinces of Boston, Hartford, New York, Newark, Omaha, and Philadelphia. Most US dioceses transfer the celebration to the Seventh Sunday of Easter.")
+                .font(.footnote)
+                .foregroundStyle(Color.secondary)
+        }
     }
     
     // MARK: - Devotional Bookmarks Section

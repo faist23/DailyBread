@@ -61,8 +61,8 @@ final class LectionaryCoverageTests: XCTestCase {
             }
             date = utc.date(byAdding: .day, value: 1, to: date)!
         }
-        // Known gap: Thursday of the Third Week of Advent never appears in the dated data.
-        XCTAssertLessThanOrEqual(withoutGospel.count, 1, "Days with no Gospel: \(withoutGospel)")
+        // All days beyond the dated range have a Gospel (Thursday of the Third Week of Advent is seeded).
+        XCTAssertTrue(withoutGospel.isEmpty, "Days with no Gospel: \(withoutGospel)")
     }
 
     func testOrdinaryTimeWeekdayFollowsItsOwnYear() {
@@ -86,8 +86,31 @@ final class LectionaryCoverageTests: XCTestCase {
     }
 
     func testADayWithNoDataReturnsNothingRatherThanInventedReadings() {
-        // Fourth Sunday in Ordinary Time, Year C, has never appeared in the dated data.
-        XCTAssertTrue(PericoreIndex.shared.entries(for: day(2028, 1, 30)).isEmpty)
+        // A hypothetical day with an unmapped season week returns empty rather than inventing readings.
+        let baseDay = day(2027, 9, 7)
+        let emptyDay = LiturgicalDay(
+            date: baseDay.date,
+            season: .ordinaryTime,
+            seasonWeek: 99,
+            title: "Invented Day",
+            rank: .weekday,
+            color: .green,
+            sundayCycle: .yearA,
+            weekdayCycle: .yearI,
+            isSunday: false,
+            isHolyDayOfObligation: false,
+            dayOfWeekInSeason: 1
+        )
+        XCTAssertTrue(PericoreIndex.shared.entries(for: emptyDay).isEmpty)
+    }
+
+    func testFourthSundayInOrdinaryTimeYearCResolvesAllReadings() {
+        // Formerly missing Fourth Sunday in Ordinary Time, Year C (2028-01-30) now completely resolves.
+        let entries = PericoreIndex.shared.entries(for: day(2028, 1, 30))
+        XCTAssertEqual(entries.count, 5)
+        XCTAssertEqual(BibleBook.find(named: entries.first { $0.type == .firstReading }?.citation.book ?? ""), .jeremiah)
+        XCTAssertEqual(BibleBook.find(named: entries.first { $0.type == .secondReading }?.citation.book ?? ""), .firstCorinthians)
+        XCTAssertEqual(BibleBook.find(named: entries.first { $0.type == .gospel }?.citation.book ?? ""), .luke)
     }
 
     // MARK: - Lectionary numbering → each Bible's numbering

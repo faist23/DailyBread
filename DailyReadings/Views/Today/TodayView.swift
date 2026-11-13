@@ -380,9 +380,28 @@ public struct TodayView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(currentColor.uiAccentColor)
+
+            if let url = usccbURL {
+                Link(destination: url) {
+                    HStack(spacing: 4) {
+                        Text("View readings on USCCB.org")
+                        Image(systemName: "arrow.up.right.square")
+                    }
+                    .font(.scaled(size: 14, weight: .medium))
+                    .foregroundStyle(currentColor.uiAccentColor)
+                }
+                .padding(.top, AppTheme.Spacing.small)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, AppTheme.Spacing.xlarge)
+    }
+
+    private var usccbURL: URL? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMddyy"
+        let dateStr = formatter.string(from: viewModel.currentDate)
+        return URL(string: "https://bible.usccb.org/bible/readings/\(dateStr).cfm")
     }
     
     // MARK: - Helpers

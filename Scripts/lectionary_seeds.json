@@ -1,438 +1,1290 @@
 {
- "fixed_11_02": [
-  {
-   "type": "First Reading",
-   "book": "Wisdom",
-   "chapter": 3,
-   "verses": "1-9"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 23,
-   "verses": "1-3a, 3b-4, 5, 6",
-   "response": "The Lord is my shepherd; there is nothing I shall want."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Romans",
-   "chapter": 5,
-   "verses": "5-11"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Matthew",
-   "chapter": 25,
-   "verses": "34",
-   "response": "Come, you who are blessed by my Father; inherit the kingdom prepared for you."
-  },
-  {
-   "type": "Gospel",
-   "book": "John",
-   "chapter": 6,
-   "verses": "37-40"
-  }
- ],
- "fixed_11_01": [
-  {
-   "type": "First Reading",
-   "book": "Revelation",
-   "chapter": 7,
-   "verses": "2-4, 9-14"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 24,
-   "verses": "1-2, 3-4ab, 5-6",
-   "response": "Lord, this is the people that longs to see your face."
-  },
-  {
-   "type": "Second Reading",
-   "book": "1 John",
-   "chapter": 3,
-   "verses": "1-3"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Matthew",
-   "chapter": 11,
-   "verses": "28",
-   "response": "Come to me, all you who labor and are burdened, and I will give you rest."
-  },
-  {
-   "type": "Gospel",
-   "book": "Matthew",
-   "chapter": 5,
-   "verses": "1-12a"
-  }
- ],
- "fixed_12_25": [
-  {
-   "type": "First Reading",
-   "book": "Isaiah",
-   "chapter": 52,
-   "verses": "7-10"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 98,
-   "verses": "1, 2-3, 3-4, 5-6",
-   "response": "All the ends of the earth have seen the saving power of God."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Hebrews",
-   "chapter": 1,
-   "verses": "1-6"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Luke",
-   "chapter": 2,
-   "verses": "14",
-   "response": "A holy day has dawned upon us. Come, you nations, and adore the Lord."
-  },
-  {
-   "type": "Gospel",
-   "book": "John",
-   "chapter": 1,
-   "verses": "1-18"
-  }
- ],
- "fixed_01_01": [
-  {
-   "type": "First Reading",
-   "book": "Numbers",
-   "chapter": 6,
-   "verses": "22-27"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 67,
-   "verses": "2-3, 5, 6, 8",
-   "response": "May God bless us in his mercy."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Galatians",
-   "chapter": 4,
-   "verses": "4-7"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Hebrews",
-   "chapter": 1,
-   "verses": "1-2",
-   "response": "In the past God spoke to our ancestors through the prophets; in these last days he has spoken to us through the Son."
-  },
-  {
-   "type": "Gospel",
-   "book": "Luke",
-   "chapter": 2,
-   "verses": "16-21"
-  }
- ],
- "fixed_03_19": [
-  {
-   "type": "First Reading",
-   "book": "2 Samuel",
-   "chapter": 7,
-   "verses": "4-5a, 12-14a, 16"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 89,
-   "verses": "2-3, 4-5, 27, 29",
-   "response": "The son of David will live for ever."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Romans",
-   "chapter": 4,
-   "verses": "13, 16-18, 22"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Psalms",
-   "chapter": 84,
-   "verses": "5",
-   "response": "Blessed are those who dwell in your house, O Lord; they never cease to praise you."
-  },
-  {
-   "type": "Gospel",
-   "book": "Matthew",
-   "chapter": 1,
-   "verses": "16, 18-21, 24a"
-  }
- ],
- "fixed_03_25": [
-  {
-   "type": "First Reading",
-   "book": "Isaiah",
-   "chapter": 7,
-   "verses": "10-14; 8:10"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 40,
-   "verses": "7-8a, 8b-9, 10, 11",
-   "response": "Here I am, Lord; I come to do your will."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Hebrews",
-   "chapter": 10,
-   "verses": "4-10"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "John",
-   "chapter": 1,
-   "verses": "14ab",
-   "response": "The Word of God became flesh and dwelt among us, and we saw his glory."
-  },
-  {
-   "type": "Gospel",
-   "book": "Luke",
-   "chapter": 1,
-   "verses": "26-38"
-  }
- ],
- "fixed_08_15": [
-  {
-   "type": "First Reading",
-   "book": "Revelation",
-   "chapter": 11,
-   "verses": "19a; 12:1-6a, 10ab"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 45,
-   "verses": "10, 11, 12, 16",
-   "response": "The queen stands at your right hand, arrayed in gold."
-  },
-  {
-   "type": "Second Reading",
-   "book": "1 Corinthians",
-   "chapter": 15,
-   "verses": "20-27"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Luke",
-   "chapter": 1,
-   "verses": "48",
-   "response": "Mary is taken up to heaven; a chorus of angels exults."
-  },
-  {
-   "type": "Gospel",
-   "book": "Luke",
-   "chapter": 1,
-   "verses": "39-56"
-  }
- ],
- "triduum_thursday": [
-  {
-   "type": "First Reading",
-   "book": "Exodus",
-   "chapter": 12,
-   "verses": "1-8, 11-14"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 116,
-   "verses": "12-13, 15-16bc, 17-18",
-   "response": "Our blessing-cup is a communion with the Blood of Christ."
-  },
-  {
-   "type": "Second Reading",
-   "book": "1 Corinthians",
-   "chapter": 11,
-   "verses": "23-26"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "John",
-   "chapter": 13,
-   "verses": "34"
-  },
-  {
-   "type": "Gospel",
-   "book": "John",
-   "chapter": 13,
-   "verses": "1-15"
-  }
- ],
- "ascension": [
-  {
-   "type": "First Reading",
-   "book": "Acts",
-   "chapter": 1,
-   "verses": "1-11"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 47,
-   "verses": "2-3, 6-7, 8-9",
-   "response": "God mounts his throne to shouts of joy: a blare of trumpets for the Lord."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Ephesians",
-   "chapter": 1,
-   "verses": "17-23"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Matthew",
-   "chapter": 28,
-   "verses": "19a, 20b"
-  }
- ],
- "ascension_A": [
-  {
-   "type": "Gospel",
-   "book": "Matthew",
-   "chapter": 28,
-   "verses": "16-20"
-  }
- ],
- "ascension_B": [
-  {
-   "type": "Gospel",
-   "book": "Mark",
-   "chapter": 16,
-   "verses": "15-20"
-  }
- ],
- "ascension_C": [
-  {
-   "type": "Gospel",
-   "book": "Luke",
-   "chapter": 24,
-   "verses": "46-53"
-  }
- ],
- "pentecost": [
-  {
-   "type": "First Reading",
-   "book": "Acts",
-   "chapter": 2,
-   "verses": "1-11"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 104,
-   "verses": "1, 24, 29-30, 31, 34",
-   "response": "Lord, send out your Spirit, and renew the face of the earth."
-  },
-  {
-   "type": "Second Reading",
-   "book": "1 Corinthians",
-   "chapter": 12,
-   "verses": "3b-7, 12-13"
-  },
-  {
-   "type": "Gospel",
-   "book": "John",
-   "chapter": 20,
-   "verses": "19-23"
-  }
- ],
- "fixed_06_24": [
-  {
-   "type": "First Reading",
-   "book": "Isaiah",
-   "chapter": 49,
-   "verses": "1-6"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 139,
-   "verses": "1b-3, 13-14ab, 14c-15",
-   "response": "I praise you, for I am wonderfully made."
-  },
-  {
-   "type": "Second Reading",
-   "book": "Acts",
-   "chapter": 13,
-   "verses": "22-26"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Luke",
-   "chapter": 1,
-   "verses": "76"
-  },
-  {
-   "type": "Gospel",
-   "book": "Luke",
-   "chapter": 1,
-   "verses": "57-66, 80"
-  }
- ],
- "fixed_06_29": [
-  {
-   "type": "First Reading",
-   "book": "Acts",
-   "chapter": 12,
-   "verses": "1-11"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 34,
-   "verses": "2-3, 4-5, 6-7, 8-9",
-   "response": "The angel of the Lord will rescue those who fear him."
-  },
-  {
-   "type": "Second Reading",
-   "book": "2 Timothy",
-   "chapter": 4,
-   "verses": "6-8, 17-18"
-  },
-  {
-   "type": "Gospel Acclamation",
-   "book": "Matthew",
-   "chapter": 16,
-   "verses": "18"
-  },
-  {
-   "type": "Gospel",
-   "book": "Matthew",
-   "chapter": 16,
-   "verses": "13-19"
-  }
- ],
- "easter_6_thursday": [
-  {
-   "type": "First Reading",
-   "book": "Acts",
-   "chapter": 18,
-   "verses": "1-8"
-  },
-  {
-   "type": "Responsorial Psalm",
-   "book": "Psalms",
-   "chapter": 98,
-   "verses": "1, 2-3ab, 3cd-4",
-   "response": "The Lord has revealed to the nations his saving power."
-  },
-  {
-   "type": "Gospel",
-   "book": "John",
-   "chapter": 16,
-   "verses": "16-20"
-  }
- ]
+  "advent_3_thursday": [
+    {
+      "book": "Isaiah",
+      "chapter": 54,
+      "type": "First Reading",
+      "verses": "1-10"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 30,
+      "response": "I will praise you, Lord, for you have rescued me.",
+      "type": "Responsorial Psalm",
+      "verses": "2, 4, 5-6, 11-12a, 13b"
+    },
+    {
+      "book": "Luke",
+      "chapter": 3,
+      "response": "Prepare the way of the Lord, make straight his paths: all flesh shall see the salvation of God.",
+      "type": "Gospel Acclamation",
+      "verses": "4, 6"
+    },
+    {
+      "book": "Luke",
+      "chapter": 7,
+      "type": "Gospel",
+      "verses": "24-30"
+    }
+  ],
+  "ascension": [
+    {
+      "book": "Acts",
+      "chapter": 1,
+      "type": "First Reading",
+      "verses": "1-11"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 47,
+      "response": "God mounts his throne to shouts of joy: a blare of trumpets for the Lord.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 6-7, 8-9"
+    },
+    {
+      "book": "Ephesians",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "17-23"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 28,
+      "type": "Gospel Acclamation",
+      "verses": "19a, 20b"
+    }
+  ],
+  "ascension_A": [
+    {
+      "book": "Matthew",
+      "chapter": 28,
+      "type": "Gospel",
+      "verses": "16-20"
+    }
+  ],
+  "ascension_B": [
+    {
+      "book": "Mark",
+      "chapter": 16,
+      "type": "Gospel",
+      "verses": "15-20"
+    }
+  ],
+  "ascension_C": [
+    {
+      "book": "Luke",
+      "chapter": 24,
+      "type": "Gospel",
+      "verses": "46-53"
+    }
+  ],
+  "christmas_after_epiphany_wednesday": [
+    {
+      "book": "1 John",
+      "chapter": 4,
+      "type": "First Reading",
+      "verses": "11-18"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 72,
+      "response": "Lord, every nation on earth will adore you.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 10, 12-13"
+    },
+    {
+      "book": "1 Timothy",
+      "chapter": 3,
+      "response": "Glory to you, O Christ, proclaimed to the Gentiles; glory to you, O Christ, believed in throughout the world.",
+      "type": "Gospel Acclamation",
+      "verses": "16"
+    },
+    {
+      "book": "Mark",
+      "chapter": 6,
+      "type": "Gospel",
+      "verses": "45-52"
+    }
+  ],
+  "easter_6_thursday": [
+    {
+      "book": "Acts",
+      "chapter": 18,
+      "type": "First Reading",
+      "verses": "1-8"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 98,
+      "response": "The Lord has revealed to the nations his saving power.",
+      "type": "Responsorial Psalm",
+      "verses": "1, 2-3ab, 3cd-4"
+    },
+    {
+      "book": "John",
+      "chapter": 16,
+      "type": "Gospel",
+      "verses": "16-20"
+    }
+  ],
+  "fixed_01_01": [
+    {
+      "book": "Numbers",
+      "chapter": 6,
+      "type": "First Reading",
+      "verses": "22-27"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 67,
+      "response": "May God bless us in his mercy.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 5, 6, 8"
+    },
+    {
+      "book": "Galatians",
+      "chapter": 4,
+      "type": "Second Reading",
+      "verses": "4-7"
+    },
+    {
+      "book": "Hebrews",
+      "chapter": 1,
+      "response": "In the past God spoke to our ancestors through the prophets; in these last days he has spoken to us through the Son.",
+      "type": "Gospel Acclamation",
+      "verses": "1-2"
+    },
+    {
+      "book": "Luke",
+      "chapter": 2,
+      "type": "Gospel",
+      "verses": "16-21"
+    }
+  ],
+  "fixed_03_19": [
+    {
+      "book": "2 Samuel",
+      "chapter": 7,
+      "type": "First Reading",
+      "verses": "4-5a, 12-14a, 16"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 89,
+      "response": "The son of David will live for ever.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 27, 29"
+    },
+    {
+      "book": "Romans",
+      "chapter": 4,
+      "type": "Second Reading",
+      "verses": "13, 16-18, 22"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 84,
+      "response": "Blessed are those who dwell in your house, O Lord; they never cease to praise you.",
+      "type": "Gospel Acclamation",
+      "verses": "5"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 1,
+      "type": "Gospel",
+      "verses": "16, 18-21, 24a"
+    }
+  ],
+  "fixed_03_25": [
+    {
+      "book": "Isaiah",
+      "chapter": 7,
+      "type": "First Reading",
+      "verses": "10-14; 8:10"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 40,
+      "response": "Here I am, Lord; I come to do your will.",
+      "type": "Responsorial Psalm",
+      "verses": "7-8a, 8b-9, 10, 11"
+    },
+    {
+      "book": "Hebrews",
+      "chapter": 10,
+      "type": "Second Reading",
+      "verses": "4-10"
+    },
+    {
+      "book": "John",
+      "chapter": 1,
+      "response": "The Word of God became flesh and dwelt among us, and we saw his glory.",
+      "type": "Gospel Acclamation",
+      "verses": "14ab"
+    },
+    {
+      "book": "Luke",
+      "chapter": 1,
+      "type": "Gospel",
+      "verses": "26-38"
+    }
+  ],
+  "fixed_06_24": [
+    {
+      "book": "Isaiah",
+      "chapter": 49,
+      "type": "First Reading",
+      "verses": "1-6"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 139,
+      "response": "I praise you, for I am wonderfully made.",
+      "type": "Responsorial Psalm",
+      "verses": "1b-3, 13-14ab, 14c-15"
+    },
+    {
+      "book": "Acts",
+      "chapter": 13,
+      "type": "Second Reading",
+      "verses": "22-26"
+    },
+    {
+      "book": "Luke",
+      "chapter": 1,
+      "type": "Gospel Acclamation",
+      "verses": "76"
+    },
+    {
+      "book": "Luke",
+      "chapter": 1,
+      "type": "Gospel",
+      "verses": "57-66, 80"
+    }
+  ],
+  "fixed_06_29": [
+    {
+      "book": "Acts",
+      "chapter": 12,
+      "type": "First Reading",
+      "verses": "1-11"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 34,
+      "response": "The angel of the Lord will rescue those who fear him.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 6-7, 8-9"
+    },
+    {
+      "book": "2 Timothy",
+      "chapter": 4,
+      "type": "Second Reading",
+      "verses": "6-8, 17-18"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 16,
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 16,
+      "type": "Gospel",
+      "verses": "13-19"
+    }
+  ],
+  "fixed_08_15": [
+    {
+      "book": "Revelation",
+      "chapter": 11,
+      "type": "First Reading",
+      "verses": "19a; 12:1-6a, 10ab"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 45,
+      "response": "The queen stands at your right hand, arrayed in gold.",
+      "type": "Responsorial Psalm",
+      "verses": "10, 11, 12, 16"
+    },
+    {
+      "book": "1 Corinthians",
+      "chapter": 15,
+      "type": "Second Reading",
+      "verses": "20-27"
+    },
+    {
+      "book": "Luke",
+      "chapter": 1,
+      "response": "Mary is taken up to heaven; a chorus of angels exults.",
+      "type": "Gospel Acclamation",
+      "verses": "48"
+    },
+    {
+      "book": "Luke",
+      "chapter": 1,
+      "type": "Gospel",
+      "verses": "39-56"
+    }
+  ],
+  "fixed_11_01": [
+    {
+      "book": "Revelation",
+      "chapter": 7,
+      "type": "First Reading",
+      "verses": "2-4, 9-14"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 24,
+      "response": "Lord, this is the people that longs to see your face.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3-4ab, 5-6"
+    },
+    {
+      "book": "1 John",
+      "chapter": 3,
+      "type": "Second Reading",
+      "verses": "1-3"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 11,
+      "response": "Come to me, all you who labor and are burdened, and I will give you rest.",
+      "type": "Gospel Acclamation",
+      "verses": "28"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 5,
+      "type": "Gospel",
+      "verses": "1-12a"
+    }
+  ],
+  "fixed_11_02": [
+    {
+      "book": "Wisdom",
+      "chapter": 3,
+      "type": "First Reading",
+      "verses": "1-9"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 23,
+      "response": "The Lord is my shepherd; there is nothing I shall want.",
+      "type": "Responsorial Psalm",
+      "verses": "1-3a, 3b-4, 5, 6"
+    },
+    {
+      "book": "Romans",
+      "chapter": 5,
+      "type": "Second Reading",
+      "verses": "5-11"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 25,
+      "response": "Come, you who are blessed by my Father; inherit the kingdom prepared for you.",
+      "type": "Gospel Acclamation",
+      "verses": "34"
+    },
+    {
+      "book": "John",
+      "chapter": 6,
+      "type": "Gospel",
+      "verses": "37-40"
+    }
+  ],
+  "fixed_12_25": [
+    {
+      "book": "Isaiah",
+      "chapter": 52,
+      "type": "First Reading",
+      "verses": "7-10"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 98,
+      "response": "All the ends of the earth have seen the saving power of God.",
+      "type": "Responsorial Psalm",
+      "verses": "1, 2-3, 3-4, 5-6"
+    },
+    {
+      "book": "Hebrews",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "1-6"
+    },
+    {
+      "book": "Luke",
+      "chapter": 2,
+      "response": "A holy day has dawned upon us. Come, you nations, and adore the Lord.",
+      "type": "Gospel Acclamation",
+      "verses": "14"
+    },
+    {
+      "book": "John",
+      "chapter": 1,
+      "type": "Gospel",
+      "verses": "1-18"
+    }
+  ],
+  "lent_sun_3_B": [
+    {
+      "book": "Exodus",
+      "chapter": 20,
+      "type": "First Reading",
+      "verses": "1-17"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 19,
+      "response": "Lord, you have the words of everlasting life.",
+      "type": "Responsorial Psalm",
+      "verses": "8, 9, 10, 11"
+    },
+    {
+      "book": "1 Corinthians",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "22-25"
+    },
+    {
+      "book": "John",
+      "chapter": 3,
+      "response": "God so loved the world that he gave his only Son, so that everyone who believes in him might have eternal life.",
+      "type": "Gospel Acclamation",
+      "verses": "16"
+    },
+    {
+      "book": "John",
+      "chapter": 2,
+      "type": "Gospel",
+      "verses": "13-25"
+    }
+  ],
+  "lent_sun_3_C": [
+    {
+      "book": "Exodus",
+      "chapter": 3,
+      "type": "First Reading",
+      "verses": "1-8a, 13-15"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 103,
+      "response": "The Lord is kind and merciful.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3-4, 6-7, 8, 11"
+    },
+    {
+      "book": "1 Corinthians",
+      "chapter": 10,
+      "type": "Second Reading",
+      "verses": "1-6, 10-12"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 4,
+      "response": "Repent, says the Lord; the kingdom of heaven is at hand.",
+      "type": "Gospel Acclamation",
+      "verses": "17"
+    },
+    {
+      "book": "Luke",
+      "chapter": 13,
+      "type": "Gospel",
+      "verses": "1-9"
+    }
+  ],
+  "lent_sun_4_B": [
+    {
+      "book": "2 Chronicles",
+      "chapter": 36,
+      "type": "First Reading",
+      "verses": "14-16, 19-23"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 137,
+      "response": "Let my tongue be silenced, if I ever forget you!",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3, 4-5, 6"
+    },
+    {
+      "book": "Ephesians",
+      "chapter": 2,
+      "type": "Second Reading",
+      "verses": "4-10"
+    },
+    {
+      "book": "John",
+      "chapter": 3,
+      "response": "God so loved the world that he gave his only Son, so that everyone who believes in him might have eternal life.",
+      "type": "Gospel Acclamation",
+      "verses": "16"
+    },
+    {
+      "book": "John",
+      "chapter": 3,
+      "type": "Gospel",
+      "verses": "14-21"
+    }
+  ],
+  "lent_sun_4_C": [
+    {
+      "book": "Joshua",
+      "chapter": 5,
+      "type": "First Reading",
+      "verses": "9a, 10-12"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 34,
+      "response": "Taste and see the goodness of the Lord.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 6-7"
+    },
+    {
+      "book": "2 Corinthians",
+      "chapter": 5,
+      "type": "Second Reading",
+      "verses": "17-21"
+    },
+    {
+      "book": "Luke",
+      "chapter": 15,
+      "response": "I will get up and go to my father and shall say to him: Father, I have sinned against heaven and against you.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "Luke",
+      "chapter": 15,
+      "type": "Gospel",
+      "verses": "1-3, 11-32"
+    }
+  ],
+  "lent_sun_5_B": [
+    {
+      "book": "Jeremiah",
+      "chapter": 31,
+      "type": "First Reading",
+      "verses": "31-34"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 51,
+      "response": "Create a clean heart in me, O God.",
+      "type": "Responsorial Psalm",
+      "verses": "3-4, 12-13, 14-15"
+    },
+    {
+      "book": "Hebrews",
+      "chapter": 5,
+      "type": "Second Reading",
+      "verses": "7-9"
+    },
+    {
+      "book": "John",
+      "chapter": 12,
+      "response": "Whoever serves me must follow me, says the Lord; and where I am, there also will my servant be.",
+      "type": "Gospel Acclamation",
+      "verses": "26"
+    },
+    {
+      "book": "John",
+      "chapter": 12,
+      "type": "Gospel",
+      "verses": "20-33"
+    }
+  ],
+  "lent_sun_5_C": [
+    {
+      "book": "Isaiah",
+      "chapter": 43,
+      "type": "First Reading",
+      "verses": "16-21"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 126,
+      "response": "The Lord has done great things for us; we are filled with joy.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 2-3, 4-5, 6"
+    },
+    {
+      "book": "Philippians",
+      "chapter": 3,
+      "type": "Second Reading",
+      "verses": "8-14"
+    },
+    {
+      "book": "Joel",
+      "chapter": 2,
+      "response": "Even now, says the Lord, return to me with your whole heart; for I am gracious and merciful.",
+      "type": "Gospel Acclamation",
+      "verses": "12-13"
+    },
+    {
+      "book": "John",
+      "chapter": 8,
+      "type": "Gospel",
+      "verses": "1-11"
+    }
+  ],
+  "ot_16_tuesday_I": [
+    {
+      "book": "Micah",
+      "chapter": 7,
+      "type": "First Reading",
+      "verses": "14-15, 18-20"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 85,
+      "response": "Lord, show us your mercy and love.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 6-7"
+    }
+  ],
+  "ot_29_saturday_I": [
+    {
+      "book": "Romans",
+      "chapter": 8,
+      "type": "First Reading",
+      "verses": "1-11"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 24,
+      "response": "Lord, this is the people that longs to see your face.",
+      "type": "Responsorial Psalm",
+      "verses": "1b-2, 3-4ab, 5-6"
+    }
+  ],
+  "ot_30_monday_II": [
+    {
+      "book": "Ephesians",
+      "chapter": 4,
+      "type": "First Reading",
+      "verses": "32—5:8"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 1,
+      "response": "Behave like God as his very dear children.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3, 4 and 6"
+    }
+  ],
+  "ot_31_thursday_I": [
+    {
+      "book": "Romans",
+      "chapter": 14,
+      "type": "First Reading",
+      "verses": "7-12"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 27,
+      "response": "I believe that I shall see the good things of the Lord in the land of the living.",
+      "type": "Responsorial Psalm",
+      "verses": "1, 4, 13-14"
+    }
+  ],
+  "ot_34_thursday_I": [
+    {
+      "book": "Daniel",
+      "chapter": 6,
+      "type": "First Reading",
+      "verses": "12-28"
+    },
+    {
+      "book": "Daniel",
+      "chapter": 3,
+      "response": "Give glory and eternal praise to him.",
+      "type": "Responsorial Psalm",
+      "verses": "68, 69, 70, 71, 72, 73, 74"
+    }
+  ],
+  "ot_6_friday_II": [
+    {
+      "book": "James",
+      "chapter": 2,
+      "type": "First Reading",
+      "verses": "14-24, 26"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 112,
+      "response": "Blessed the man who greatly delights in the Lord's commands.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3-4, 5-6"
+    }
+  ],
+  "ot_6_saturday_II": [
+    {
+      "book": "James",
+      "chapter": 3,
+      "type": "First Reading",
+      "verses": "1-10"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 12,
+      "response": "You will protect us, Lord.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 7-8"
+    }
+  ],
+  "ot_6_thursday_II": [
+    {
+      "book": "James",
+      "chapter": 2,
+      "type": "First Reading",
+      "verses": "1-9"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 34,
+      "response": "The Lord hears the cry of the poor.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 6-7"
+    }
+  ],
+  "ot_6_wednesday_II": [
+    {
+      "book": "James",
+      "chapter": 1,
+      "type": "First Reading",
+      "verses": "19-27"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 15,
+      "response": "Whoever walks in justice will live in the presence of the Lord.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3a, 3bc-4ab, 5"
+    }
+  ],
+  "ot_7_monday_II": [
+    {
+      "book": "James",
+      "chapter": 3,
+      "type": "First Reading",
+      "verses": "13-18"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 19,
+      "response": "The precepts of the Lord give joy to the heart.",
+      "type": "Responsorial Psalm",
+      "verses": "8, 9, 10, 15"
+    }
+  ],
+  "ot_sun_10_A": [
+    {
+      "book": "Hosea",
+      "chapter": 6,
+      "type": "First Reading",
+      "verses": "3-6"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 50,
+      "response": "To the upright I will show the saving power of God.",
+      "type": "Responsorial Psalm",
+      "verses": "1 and 8, 12-13, 14-15"
+    },
+    {
+      "book": "Romans",
+      "chapter": 4,
+      "type": "Second Reading",
+      "verses": "18-25"
+    },
+    {
+      "book": "Luke",
+      "chapter": 4,
+      "response": "The Lord sent me to bring glad tidings to the poor, and to proclaim liberty to captives.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "Matthew",
+      "chapter": 9,
+      "type": "Gospel",
+      "verses": "9-13"
+    }
+  ],
+  "ot_sun_12_C": [
+    {
+      "book": "Zechariah",
+      "chapter": 12,
+      "type": "First Reading",
+      "verses": "10-11; 13:1"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 63,
+      "response": "My soul is thirsting for you, O Lord my God.",
+      "type": "Responsorial Psalm",
+      "verses": "2, 3-4, 5-6, 8-9"
+    },
+    {
+      "book": "Galatians",
+      "chapter": 3,
+      "type": "Second Reading",
+      "verses": "26-29"
+    },
+    {
+      "book": "John",
+      "chapter": 10,
+      "response": "My sheep hear my voice, says the Lord; I know them, and they follow me.",
+      "type": "Gospel Acclamation",
+      "verses": "27"
+    },
+    {
+      "book": "Luke",
+      "chapter": 9,
+      "type": "Gospel",
+      "verses": "18-24"
+    }
+  ],
+  "ot_sun_13_C": [
+    {
+      "book": "1 Kings",
+      "chapter": 19,
+      "type": "First Reading",
+      "verses": "16b, 19-21"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 16,
+      "response": "You are my inheritance, O Lord.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2a and 5, 7-8, 9-10, 11"
+    },
+    {
+      "book": "Galatians",
+      "chapter": 5,
+      "type": "Second Reading",
+      "verses": "1, 13-18"
+    },
+    {
+      "book": "1 Samuel",
+      "chapter": 3,
+      "response": "Speak, Lord, your servant is listening; you have the words of everlasting life.",
+      "type": "Gospel Acclamation",
+      "verses": "9"
+    },
+    {
+      "book": "Luke",
+      "chapter": 9,
+      "type": "Gospel",
+      "verses": "51-62"
+    }
+  ],
+  "ot_sun_23_C": [
+    {
+      "book": "Wisdom",
+      "chapter": 9,
+      "type": "First Reading",
+      "verses": "13-18b"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 90,
+      "response": "In every age, O Lord, you have been our refuge.",
+      "type": "Responsorial Psalm",
+      "verses": "3-4, 5-6, 12-13, 14 and 17"
+    },
+    {
+      "book": "Philemon",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "9-10, 12-17"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 119,
+      "response": "Let your face shine upon your servant; and teach me your laws.",
+      "type": "Gospel Acclamation",
+      "verses": "135"
+    },
+    {
+      "book": "Luke",
+      "chapter": 14,
+      "type": "Gospel",
+      "verses": "25-33"
+    }
+  ],
+  "ot_sun_24_C": [
+    {
+      "book": "Exodus",
+      "chapter": 32,
+      "type": "First Reading",
+      "verses": "7-11, 13-14"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 51,
+      "response": "I will rise and go to my father.",
+      "type": "Responsorial Psalm",
+      "verses": "3-4, 12-13, 17, 19"
+    },
+    {
+      "book": "1 Timothy",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "12-17"
+    },
+    {
+      "book": "2 Corinthians",
+      "chapter": 5,
+      "response": "God was reconciling the world to himself in Christ and entrusting to us the message of reconciliation.",
+      "type": "Gospel Acclamation",
+      "verses": "19"
+    },
+    {
+      "book": "Luke",
+      "chapter": 15,
+      "type": "Gospel",
+      "verses": "1-32"
+    }
+  ],
+  "ot_sun_31_C": [
+    {
+      "book": "Wisdom",
+      "chapter": 11,
+      "type": "First Reading",
+      "verses": "22—12:2"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 145,
+      "response": "I will praise your name for ever, my king and my God.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 8-9, 10-11, 13, 14"
+    },
+    {
+      "book": "2 Thessalonians",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "11—2:2"
+    },
+    {
+      "book": "John",
+      "chapter": 3,
+      "response": "God so loved the world that he gave his only Son, so that everyone who believes in him might have eternal life.",
+      "type": "Gospel Acclamation",
+      "verses": "16"
+    },
+    {
+      "book": "Luke",
+      "chapter": 19,
+      "type": "Gospel",
+      "verses": "1-10"
+    }
+  ],
+  "ot_sun_32_C": [
+    {
+      "book": "2 Maccabees",
+      "chapter": 7,
+      "type": "First Reading",
+      "verses": "1-2, 9-14"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 17,
+      "response": "Lord, when your glory appears, my joy will be full.",
+      "type": "Responsorial Psalm",
+      "verses": "1, 5-6, 8, 15"
+    },
+    {
+      "book": "2 Thessalonians",
+      "chapter": 2,
+      "type": "Second Reading",
+      "verses": "16—3:5"
+    },
+    {
+      "book": "Revelation",
+      "chapter": 1,
+      "response": "Jesus Christ is the firstborn of the dead; to him be glory and power, for ever and ever.",
+      "type": "Gospel Acclamation",
+      "verses": "5a, 6b"
+    },
+    {
+      "book": "Luke",
+      "chapter": 20,
+      "type": "Gospel",
+      "verses": "27-38"
+    }
+  ],
+  "ot_sun_4_C": [
+    {
+      "book": "Jeremiah",
+      "chapter": 1,
+      "type": "First Reading",
+      "verses": "4-5, 17-19"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 71,
+      "response": "I will sing of your salvation.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3-4a, 5-6ab, 15ab and 17"
+    },
+    {
+      "book": "1 Corinthians",
+      "chapter": 12,
+      "type": "Second Reading",
+      "verses": "31—13:13"
+    },
+    {
+      "book": "Luke",
+      "chapter": 4,
+      "response": "The Lord sent me to bring glad tidings to the poor, and to proclaim liberty to captives.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "Luke",
+      "chapter": 4,
+      "type": "Gospel",
+      "verses": "21-30"
+    }
+  ],
+  "ot_sun_7_B": [
+    {
+      "book": "Isaiah",
+      "chapter": 43,
+      "type": "First Reading",
+      "verses": "18-19, 21-22, 24b-25"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 41,
+      "response": "Lord, heal my soul, for I have sinned against you.",
+      "type": "Responsorial Psalm",
+      "verses": "2-3, 4-5, 13-14"
+    },
+    {
+      "book": "2 Corinthians",
+      "chapter": 1,
+      "type": "Second Reading",
+      "verses": "18-22"
+    },
+    {
+      "book": "Luke",
+      "chapter": 4,
+      "response": "The Lord sent me to bring glad tidings to the poor, and to proclaim liberty to captives.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "Mark",
+      "chapter": 2,
+      "type": "Gospel",
+      "verses": "1-12"
+    }
+  ],
+  "ot_sun_8_B": [
+    {
+      "book": "Hosea",
+      "chapter": 2,
+      "type": "First Reading",
+      "verses": "16b, 17b, 21-22"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 103,
+      "response": "The Lord is kind and merciful.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 3-4, 8, 10, 12-13"
+    },
+    {
+      "book": "2 Corinthians",
+      "chapter": 3,
+      "type": "Second Reading",
+      "verses": "1b-6"
+    },
+    {
+      "book": "James",
+      "chapter": 1,
+      "response": "The Father willed to give us birth by the word of truth that we may be a kind of firstfruits of his creatures.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "Mark",
+      "chapter": 2,
+      "type": "Gospel",
+      "verses": "18-22"
+    }
+  ],
+  "pentecost": [
+    {
+      "book": "Acts",
+      "chapter": 2,
+      "type": "First Reading",
+      "verses": "1-11"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 104,
+      "response": "Lord, send out your Spirit, and renew the face of the earth.",
+      "type": "Responsorial Psalm",
+      "verses": "1, 24, 29-30, 31, 34"
+    },
+    {
+      "book": "1 Corinthians",
+      "chapter": 12,
+      "type": "Second Reading",
+      "verses": "3b-7, 12-13"
+    },
+    {
+      "book": "John",
+      "chapter": 20,
+      "type": "Gospel",
+      "verses": "19-23"
+    }
+  ],
+  "triduum_thursday": [
+    {
+      "book": "Exodus",
+      "chapter": 12,
+      "type": "First Reading",
+      "verses": "1-8, 11-14"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 116,
+      "response": "Our blessing-cup is a communion with the Blood of Christ.",
+      "type": "Responsorial Psalm",
+      "verses": "12-13, 15-16bc, 17-18"
+    },
+    {
+      "book": "1 Corinthians",
+      "chapter": 11,
+      "type": "Second Reading",
+      "verses": "23-26"
+    },
+    {
+      "book": "John",
+      "chapter": 13,
+      "type": "Gospel Acclamation",
+      "verses": "34"
+    },
+    {
+      "book": "John",
+      "chapter": 13,
+      "type": "Gospel",
+      "verses": "1-15"
+    }
+  ],
+  "easter_sun_7_A": [
+    {
+      "book": "Acts",
+      "chapter": 1,
+      "type": "First Reading",
+      "verses": "12-14"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 27,
+      "response": "I believe that I shall see the good things of the Lord in the land of the living.",
+      "type": "Responsorial Psalm",
+      "verses": "1, 4, 7-8a"
+    },
+    {
+      "book": "1 Peter",
+      "chapter": 4,
+      "type": "Second Reading",
+      "verses": "13-16"
+    },
+    {
+      "book": "John",
+      "chapter": 14,
+      "response": "I will not leave you orphans, says the Lord; I will come back to you, and your hearts will rejoice.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "John",
+      "chapter": 17,
+      "type": "Gospel",
+      "verses": "1-11a"
+    }
+  ],
+  "easter_sun_7_B": [
+    {
+      "book": "Acts",
+      "chapter": 1,
+      "type": "First Reading",
+      "verses": "15-17, 20a, 20c-26"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 103,
+      "response": "The Lord has set his throne in heaven.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 11-12, 19-20ab"
+    },
+    {
+      "book": "1 John",
+      "chapter": 4,
+      "type": "Second Reading",
+      "verses": "11-16"
+    },
+    {
+      "book": "John",
+      "chapter": 14,
+      "response": "I will not leave you orphans, says the Lord; I will come back to you, and your hearts will rejoice.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "John",
+      "chapter": 17,
+      "type": "Gospel",
+      "verses": "11b-19"
+    }
+  ],
+  "easter_sun_7_C": [
+    {
+      "book": "Acts",
+      "chapter": 7,
+      "type": "First Reading",
+      "verses": "55-60"
+    },
+    {
+      "book": "Psalms",
+      "chapter": 97,
+      "response": "The Lord is king, the most high over all the earth.",
+      "type": "Responsorial Psalm",
+      "verses": "1-2, 6-7, 9"
+    },
+    {
+      "book": "Revelation",
+      "chapter": 22,
+      "type": "Second Reading",
+      "verses": "12-14, 16-17, 20"
+    },
+    {
+      "book": "John",
+      "chapter": 14,
+      "response": "I will not leave you orphans, says the Lord; I will come back to you, and your hearts will rejoice.",
+      "type": "Gospel Acclamation",
+      "verses": "18"
+    },
+    {
+      "book": "John",
+      "chapter": 17,
+      "type": "Gospel",
+      "verses": "20-26"
+    }
+  ]
 }

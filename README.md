@@ -38,6 +38,7 @@
   - Full implementation of Meeus/Jones/Butcher Computus algorithm for movable feasts.
   - Conforms to the *Universal Norms for the Liturgical Year* and *Proper Calendar for the Dioceses of the United States of America* (USCCB).
   - Accurate season tracking (Advent, Christmas, Ordinary Time, Lent, Triduum, Easter), liturgical cycles (Sundays A/B/C, Weekdays I/II), psalter weeks, ranks, and holy days of obligation.
+  - Support for Ascension Thursday provinces (Boston, Hartford, New York, Newark, Omaha, Philadelphia) via user toggle in Settings.
   - Dynamic liturgical vestment color tinting (White/Gold, Red, Green, Violet, Rose, Black).
 - **Interactive Liturgical Calendar**:
   - Month-by-month calendar view with liturgical color dots and feast rankings.
@@ -102,7 +103,7 @@
 
 ## Testing
 
-The project includes an automated test target with 40 unit tests covering calendar edge cases, Computus calculations, citation parsing, verse-numbering maps, SQLite queries, the Rosary's weekly schedule, and a walk of every lectionary citation through 2028 in both bundled Bibles:
+The project includes an automated test target with 48 unit tests covering calendar edge cases, Computus calculations, citation parsing, verse-numbering maps, SQLite queries, psalm stanza formatting, liturgical audio recitation, the Rosary's weekly schedule, and a walk of every lectionary citation through 2028 in both bundled Bibles:
 
 ```bash
 xcodebuild test -scheme DailyReadings -destination "platform=iOS Simulator,name=iPhone 17"
@@ -139,4 +140,4 @@ The Xcode project is generated from `project.yml`; run `xcodegen generate` after
 
 ## Status
 
-Not released. Current build: 1.0.0 (16). What was done and what is still open is in `TODOS.md` ("Build 16" and "Active & Upcoming TODOS") and `ARCHITECTURE.md` sections 7 and 8.
+Not released. Current build: 1.0.0 (17). What was done and what is still open is in `TODOS.md` ("Build 17" and "Active & Upcoming TODOS") and `ARCHITECTURE.md` sections 7 and 8.

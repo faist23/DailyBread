@@ -157,9 +157,20 @@ for base in PericoreIndex.cycleOnlyBases {
     }
 }
 var seedsUsed: [String] = []
-for (key, entries) in seeds where index[key] == nil {
-    index[key] = entries
-    seedsUsed.append(key)
+for (key, entries) in seeds {
+    if let existing = index[key] {
+        let existingTypes = Set(existing.map(\.type))
+        let seedTypes = Set(entries.map(\.type))
+        if !seedTypes.isSubset(of: existingTypes) {
+            var merged = existing.filter { !seedTypes.contains($0.type) }
+            merged += entries
+            index[key] = ReadingType.allCases.sorted { $0.liturgicalOrder < $1.liturgicalOrder }.flatMap { t in merged.filter { $0.type == t } }
+            seedsUsed.append(key)
+        }
+    } else {
+        index[key] = entries
+        seedsUsed.append(key)
+    }
 }
 
 print("dated days read: \(dated.count)  cycle keys: \(index.count)  memorials with readings of their own: \(properIdentity.count)  seeds used: \(seedsUsed.sorted())")

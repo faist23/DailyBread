@@ -268,23 +268,29 @@ public struct FixedSolemnities: Sendable {
     public static let saintJuniperoSerra = FixedCelebration(month: 7, day: 1, title: "Saint Junípero Serra, Priest", rank: .optionalMemorial, color: .white, isUSProper: true)
     public static let saintKateriTekakwitha = FixedCelebration(month: 7, day: 14, title: "Saint Kateri Tekakwitha, Virgin", rank: .obligatoryMemorial, color: .white, isUSProper: true)
     public static let saintPeterClaver = FixedCelebration(month: 9, day: 9, title: "Saint Peter Claver, Priest", rank: .obligatoryMemorial, color: .white, isUSProper: true)
+    public static let saintsJeanDeBrebeufAndIsaacJogues = FixedCelebration(month: 10, day: 19, title: "Saints John de Brébeuf and Isaac Jogues, Priests, and Companions, Martyrs", rank: .obligatoryMemorial, color: .red, isUSProper: true)
     public static let saintFrancesXavierCabrini = FixedCelebration(month: 11, day: 13, title: "Saint Frances Xavier Cabrini, Virgin", rank: .obligatoryMemorial, color: .white, isUSProper: true)
     public static let saintRosePhilippineDuchesne = FixedCelebration(month: 11, day: 18, title: "Saint Rose Philippine Duchesne, Virgin", rank: .optionalMemorial, color: .white, isUSProper: true)
     public static let blessedMiguelPro = FixedCelebration(month: 11, day: 23, title: "Blessed Miguel Agustín Pro, Priest and Martyr", rank: .optionalMemorial, color: .red, isUSProper: true)
     public static let saintJuanDiego = FixedCelebration(month: 12, day: 9, title: "Saint Juan Diego Cuauhtlatoatzin", rank: .optionalMemorial, color: .white, isUSProper: true)
     public static let ourLadyOfGuadalupe = FixedCelebration(month: 12, day: 12, title: "Our Lady of Guadalupe", rank: .feastGeneral, color: .white, isUSProper: true)
 
-    // MARK: - Selected Obligatory Memorials
+    // MARK: - Obligatory Memorials
 
     public static let saintsBasilAndGregory = FixedCelebration(month: 1, day: 2, title: "Saints Basil the Great and Gregory Nazianzen, Bishops and Doctors", rank: .obligatoryMemorial, color: .white)
     public static let saintAnthonyAbbot = FixedCelebration(month: 1, day: 17, title: "Saint Anthony, Abbot", rank: .obligatoryMemorial, color: .white)
     public static let saintAgnes = FixedCelebration(month: 1, day: 21, title: "Saint Agnes, Virgin and Martyr", rank: .obligatoryMemorial, color: .red)
+    public static let saintsTimothyAndTitus = FixedCelebration(month: 1, day: 26, title: "Saints Timothy and Titus, Bishops", rank: .obligatoryMemorial, color: .white)
     public static let saintThomasAquinas = FixedCelebration(month: 1, day: 28, title: "Saint Thomas Aquinas, Priest and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
+    public static let saintJohnBosco = FixedCelebration(month: 1, day: 31, title: "Saint John Bosco, Priest", rank: .obligatoryMemorial, color: .white)
     public static let saintAgatha = FixedCelebration(month: 2, day: 5, title: "Saint Agatha, Virgin and Martyr", rank: .obligatoryMemorial, color: .red)
     public static let saintPaulMiki = FixedCelebration(month: 2, day: 6, title: "Saint Paul Miki and Companions, Martyrs", rank: .obligatoryMemorial, color: .red)
     public static let saintScholastica = FixedCelebration(month: 2, day: 10, title: "Saint Scholastica, Virgin", rank: .obligatoryMemorial, color: .white)
     public static let saintsCyrilAndMethodius = FixedCelebration(month: 2, day: 14, title: "Saints Cyril, Monk, and Methodius, Bishop", rank: .obligatoryMemorial, color: .white)
     public static let saintPolycarp = FixedCelebration(month: 2, day: 23, title: "Saint Polycarp, Bishop and Martyr", rank: .obligatoryMemorial, color: .red)
+    public static let saintsPerpetuaAndFelicity = FixedCelebration(month: 3, day: 7, title: "Saints Perpetua and Felicity, Martyrs", rank: .obligatoryMemorial, color: .red)
+    public static let saintJohnBaptistDeLaSalle = FixedCelebration(month: 4, day: 7, title: "Saint John Baptist de la Salle, Priest", rank: .obligatoryMemorial, color: .white)
+    public static let saintStanislaus = FixedCelebration(month: 4, day: 11, title: "Saint Stanislaus, Bishop and Martyr", rank: .obligatoryMemorial, color: .red)
     public static let saintCatherineOfSiena = FixedCelebration(month: 4, day: 29, title: "Saint Catherine of Siena, Virgin and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
     public static let saintAthanasius = FixedCelebration(month: 5, day: 2, title: "Saint Athanasius, Bishop and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
     public static let saintPhilipNeri = FixedCelebration(month: 5, day: 26, title: "Saint Philip Neri, Priest", rank: .obligatoryMemorial, color: .white)
@@ -315,6 +321,8 @@ public struct FixedSolemnities: Sendable {
     public static let saintJohnChrysostom = FixedCelebration(month: 9, day: 13, title: "Saint John Chrysostom, Bishop and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
     public static let ourLadyOfSorrows = FixedCelebration(month: 9, day: 15, title: "Our Lady of Sorrows", rank: .obligatoryMemorial, color: .white)
     public static let saintsCorneliusAndCyprian = FixedCelebration(month: 9, day: 16, title: "Saints Cornelius, Pope, and Cyprian, Bishop, Martyrs", rank: .obligatoryMemorial, color: .red)
+    public static let saintsAndrewKimAndPaulChong = FixedCelebration(month: 9, day: 20, title: "Saints Andrew Kim Tae-gŏn, Priest, and Paul Chŏng Ha-sang, and Companions, Martyrs", rank: .obligatoryMemorial, color: .red)
+    public static let saintPioOfPietrelcina = FixedCelebration(month: 9, day: 23, title: "Saint Pio of Pietrelcina (Padre Pio), Priest", rank: .obligatoryMemorial, color: .white)
     public static let saintVincentDePaul = FixedCelebration(month: 9, day: 27, title: "Saint Vincent de Paul, Priest", rank: .obligatoryMemorial, color: .white)
     public static let saintJerome = FixedCelebration(month: 9, day: 30, title: "Saint Jerome, Priest and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
     public static let saintThereseOfLisieux = FixedCelebration(month: 10, day: 1, title: "Saint Thérèse of the Child Jesus, Virgin and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
@@ -336,6 +344,29 @@ public struct FixedSolemnities: Sendable {
     public static let saintLucy = FixedCelebration(month: 12, day: 13, title: "Saint Lucy, Virgin and Martyr", rank: .obligatoryMemorial, color: .red)
     public static let saintJohnOfTheCross = FixedCelebration(month: 12, day: 14, title: "Saint John of the Cross, Priest and Doctor of the Church", rank: .obligatoryMemorial, color: .white)
 
+    // MARK: - Key Optional Memorials
+
+    public static let holyNameOfJesus = FixedCelebration(month: 1, day: 3, title: "The Most Holy Name of Jesus", rank: .optionalMemorial, color: .white)
+    public static let saintJosephineBakhita = FixedCelebration(month: 2, day: 8, title: "Saint Josephine Bakhita, Virgin", rank: .optionalMemorial, color: .white)
+    public static let ourLadyOfLourdes = FixedCelebration(month: 2, day: 11, title: "Our Lady of Lourdes", rank: .optionalMemorial, color: .white)
+    public static let saintPatrick = FixedCelebration(month: 3, day: 17, title: "Saint Patrick, Bishop", rank: .optionalMemorial, color: .white, isUSProper: true)
+    public static let saintCyrilOfJerusalem = FixedCelebration(month: 3, day: 18, title: "Saint Cyril of Jerusalem, Bishop and Doctor of the Church", rank: .optionalMemorial, color: .white)
+    public static let saintAnselm = FixedCelebration(month: 4, day: 21, title: "Saint Anselm, Bishop and Doctor of the Church", rank: .optionalMemorial, color: .white)
+    public static let saintLouisDeMontfort = FixedCelebration(month: 4, day: 28, title: "Saint Louis Grignion de Montfort, Priest", rank: .optionalMemorial, color: .white)
+    public static let ourLadyOfFatima = FixedCelebration(month: 5, day: 13, title: "Our Lady of Fatima", rank: .optionalMemorial, color: .white)
+    public static let saintBedeTheVenerable = FixedCelebration(month: 5, day: 25, title: "Saint Bede the Venerable, Priest and Doctor of the Church", rank: .optionalMemorial, color: .white)
+    public static let saintsJohnFisherAndThomasMore = FixedCelebration(month: 6, day: 22, title: "Saints John Fisher, Bishop, and Thomas More, Martyrs", rank: .optionalMemorial, color: .red)
+    public static let ourLadyOfMountCarmel = FixedCelebration(month: 7, day: 16, title: "Our Lady of Mount Carmel", rank: .optionalMemorial, color: .white)
+    public static let saintBridgetOfSweden = FixedCelebration(month: 7, day: 23, title: "Saint Bridget, Religious", rank: .optionalMemorial, color: .white)
+    public static let mostHolyNameOfMary = FixedCelebration(month: 9, day: 12, title: "The Most Holy Name of Mary", rank: .optionalMemorial, color: .white)
+    public static let saintFaustinaKowalska = FixedCelebration(month: 10, day: 5, title: "Saint Faustina Kowalska, Virgin", rank: .optionalMemorial, color: .white)
+    public static let saintJohnXXIII = FixedCelebration(month: 10, day: 11, title: "Saint John XXIII, Pope", rank: .optionalMemorial, color: .white)
+    public static let saintJohnPaulII = FixedCelebration(month: 10, day: 22, title: "Saint John Paul II, Pope", rank: .optionalMemorial, color: .white)
+    public static let saintAlbertTheGreat = FixedCelebration(month: 11, day: 15, title: "Saint Albert the Great, Bishop and Doctor of the Church", rank: .optionalMemorial, color: .white)
+    public static let saintCatherineOfAlexandria = FixedCelebration(month: 11, day: 25, title: "Saint Catherine of Alexandria, Virgin and Martyr", rank: .optionalMemorial, color: .red)
+    public static let saintNicholas = FixedCelebration(month: 12, day: 6, title: "Saint Nicholas, Bishop", rank: .optionalMemorial, color: .white)
+    public static let ourLadyOfLoreto = FixedCelebration(month: 12, day: 10, title: "Our Lady of Loreto", rank: .optionalMemorial, color: .white)
+
     // MARK: - Master Collection
 
     /// All fixed celebrations catalogued by `(month, day)`.
@@ -352,20 +383,27 @@ public struct FixedSolemnities: Sendable {
             saintsSimonAndJude, allSouls, saintAndrew, saintStephen, saintJohnEvangelist, holyInnocents,
             saintElizabethAnnSeton, saintJohnNeumann, saintAndreBessette, saintMarianneCope,
             saintKatharineDrexel, saintDamienDeVeuster, saintJuniperoSerra, saintKateriTekakwitha,
-            saintPeterClaver, saintFrancesXavierCabrini, saintRosePhilippineDuchesne, blessedMiguelPro,
+            saintPeterClaver, saintsJeanDeBrebeufAndIsaacJogues, saintFrancesXavierCabrini, saintRosePhilippineDuchesne, blessedMiguelPro,
             saintJuanDiego, ourLadyOfGuadalupe,
-            saintsBasilAndGregory, saintAnthonyAbbot, saintAgnes, saintThomasAquinas, saintAgatha,
-            saintPaulMiki, saintScholastica, saintsCyrilAndMethodius, saintPolycarp, saintCatherineOfSiena,
+            saintsBasilAndGregory, saintAnthonyAbbot, saintAgnes, saintsTimothyAndTitus, saintThomasAquinas, saintJohnBosco, saintAgatha,
+            saintPaulMiki, saintScholastica, saintsCyrilAndMethodius, saintPolycarp, saintsPerpetuaAndFelicity, saintJohnBaptistDeLaSalle,
+            saintStanislaus, saintCatherineOfSiena,
             saintAthanasius, saintPhilipNeri, saintJustinMartyr, saintCharlesLwanga, saintBoniface,
             saintBarnabas, saintAnthonyOfPadua, saintAloysiusGonzaga, saintIrenaeus, saintBenedict,
             saintBonaventure, saintsJoachimAndAnne, saintsMarthaMaryLazarus, saintIgnatiusOfLoyola,
             saintAlphonsusLiguori, saintJohnVianney, saintDominic, saintClare, saintMaximilianKolbe,
             saintBernard, saintPiusX, queenshipOfMary, saintMonica, saintAugustine, passionOfJohnTheBaptist,
             saintGregoryTheGreat, saintJohnChrysostom, ourLadyOfSorrows, saintsCorneliusAndCyprian,
+            saintsAndrewKimAndPaulChong, saintPioOfPietrelcina,
             saintVincentDePaul, saintJerome, saintThereseOfLisieux, holyGuardianAngels, saintFrancisOfAssisi,
             ourLadyOfTheRosary, saintTeresaOfAvila, saintIgnatiusOfAntioch, saintCharlesBorromeo,
             saintLeoTheGreat, saintMartinOfTours, saintJosaphat, saintElizabethOfHungary, presentationOfMary,
-            saintCecilia, saintAndrewDungLac, saintFrancisXavier, saintAmbrose, saintLucy, saintJohnOfTheCross
+            saintCecilia, saintAndrewDungLac, saintFrancisXavier, saintAmbrose, saintLucy, saintJohnOfTheCross,
+            // Key Optional Memorials
+            holyNameOfJesus, saintJosephineBakhita, ourLadyOfLourdes, saintPatrick, saintCyrilOfJerusalem,
+            saintAnselm, saintLouisDeMontfort, ourLadyOfFatima, saintBedeTheVenerable, saintsJohnFisherAndThomasMore,
+            ourLadyOfMountCarmel, saintBridgetOfSweden, mostHolyNameOfMary, saintFaustinaKowalska, saintJohnXXIII,
+            saintJohnPaulII, saintAlbertTheGreat, saintCatherineOfAlexandria, saintNicholas, ourLadyOfLoreto
         ]
 
         var dict: [CelebrationKey: [FixedCelebration]] = [:]

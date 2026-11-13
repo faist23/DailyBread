@@ -143,4 +143,96 @@ final class LiturgicalCalendarTests: XCTestCase {
         XCTAssertTrue(day24.title.contains("Sacred Heart"), "June 24, 2033 must celebrate the Sacred Heart of Jesus")
         XCTAssertTrue(day23.title.contains("John the Baptist"), "Nativity of St. John the Baptist must be transferred to June 23, 2033")
     }
+
+    // MARK: - 6. Ascension Celebration Modes (Thursday vs Sunday)
+
+    func testAscensionCelebratedOnSundayByDefaultInUS() {
+        // In 2027, Easter is March 28.
+        // Thursday of 6th Week of Easter is May 6, 2027 (Easter + 39 days).
+        // 7th Sunday of Easter is May 9, 2027 (Easter + 42 days).
+        let may6 = makeDate(year: 2027, month: 5, day: 6)
+        let may9 = makeDate(year: 2027, month: 5, day: 9)
+
+        let thursdayDay = LiturgicalCalendar.day(for: may6, calendar: calendar, ascensionOnThursday: false)
+        let sundayDay = LiturgicalCalendar.day(for: may9, calendar: calendar, ascensionOnThursday: false)
+
+        XCTAssertEqual(thursdayDay.title, "Thursday of the Sixth Week of Easter")
+        XCTAssertEqual(thursdayDay.rank, .weekday)
+        XCTAssertFalse(thursdayDay.isHolyDayOfObligation, "Thursday of 6th Week of Easter is not an obligation when Ascension is on Sunday")
+
+        XCTAssertEqual(sundayDay.title, "The Ascension of the Lord")
+        XCTAssertEqual(sundayDay.rank, .primarySolemnity)
+        XCTAssertTrue(sundayDay.isHolyDayOfObligation, "Ascension on Sunday is a Holy Day of Obligation")
+    }
+
+    func testAscensionCelebratedOnThursdayWhenProvincialToggleActive() {
+        // In 2027, Easter is March 28.
+        // Thursday of 6th Week of Easter is May 6, 2027.
+        // 7th Sunday of Easter is May 9, 2027.
+        let may6 = makeDate(year: 2027, month: 5, day: 6)
+        let may9 = makeDate(year: 2027, month: 5, day: 9)
+
+        let thursdayDay = LiturgicalCalendar.day(for: may6, calendar: calendar, ascensionOnThursday: true)
+        let sundayDay = LiturgicalCalendar.day(for: may9, calendar: calendar, ascensionOnThursday: true)
+
+        XCTAssertEqual(thursdayDay.title, "The Ascension of the Lord")
+        XCTAssertEqual(thursdayDay.rank, .primarySolemnity)
+        XCTAssertEqual(thursdayDay.color, .white)
+        XCTAssertTrue(thursdayDay.isHolyDayOfObligation, "Ascension on Thursday is a Holy Day of Obligation in designated provinces")
+
+        XCTAssertEqual(sundayDay.title, "Seventh Sunday of Easter")
+        XCTAssertEqual(sundayDay.rank, .primarySolemnity)
+        XCTAssertEqual(sundayDay.color, .white)
+        XCTAssertTrue(sundayDay.isHolyDayOfObligation, "Sunday is always an obligation")
+    }
+
+    func testSeventhSundayOfEasterResolvesAllReadingsInYearC() {
+        // May 9, 2027 is 7th Sunday of Easter (Year C).
+        let may9 = makeDate(year: 2027, month: 5, day: 9)
+        let day = LiturgicalCalendar.day(for: may9, calendar: calendar, ascensionOnThursday: true)
+        let entries = PericoreIndex.shared.cycleEntries(for: day)
+
+        XCTAssertFalse(entries.isEmpty, "Seventh Sunday of Easter must resolve readings")
+        let types = Set(entries.map(\.type))
+        XCTAssertTrue(types.contains(.firstReading), "Must contain First Reading (Acts 7:55-60)")
+        XCTAssertTrue(types.contains(.responsorialPsalm), "Must contain Responsorial Psalm (Psalm 97)")
+        XCTAssertTrue(types.contains(.secondReading), "Must contain Second Reading (Rev 22:12-14)")
+        XCTAssertTrue(types.contains(.gospelAcclamation), "Must contain Gospel Acclamation")
+        XCTAssertTrue(types.contains(.gospel), "Must contain Gospel (John 17:20-26)")
+    }
+
+    // MARK: - 7. Newly Added Memorials in FixedSolemnities
+
+    func testObligatoryMemorialsInFixedSolemnities() {
+        // St. Pio of Pietrelcina on September 23
+        let pio = FixedSolemnities.celebrationsByMonthAndDay[FixedSolemnities.CelebrationKey(month: 9, day: 23)]?.first
+        XCTAssertNotNil(pio)
+        XCTAssertTrue(pio?.title.contains("Padre Pio") == true)
+        XCTAssertEqual(pio?.rank, .obligatoryMemorial)
+
+        // Saints Timothy and Titus on January 26
+        let timothy = FixedSolemnities.celebrationsByMonthAndDay[FixedSolemnities.CelebrationKey(month: 1, day: 26)]?.first
+        XCTAssertNotNil(timothy)
+        XCTAssertTrue(timothy?.title.contains("Timothy and Titus") == true)
+        XCTAssertEqual(timothy?.rank, .obligatoryMemorial)
+
+        // Saint John Bosco on January 31
+        let bosco = FixedSolemnities.celebrationsByMonthAndDay[FixedSolemnities.CelebrationKey(month: 1, day: 31)]?.first
+        XCTAssertNotNil(bosco)
+        XCTAssertTrue(bosco?.title.contains("John Bosco") == true)
+        XCTAssertEqual(bosco?.rank, .obligatoryMemorial)
+
+        // Saints Perpetua and Felicity on March 7
+        let perpetua = FixedSolemnities.celebrationsByMonthAndDay[FixedSolemnities.CelebrationKey(month: 3, day: 7)]?.first
+        XCTAssertNotNil(perpetua)
+        XCTAssertTrue(perpetua?.title.contains("Perpetua and Felicity") == true)
+        XCTAssertEqual(perpetua?.rank, .obligatoryMemorial)
+
+        // Saints Jean de Brébeuf and Isaac Jogues (North American Martyrs) on October 19
+        let martyrs = FixedSolemnities.celebrationsByMonthAndDay[FixedSolemnities.CelebrationKey(month: 10, day: 19)]?.first
+        XCTAssertNotNil(martyrs)
+        XCTAssertTrue(martyrs?.title.contains("Isaac Jogues") == true)
+        XCTAssertEqual(martyrs?.rank, .obligatoryMemorial)
+        XCTAssertTrue(martyrs?.isUSProper == true)
+    }
 }

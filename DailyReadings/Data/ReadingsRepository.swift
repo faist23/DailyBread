@@ -315,8 +315,13 @@ public final class ReadingsRepository {
         var readings: [Reading] = []
 
         for entry in entries {
-            let verses = await db.queryVerses(citation: entry.citation)
-            let formattedText = await db.formattedText(for: verses)
+            let formattedText: String
+            if entry.type == .responsorialPsalm {
+                formattedText = await db.formattedPsalmText(citation: entry.citation)
+            } else {
+                let verses = await db.queryVerses(citation: entry.citation)
+                formattedText = await db.formattedText(for: verses)
+            }
 
             let text = formattedText.isEmpty
                 ? "[\(entry.citation.displayReference) — \(translationName) offline text.]"

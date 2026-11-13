@@ -170,6 +170,88 @@ public enum BibleBook: Int, CaseIterable, Codable, Sendable {
         }
     }
 
+    /// The official Roman Catholic Lectionary spoken announcement for this book at Mass
+    /// (e.g. "the Letter of Saint Paul to Philemon", "the Book of Genesis", "the Book of the Prophet Isaiah").
+    public var liturgicalAnnouncement: String {
+        switch self {
+        case .genesis: return "the Book of Genesis"
+        case .exodus: return "the Book of Exodus"
+        case .leviticus: return "the Book of Leviticus"
+        case .numbers: return "the Book of Numbers"
+        case .deuteronomy: return "the Book of Deuteronomy"
+        case .joshua: return "the Book of Joshua"
+        case .judges: return "the Book of Judges"
+        case .ruth: return "the Book of Ruth"
+        case .firstSamuel: return "the first Book of Samuel"
+        case .secondSamuel: return "the second Book of Samuel"
+        case .firstKings: return "the first Book of Kings"
+        case .secondKings: return "the second Book of Kings"
+        case .firstChronicles: return "the first Book of Chronicles"
+        case .secondChronicles: return "the second Book of Chronicles"
+        case .ezra: return "the Book of Ezra"
+        case .nehemiah: return "the Book of Nehemiah"
+        case .tobit: return "the Book of Tobit"
+        case .judith: return "the Book of Judith"
+        case .esther: return "the Book of Esther"
+        case .job: return "the Book of Job"
+        case .psalms: return "the Book of Psalms"
+        case .proverbs: return "the Book of Proverbs"
+        case .ecclesiastes: return "the Book of Ecclesiastes"
+        case .songOfSongs: return "the Song of Songs"
+        case .wisdom: return "the Book of Wisdom"
+        case .sirach: return "the Book of Sirach"
+        case .isaiah: return "the Book of the Prophet Isaiah"
+        case .jeremiah: return "the Book of the Prophet Jeremiah"
+        case .lamentations: return "the Book of Lamentations"
+        case .baruch: return "the Book of the Prophet Baruch"
+        case .ezekiel: return "the Book of the Prophet Ezekiel"
+        case .daniel: return "the Book of the Prophet Daniel"
+        case .hosea: return "the Book of the Prophet Hosea"
+        case .joel: return "the Book of the Prophet Joel"
+        case .amos: return "the Book of the Prophet Amos"
+        case .obadiah: return "the Book of the Prophet Obadiah"
+        case .jonah: return "the Book of the Prophet Jonah"
+        case .micah: return "the Book of the Prophet Micah"
+        case .nahum: return "the Book of the Prophet Nahum"
+        case .habakkuk: return "the Book of the Prophet Habakkuk"
+        case .zephaniah: return "the Book of the Prophet Zephaniah"
+        case .haggai: return "the Book of the Prophet Haggai"
+        case .zechariah: return "the Book of the Prophet Zechariah"
+        case .malachi: return "the Book of the Prophet Malachi"
+        case .firstMaccabees: return "the first Book of Maccabees"
+        case .secondMaccabees: return "the second Book of Maccabees"
+
+        case .matthew: return "the holy Gospel according to Matthew"
+        case .mark: return "the holy Gospel according to Mark"
+        case .luke: return "the holy Gospel according to Luke"
+        case .john: return "the holy Gospel according to John"
+
+        case .acts: return "the Acts of the Apostles"
+        case .romans: return "the Letter of Saint Paul to the Romans"
+        case .firstCorinthians: return "the first Letter of Saint Paul to the Corinthians"
+        case .secondCorinthians: return "the second Letter of Saint Paul to the Corinthians"
+        case .galatians: return "the Letter of Saint Paul to the Galatians"
+        case .ephesians: return "the Letter of Saint Paul to the Ephesians"
+        case .philippians: return "the Letter of Saint Paul to the Philippians"
+        case .colossians: return "the Letter of Saint Paul to the Colossians"
+        case .firstThessalonians: return "the first Letter of Saint Paul to the Thessalonians"
+        case .secondThessalonians: return "the second Letter of Saint Paul to the Thessalonians"
+        case .firstTimothy: return "the first Letter of Saint Paul to Timothy"
+        case .secondTimothy: return "the second Letter of Saint Paul to Timothy"
+        case .titus: return "the Letter of Saint Paul to Titus"
+        case .philemon: return "the Letter of Saint Paul to Philemon"
+        case .hebrews: return "the Letter to the Hebrews"
+        case .james: return "the Letter of Saint James"
+        case .firstPeter: return "the first Letter of Saint Peter"
+        case .secondPeter: return "the second Letter of Saint Peter"
+        case .firstJohn: return "the first Letter of Saint John"
+        case .secondJohn: return "the second Letter of Saint John"
+        case .thirdJohn: return "the third Letter of Saint John"
+        case .jude: return "the Letter of Saint Jude"
+        case .revelation: return "the Book of Revelation"
+        }
+    }
+
     /// Number of chapters in this book.
     public var chapterCount: Int {
         switch self {
@@ -666,6 +748,8 @@ public actor BibleDatabase {
             return mapHebrewJoelToVulgate(chapter: chapter, verseNumbers: verseNumbers)
         case .malachi:
             return mapHebrewMalachiToVulgate(chapter: chapter, verseNumbers: verseNumbers)
+        case .sirach:
+            return mapHebrewSirachToVulgate(chapter: chapter, verseNumbers: verseNumbers)
         default:
             return [BibleQuerySlice(bookId: book.rawValue, chapter: chapter, verseNumbers: verseNumbers)]
         }
@@ -790,6 +874,18 @@ public actor BibleDatabase {
         return slices
     }
 
+    private static func mapHebrewSirachToVulgate(chapter: Int, verseNumbers: [Int]) -> [BibleQuerySlice] {
+        let bookId = BibleBook.sirach.rawValue
+        switch chapter {
+        case 50:
+            // Lectionary Sirach 50:22-24 = Vulgate Ecclesiasticus 50:24-26 (+2)
+            let mapped = verseNumbers.map { ($0 >= 22 && $0 <= 24) ? $0 + 2 : $0 }
+            return [BibleQuerySlice(bookId: bookId, chapter: 50, verseNumbers: mapped)]
+        default:
+            return [BibleQuerySlice(bookId: bookId, chapter: chapter, verseNumbers: verseNumbers)]
+        }
+    }
+
     /// Locates Lectionary "Esther C" (the prayers of Mordecai and Esther) in a bundled Bible.
     ///
     /// The Lectionary letters the Greek additions to Esther; neither bundled Bible does.
@@ -853,7 +949,7 @@ public actor BibleDatabase {
             if let cited, cited.isEmpty { continue }
 
             // 2. Translate to this Bible's numbering.
-            if isVulgateNumbering, book == .psalms || book == .joel || book == .malachi {
+            if isVulgateNumbering, book == .psalms || book == .joel || book == .malachi || book == .sirach {
                 slices.append(contentsOf: Self.mapHebrewToVulgate(book: book, chapter: span.chapter, verseNumbers: cited ?? []))
             } else if let cited, let versification {
                 var current: (chapter: Int, verses: [Int])?
@@ -1045,5 +1141,120 @@ public actor BibleDatabase {
                 .map { $0.text.trimmingCharacters(in: .whitespaces) }
                 .joined(separator: " ")
         }
+    }
+
+    /// Formats a Responsorial Psalm into missal stanzas separated by "\n\n".
+    ///
+    /// The Roman Catholic Lectionary divides the responsorial psalm into distinct stanzas
+    /// indicated by commas or semicolons in the citation (e.g. "Ps 146:7, 8-9a, 9bc-10" or "Ps 23:1-3a, 3b-4, 5, 6").
+    /// This method queries each stanza, divides shared verses at clause/sentence boundaries without duplication,
+    /// and formats each stanza separated by "\n\n" so views and audio players can present the congregational
+    /// response after each stanza.
+    public func formattedPsalmText(citation: ReadingCitation, includeVerseNumbers: Bool = false) -> String {
+        let rawSegments = citation.verses
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        guard rawSegments.count > 1 else {
+            let verses = queryVerses(citation: citation)
+            return formattedText(for: verses, includeVerseNumbers: includeVerseNumbers)
+        }
+
+        // Query verses for each stanza segment
+        var stanzaVersesList: [[BibleVerse]] = []
+        for segment in rawSegments {
+            let stanzaCitation = ReadingCitation(book: citation.book, chapter: citation.chapter, verses: segment)
+            let verses = queryVerses(citation: stanzaCitation)
+            stanzaVersesList.append(verses)
+        }
+
+        // Cleanly partition overlapping verses between adjacent stanzas (e.g. 1-3a and 3b-4, or 8-9a and 9bc-10)
+        var stanzas: [String] = []
+        for i in 0..<stanzaVersesList.count {
+            var currentVerses = stanzaVersesList[i]
+
+            // If the next stanza shares the last verse of this stanza
+            if i + 1 < stanzaVersesList.count {
+                if let lastVerse = currentVerses.last,
+                   let nextFirst = stanzaVersesList[i + 1].first,
+                   lastVerse.chapter == nextFirst.chapter,
+                   lastVerse.verse == nextFirst.verse {
+                    let parts = Self.splitVerseParts(lastVerse.text)
+                    if !parts.first.isEmpty && !parts.rest.isEmpty {
+                        // Replace last verse in current stanza with first part
+                        currentVerses[currentVerses.count - 1] = BibleVerse(
+                            id: lastVerse.id,
+                            bookId: lastVerse.bookId,
+                            bookName: lastVerse.bookName,
+                            chapter: lastVerse.chapter,
+                            verse: lastVerse.verse,
+                            text: parts.first
+                        )
+                        // Replace first verse in next stanza with rest part
+                        stanzaVersesList[i + 1][0] = BibleVerse(
+                            id: nextFirst.id,
+                            bookId: nextFirst.bookId,
+                            bookName: nextFirst.bookName,
+                            chapter: nextFirst.chapter,
+                            verse: nextFirst.verse,
+                            text: parts.rest
+                        )
+                    } else {
+                        // Cannot split text cleanly: leave whole verse in first stanza and remove duplicate from second
+                        stanzaVersesList[i + 1].removeFirst()
+                    }
+                }
+            }
+
+            let text = formattedText(for: currentVerses, includeVerseNumbers: includeVerseNumbers)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if !text.isEmpty {
+                stanzas.append(text)
+            }
+        }
+
+        // Fallback: If stanzas came out empty, query the entire citation normally
+        if stanzas.isEmpty {
+            let verses = queryVerses(citation: citation)
+            return formattedText(for: verses, includeVerseNumbers: includeVerseNumbers)
+        }
+
+        return stanzas.joined(separator: "\n\n")
+    }
+
+    /// Splits verse text into two parts at a natural sentence or clause boundary.
+    private static func splitVerseParts(_ text: String) -> (first: String, rest: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // 1. Sentence ending (. ! ?) followed by whitespace and a capital letter or quote
+        let sentencePattern = #"(?<=[.!?])\s+(?=[A-Z“\"'‘])"#
+        if let regex = try? NSRegularExpression(pattern: sentencePattern) {
+            let nsString = trimmed as NSString
+            let matches = regex.matches(in: trimmed, range: NSRange(location: 0, length: nsString.length))
+            if let firstMatch = matches.first {
+                let firstPart = nsString.substring(to: firstMatch.range.location).trimmingCharacters(in: .whitespaces)
+                let restPart = nsString.substring(from: firstMatch.range.location + firstMatch.range.length).trimmingCharacters(in: .whitespaces)
+                if !firstPart.isEmpty && !restPart.isEmpty {
+                    return (firstPart, restPart)
+                }
+            }
+        }
+
+        // 2. Colon or semicolon (: or ;) followed by whitespace
+        let clausePattern = #"(?<=[;:])\s+"#
+        if let regex = try? NSRegularExpression(pattern: clausePattern) {
+            let nsString = trimmed as NSString
+            let matches = regex.matches(in: trimmed, range: NSRange(location: 0, length: nsString.length))
+            if let firstMatch = matches.first {
+                let firstPart = nsString.substring(to: firstMatch.range.location).trimmingCharacters(in: .whitespaces)
+                let restPart = nsString.substring(from: firstMatch.range.location + firstMatch.range.length).trimmingCharacters(in: .whitespaces)
+                if !firstPart.isEmpty && !restPart.isEmpty {
+                    return (firstPart, restPart)
+                }
+            }
+        }
+
+        return (trimmed, "")
     }
 }

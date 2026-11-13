@@ -33,8 +33,12 @@ public struct LiturgicalCalendar: Sendable {
     public init() {}
 
     /// Instance convenience method to compute the liturgical day for a date.
-    public func liturgicalDay(for date: Date, calendar: Calendar = .current) -> LiturgicalDay {
-        Self.day(for: date, calendar: calendar)
+    public func liturgicalDay(
+        for date: Date,
+        calendar: Calendar = .current,
+        ascensionOnThursday: Bool? = nil
+    ) -> LiturgicalDay {
+        Self.day(for: date, calendar: calendar, ascensionOnThursday: ascensionOnThursday)
     }
 
     // MARK: - Primary Public Engine API
@@ -44,8 +48,14 @@ public struct LiturgicalCalendar: Sendable {
     /// - Parameters:
     ///   - date: The civil date to compute.
     ///   - calendar: The base calendar. Calculations are safely normalized to UTC noon to prevent timezone shifts.
+    ///   - ascensionOnThursday: Optional override for Ascension celebration (defaults to `UserDefaults.standard.bool(forKey: "ascensionOnThursday")`).
     /// - Returns: A fully resolved `LiturgicalDay` value.
-    public static func day(for date: Date, calendar: Calendar = .current) -> LiturgicalDay {
+    public static func day(
+        for date: Date,
+        calendar: Calendar = .current,
+        ascensionOnThursday: Bool? = nil
+    ) -> LiturgicalDay {
+        let isAscensionOnThursday = ascensionOnThursday ?? UserDefaults.standard.bool(forKey: "ascensionOnThursday")
         let gmtCal = normalizedCalendar()
         let norm = normalize(date: date, calendar: calendar, gmtCal: gmtCal)
         let year = norm.year
@@ -90,7 +100,8 @@ public struct LiturgicalCalendar: Sendable {
             christTheKing: christTheKing,
             sundayCycle: sundayCycle,
             weekdayCycle: weekdayCycle,
-            calendar: gmtCal
+            calendar: gmtCal,
+            ascensionOnThursday: isAscensionOnThursday
         )
 
         // 4. Check for Transferred Solemnities on this Date
@@ -140,8 +151,8 @@ public struct LiturgicalCalendar: Sendable {
             // Select the highest-ranking sanctoral candidate
             let sortedCandidates = filteredFixed.sorted { $0.rank < $1.rank }
             if let bestFixed = sortedCandidates.first {
-                // If sanctoral candidate outranks temporal day:
-                if bestFixed.rank.takesPrecedence(over: temporalDay.rank) {
+                // If sanctoral candidate outranks temporal day (optional memorials do not displace ordinary weekdays):
+                if bestFixed.rank.takesPrecedence(over: temporalDay.rank) && bestFixed.rank != .optionalMemorial {
                     finalTitle = bestFixed.title
                     finalRank = bestFixed.rank
                     finalColor = bestFixed.color
@@ -153,8 +164,9 @@ public struct LiturgicalCalendar: Sendable {
                     optionalMemorials.append(bestFixed.title)
                     finalSubtitle = "Optional Commemoration: \(bestFixed.title)"
                 } else if temporalDay.rank == .weekday && bestFixed.rank == .optionalMemorial {
-                    // On ordinary weekdays, optional memorials may be celebrated
+                    // On ordinary weekdays, optional memorials may be celebrated optionally
                     optionalMemorials.append(bestFixed.title)
+                    finalSubtitle = "Optional Memorial: \(bestFixed.title)"
                 }
             }
 
@@ -175,7 +187,8 @@ public struct LiturgicalCalendar: Sendable {
             isSunday: isSunday,
             title: finalTitle,
             rank: finalRank,
-            calendar: gmtCal
+            calendar: gmtCal,
+            ascensionOnThursday: isAscensionOnThursday
         )
 
         // 8. Compute Fasting and Abstinence
@@ -349,7 +362,8 @@ public struct LiturgicalCalendar: Sendable {
         christTheKing: Date,
         sundayCycle: SundayCycle,
         weekdayCycle: WeekdayCycle,
-        calendar: Calendar
+        calendar: Calendar,
+        ascensionOnThursday: Bool = false
     ) -> TemporalDayComputation {
         let isSunday = (weekday == 1)
         let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -669,15 +683,28 @@ public struct LiturgicalCalendar: Sendable {
                 )
             }
 
-            let ascensionSunday = Computus.ascensionSunday(year: year)
-            if calendar.isDate(date, inSameDayAs: ascensionSunday) {
-                return TemporalDayComputation(
-                    season: .easter,
-                    seasonWeek: 7,
-                    title: "The Ascension of the Lord",
-                    rank: .primarySolemnity,
-                    color: .white
-                )
+            if ascensionOnThursday {
+                let ascensionThursday = Computus.ascensionThursday(year: year)
+                if calendar.isDate(date, inSameDayAs: ascensionThursday) {
+                    return TemporalDayComputation(
+                        season: .easter,
+                        seasonWeek: 6,
+                        title: "The Ascension of the Lord",
+                        rank: .primarySolemnity,
+                        color: .white
+                    )
+                }
+            } else {
+                let ascensionSunday = Computus.ascensionSunday(year: year)
+                if calendar.isDate(date, inSameDayAs: ascensionSunday) {
+                    return TemporalDayComputation(
+                        season: .easter,
+                        seasonWeek: 7,
+                        title: "The Ascension of the Lord",
+                        rank: .primarySolemnity,
+                        color: .white
+                    )
+                }
             }
 
             if isSunday {
@@ -874,7 +901,8 @@ public struct LiturgicalCalendar: Sendable {
         isSunday: Bool,
         title: String,
         rank: LiturgicalRank,
-        calendar: Calendar
+        calendar: Calendar,
+        ascensionOnThursday: Bool = false
     ) -> Bool {
         // 1. Every Sunday is always a Holy Day of Obligation (Canon 1246 §1)
         if isSunday {
@@ -915,17 +943,30 @@ public struct LiturgicalCalendar: Sendable {
             return !isSaturdayOrMonday
         }
 
+        // 5. The Ascension of the Lord (when celebrated on Thursday)
+        if ascensionOnThursday {
+            let year = calendar.component(.year, from: date)
+            let ascensionThursday = Computus.ascensionThursday(year: year)
+            if calendar.isDate(date, inSameDayAs: ascensionThursday) {
+                return true
+            }
+        }
+
         return false
     }
 
     /// Scans upcoming days ahead and returns the next non-Sunday Holy Day of Obligation, if one occurs within `daysAhead`.
-    public func nextHolyDayOfObligation(from date: Date = .now, daysAhead: Int = 30) -> (day: LiturgicalDay, daysAway: Int)? {
+    public func nextHolyDayOfObligation(
+        from date: Date = .now,
+        daysAhead: Int = 30,
+        ascensionOnThursday: Bool? = nil
+    ) -> (day: LiturgicalDay, daysAway: Int)? {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: date)
 
         for offset in 1...daysAhead {
             guard let target = calendar.date(byAdding: .day, value: offset, to: start) else { continue }
-            let day = liturgicalDay(for: target)
+            let day = liturgicalDay(for: target, ascensionOnThursday: ascensionOnThursday)
             if day.isNonSundayHolyDayOfObligation {
                 return (day, offset)
             }
